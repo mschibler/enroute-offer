@@ -1,0 +1,216 @@
+# Enroute Offers – Italian (it_IT)
+msgid ""
+msgstr ""
+"Project-Id-Version: Enroute Offers 1.0.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: it_IT\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Offers"
+msgstr "Offerte"
+
+msgid "Offer"
+msgstr "Offerta"
+
+msgid "Add New Offer"
+msgstr "Aggiungi nuova offerta"
+
+msgid "Edit Offer"
+msgstr "Modifica offerta"
+
+msgid "New Offer"
+msgstr "Nuova offerta"
+
+msgid "Stations"
+msgstr "Stazioni"
+
+msgid "Station"
+msgstr "Stazione"
+
+msgid "Add New Station"
+msgstr "Aggiungi nuova stazione"
+
+msgid "Edit Station"
+msgstr "Modifica stazione"
+
+msgid "Resources"
+msgstr "Risorse"
+
+msgid "Resource"
+msgstr "Risorsa"
+
+msgid "Add New Resource"
+msgstr "Aggiungi nuova risorsa"
+
+msgid "Edit Resource"
+msgstr "Modifica risorsa"
+
+msgid "Subjects"
+msgstr "Soggetti"
+
+msgid "Subject"
+msgstr "Soggetto"
+
+msgid "Target Groups"
+msgstr "Gruppi target"
+
+msgid "Target Group"
+msgstr "Gruppo target"
+
+msgid "Offer Types"
+msgstr "Tipi di offerta"
+
+msgid "Offer Type"
+msgstr "Tipo di offerta"
+
+msgid "Resource Types"
+msgstr "Tipi di risorsa"
+
+msgid "Resource Type"
+msgstr "Tipo di risorsa"
+
+msgid "Tags"
+msgstr "Etichette"
+
+msgid "Tag"
+msgstr "Etichetta"
+
+msgid "German"
+msgstr "Tedesco"
+
+msgid "French"
+msgstr "Francese"
+
+msgid "Italian"
+msgstr "Italiano"
+
+msgid "English"
+msgstr "Inglese"
+
+msgid "Monday"
+msgstr "Lunedì"
+
+msgid "Tuesday"
+msgstr "Martedì"
+
+msgid "Wednesday"
+msgstr "Mercoledì"
+
+msgid "Thursday"
+msgstr "Giovedì"
+
+msgid "Friday"
+msgstr "Venerdì"
+
+msgid "Saturday"
+msgstr "Sabato"
+
+msgid "Sunday"
+msgstr "Domenica"
+
+msgid "Morning"
+msgstr "Mattina"
+
+msgid "Afternoon"
+msgstr "Pomeriggio"
+
+msgid "Evening"
+msgstr "Sera"
+
+msgid "Description"
+msgstr "Descrizione"
+
+msgid "Price"
+msgstr "Prezzo"
+
+msgid "Language"
+msgstr "Lingua"
+
+msgid "— Select Language —"
+msgstr "— Seleziona lingua —"
+
+msgid "— Select Station —"
+msgstr "— Seleziona stazione —"
+
+msgid "— Select Weekday —"
+msgstr "— Seleziona giorno —"
+
+msgid "— Select Time of Day —"
+msgstr "— Seleziona momento della giornata —"
+
+msgid "Weekday"
+msgstr "Giorno della settimana"
+
+msgid "Time of Day"
+msgstr "Momento della giornata"
+
+msgid "Additional Date Information"
+msgstr "Informazioni aggiuntive sulla data"
+
+msgid "Fixed Date (optional)"
+msgstr "Data fissa (facoltativa)"
+
+msgid "External Links"
+msgstr "Link esterni"
+
+msgid "Add Link"
+msgstr "Aggiungi link"
+
+msgid "Remove"
+msgstr "Rimuovi"
+
+msgid "Portrait / Description"
+msgstr "Ritratto / Descrizione"
+
+msgid "Address (Street & Number)"
+msgstr "Indirizzo (via e numero)"
+
+msgid "Postal Code (PLZ)"
+msgstr "Codice postale"
+
+msgid "Place / City"
+msgstr "Luogo / Città"
+
+msgid "File (PDF, Word, Excel, PowerPoint)"
+msgstr "File (PDF, Word, Excel, PowerPoint)"
+
+msgid "Select / Upload File"
+msgstr "Seleziona / Carica file"
+
+msgid "View file"
+msgstr "Visualizza file"
+
+msgid "No file selected"
+msgstr "Nessun file selezionato"
+
+msgid "Filter"
+msgstr "Filtra"
+
+msgid "Filter Offers"
+msgstr "Filtra offerte"
+
+msgid "Filter Resources"
+msgstr "Filtra risorse"
+
+msgid "offers"
+msgstr "offerte"
+
+msgid "resources"
+msgstr "risorse"
+
+msgid "No offers match the selected filters."
+msgstr "Nessuna offerta corrisponde ai filtri selezionati."
+
+msgid "No resources match the selected filters."
+msgstr "Nessuna risorsa corrisponde ai filtri selezionati."
+
+msgid "Clear filters"
+msgstr "Azzera filtri"
+
+msgid "Clear all"
+msgstr "Cancella tutto"
+
+msgid "Show results"
+msgstr "Mostra risultati"

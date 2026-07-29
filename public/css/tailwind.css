@@ -1,0 +1,13 @@
+/*
+ * Enroute Offers – Tailwind CSS
+ *
+ * This file is intentionally minimal. In production, replace it with the
+ * output of `npx tailwindcss -i ./src/input.css -o ./public/css/tailwind.css --minify`
+ * scanned against the templates/ directory so only used utilities are included.
+ *
+ * For quick setup, load Tailwind via CDN in your theme's <head>:
+ *   <script src="https://cdn.tailwindcss.com"></script>
+ * and remove this stylesheet enqueue from the plugin.
+ *
+ * The plugin registers this file as a placeholder so the enqueue chain works.
+ */

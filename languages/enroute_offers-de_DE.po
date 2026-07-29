@@ -1,0 +1,349 @@
+# Enroute Offers – German (de_DE)
+# Copyright (C) 2024 Enroute
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Enroute Offers 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Offers"
+msgstr "Angebote"
+
+msgid "Offer"
+msgstr "Angebot"
+
+msgid "Add New Offer"
+msgstr "Neues Angebot hinzufügen"
+
+msgid "Edit Offer"
+msgstr "Angebot bearbeiten"
+
+msgid "New Offer"
+msgstr "Neues Angebot"
+
+msgid "View Offer"
+msgstr "Angebot ansehen"
+
+msgid "Search Offers"
+msgstr "Angebote suchen"
+
+msgid "No offers found"
+msgstr "Keine Angebote gefunden"
+
+msgid "No offers in trash"
+msgstr "Keine Angebote im Papierkorb"
+
+msgid "Stations"
+msgstr "Stationen"
+
+msgid "Station"
+msgstr "Station"
+
+msgid "Add New Station"
+msgstr "Neue Station hinzufügen"
+
+msgid "Edit Station"
+msgstr "Station bearbeiten"
+
+msgid "New Station"
+msgstr "Neue Station"
+
+msgid "View Station"
+msgstr "Station ansehen"
+
+msgid "Search Stations"
+msgstr "Stationen suchen"
+
+msgid "No stations found"
+msgstr "Keine Stationen gefunden"
+
+msgid "No stations in trash"
+msgstr "Keine Stationen im Papierkorb"
+
+msgid "Resources"
+msgstr "Ressourcen"
+
+msgid "Resource"
+msgstr "Ressource"
+
+msgid "Add New Resource"
+msgstr "Neue Ressource hinzufügen"
+
+msgid "Edit Resource"
+msgstr "Ressource bearbeiten"
+
+msgid "New Resource"
+msgstr "Neue Ressource"
+
+msgid "View Resource"
+msgstr "Ressource ansehen"
+
+msgid "Search Resources"
+msgstr "Ressourcen suchen"
+
+msgid "No resources found"
+msgstr "Keine Ressourcen gefunden"
+
+msgid "No resources in trash"
+msgstr "Keine Ressourcen im Papierkorb"
+
+msgid "Subjects"
+msgstr "Themen"
+
+msgid "Subject"
+msgstr "Thema"
+
+msgid "Search Subjects"
+msgstr "Themen suchen"
+
+msgid "All Subjects"
+msgstr "Alle Themen"
+
+msgid "Edit Subject"
+msgstr "Thema bearbeiten"
+
+msgid "Add New Subject"
+msgstr "Neues Thema hinzufügen"
+
+msgid "Target Groups"
+msgstr "Zielgruppen"
+
+msgid "Target Group"
+msgstr "Zielgruppe"
+
+msgid "Search Target Groups"
+msgstr "Zielgruppen suchen"
+
+msgid "All Target Groups"
+msgstr "Alle Zielgruppen"
+
+msgid "Edit Target Group"
+msgstr "Zielgruppe bearbeiten"
+
+msgid "Add New Target Group"
+msgstr "Neue Zielgruppe hinzufügen"
+
+msgid "Offer Types"
+msgstr "Angebotsarten"
+
+msgid "Offer Type"
+msgstr "Angebotsart"
+
+msgid "Search Offer Types"
+msgstr "Angebotsarten suchen"
+
+msgid "All Offer Types"
+msgstr "Alle Angebotsarten"
+
+msgid "Edit Offer Type"
+msgstr "Angebotsart bearbeiten"
+
+msgid "Add New Offer Type"
+msgstr "Neue Angebotsart hinzufügen"
+
+msgid "Resource Types"
+msgstr "Ressourcentypen"
+
+msgid "Resource Type"
+msgstr "Ressourcentyp"
+
+msgid "Search Resource Types"
+msgstr "Ressourcentypen suchen"
+
+msgid "All Resource Types"
+msgstr "Alle Ressourcentypen"
+
+msgid "Edit Resource Type"
+msgstr "Ressourcentyp bearbeiten"
+
+msgid "Add New Resource Type"
+msgstr "Neuen Ressourcentyp hinzufügen"
+
+msgid "Tags"
+msgstr "Schlagwörter"
+
+msgid "Tag"
+msgstr "Schlagwort"
+
+msgid "Search Tags"
+msgstr "Schlagwörter suchen"
+
+msgid "All Tags"
+msgstr "Alle Schlagwörter"
+
+msgid "Edit Tag"
+msgstr "Schlagwort bearbeiten"
+
+msgid "Add New Tag"
+msgstr "Neues Schlagwort hinzufügen"
+
+msgid "German"
+msgstr "Deutsch"
+
+msgid "French"
+msgstr "Französisch"
+
+msgid "Italian"
+msgstr "Italienisch"
+
+msgid "English"
+msgstr "Englisch"
+
+msgid "Monday"
+msgstr "Montag"
+
+msgid "Tuesday"
+msgstr "Dienstag"
+
+msgid "Wednesday"
+msgstr "Mittwoch"
+
+msgid "Thursday"
+msgstr "Donnerstag"
+
+msgid "Friday"
+msgstr "Freitag"
+
+msgid "Saturday"
+msgstr "Samstag"
+
+msgid "Sunday"
+msgstr "Sonntag"
+
+msgid "Morning"
+msgstr "Morgen"
+
+msgid "Afternoon"
+msgstr "Nachmittag"
+
+msgid "Evening"
+msgstr "Abend"
+
+msgid "Offer Details"
+msgstr "Angebotsdetails"
+
+msgid "Dates"
+msgstr "Daten"
+
+msgid "Resources & Links"
+msgstr "Ressourcen & Links"
+
+msgid "Station Details"
+msgstr "Stationsdetails"
+
+msgid "Resource Details"
+msgstr "Ressourcendetails"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Price"
+msgstr "Preis"
+
+msgid "Station"
+msgstr "Station"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "— Select Station —"
+msgstr "— Station wählen —"
+
+msgid "— Select Language —"
+msgstr "— Sprache wählen —"
+
+msgid "— Select Weekday —"
+msgstr "— Wochentag wählen —"
+
+msgid "— Select Time of Day —"
+msgstr "— Tageszeit wählen —"
+
+msgid "Weekday"
+msgstr "Wochentag"
+
+msgid "Time of Day"
+msgstr "Tageszeit"
+
+msgid "Additional Date Information"
+msgstr "Zusätzliche Terminangaben"
+
+msgid "Fixed Date (optional)"
+msgstr "Fixer Termin (optional)"
+
+msgid "External Links"
+msgstr "Externe Links"
+
+msgid "Add Link"
+msgstr "Link hinzufügen"
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid "No resources found. Please add some resources first."
+msgstr "Keine Ressourcen gefunden. Bitte zuerst Ressourcen hinzufügen."
+
+msgid "Portrait / Description"
+msgstr "Portrait / Beschreibung"
+
+msgid "Address (Street & Number)"
+msgstr "Adresse (Strasse und Nummer)"
+
+msgid "Postal Code (PLZ)"
+msgstr "Postleitzahl (PLZ)"
+
+msgid "Place / City"
+msgstr "Ort"
+
+msgid "File (PDF, Word, Excel, PowerPoint)"
+msgstr "Datei (PDF, Word, Excel, PowerPoint)"
+
+msgid "Select / Upload File"
+msgstr "Datei auswählen / hochladen"
+
+msgid "View file"
+msgstr "Datei ansehen"
+
+msgid "No file selected"
+msgstr "Keine Datei ausgewählt"
+
+msgid "Select or Upload File"
+msgstr "Datei auswählen oder hochladen"
+
+msgid "Use this file"
+msgstr "Diese Datei verwenden"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Filter Offers"
+msgstr "Angebote filtern"
+
+msgid "Filter Resources"
+msgstr "Ressourcen filtern"
+
+msgid "offers"
+msgstr "Angebote"
+
+msgid "resources"
+msgstr "Ressourcen"
+
+msgid "No offers match the selected filters."
+msgstr "Keine Angebote entsprechen den ausgewählten Filtern."
+
+msgid "No resources match the selected filters."
+msgstr "Keine Ressourcen entsprechen den ausgewählten Filtern."
+
+msgid "Clear filters"
+msgstr "Filter zurücksetzen"
+
+msgid "Clear all"
+msgstr "Alle löschen"
+
+msgid "Show results"
+msgstr "Ergebnisse anzeigen"
