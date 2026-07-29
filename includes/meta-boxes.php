@@ -50,6 +50,18 @@ function enroute_register_meta_boxes() {
         'normal',
         'high'
     );
+
+    // ── OLD CMS ID (all three post types, side column) ──────────────────────
+    foreach ( [ 'offer', 'station', 'resource' ] as $pt ) {
+        add_meta_box(
+            'enroute_old_cms_id',
+            __( 'Old CMS ID', 'enroute_offers' ),
+            'enroute_old_cms_id_cb',
+            $pt,
+            'side',
+            'low'
+        );
+    }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -369,5 +381,29 @@ function enroute_resource_details_cb( WP_Post $post ): void {
         });
     })();
     </script>
+    <?php
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// OLD CMS ID — shared callback for offer / station / resource
+// ══════════════════════════════════════════════════════════════════════════════
+
+function enroute_old_cms_id_cb( WP_Post $post ): void {
+    wp_nonce_field( 'enroute_old_cms_id_save', 'enroute_old_cms_id_nonce' );
+    $value = get_post_meta( $post->ID, '_old_cms_id', true );
+    ?>
+    <div class="enroute-meta-wrap" style="margin-top:4px;">
+        <input
+            type="text"
+            id="old_cms_id"
+            name="old_cms_id"
+            value="<?php echo esc_attr( $value ); ?>"
+            class="widefat"
+            placeholder="<?php esc_attr_e( 'e.g. 42', 'enroute_offers' ); ?>"
+        >
+        <p class="description" style="margin-top:4px;">
+            <?php esc_html_e( 'ID from the old Django CMS. Used for migration only.', 'enroute_offers' ); ?>
+        </p>
+    </div>
     <?php
 }

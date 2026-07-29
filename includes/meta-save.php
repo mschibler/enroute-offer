@@ -121,3 +121,20 @@ function enroute_save_resource_meta( int $post_id ): void {
         ? sanitize_key( $_POST['resource_language'] ) : '';
     update_post_meta( $post_id, '_resource_language', $language );
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// OLD CMS ID — save for offer / station / resource
+// ══════════════════════════════════════════════════════════════════════════════
+
+function enroute_save_old_cms_id( int $post_id ): void {
+    if ( ! isset( $_POST['enroute_old_cms_id_nonce'] ) ) return;
+    if ( ! wp_verify_nonce( $_POST['enroute_old_cms_id_nonce'], 'enroute_old_cms_id_save' ) ) return;
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+    if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+
+    $value = isset( $_POST['old_cms_id'] ) ? sanitize_text_field( $_POST['old_cms_id'] ) : '';
+    update_post_meta( $post_id, '_old_cms_id', $value );
+}
+add_action( 'save_post_offer',    'enroute_save_old_cms_id' );
+add_action( 'save_post_station',  'enroute_save_old_cms_id' );
+add_action( 'save_post_resource', 'enroute_save_old_cms_id' );
