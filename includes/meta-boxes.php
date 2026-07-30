@@ -273,18 +273,29 @@ function enroute_offer_resources_cb( WP_Post $post ): void {
 function enroute_station_details_cb( WP_Post $post ): void {
     wp_nonce_field( 'enroute_station_save', 'enroute_station_nonce' );
 
-    $portrait = get_post_meta( $post->ID, '_station_portrait', true );
-    $address  = get_post_meta( $post->ID, '_station_address',  true );
-    $plz      = get_post_meta( $post->ID, '_station_plz',      true );
-    $place    = get_post_meta( $post->ID, '_station_place',    true );
+    $portrait        = get_post_meta( $post->ID, '_station_portrait',        true );
+    $address         = get_post_meta( $post->ID, '_station_address',         true );
+    $plz             = get_post_meta( $post->ID, '_station_plz',             true );
+    $place           = get_post_meta( $post->ID, '_station_place',           true );
+    $email           = get_post_meta( $post->ID, '_station_email',           true );
+    $website         = get_post_meta( $post->ID, '_station_website',         true );
+    $phone           = get_post_meta( $post->ID, '_station_phone',           true );
+    $contact_person  = get_post_meta( $post->ID, '_station_contact_person',  true );
+    $contact_details = get_post_meta( $post->ID, '_station_contact_details', true );
+    $coordinates     = get_post_meta( $post->ID, '_station_coordinates',     true );
+    $active          = get_post_meta( $post->ID, '_station_active',          true );
+    $photo_id        = get_post_meta( $post->ID, '_station_photo_id',        true );
+    $photo_url       = $photo_id ? wp_get_attachment_image_url( $photo_id, 'medium' ) : '';
     ?>
     <div class="enroute-meta-wrap">
 
+        <!-- Portrait -->
         <div class="enroute-field">
             <label for="station_portrait"><?php esc_html_e( 'Portrait / Description', 'enroute_offers' ); ?></label>
             <textarea id="station_portrait" name="station_portrait" rows="6"><?php echo esc_textarea( $portrait ); ?></textarea>
         </div>
 
+        <!-- Address group -->
         <div class="enroute-field-group">
             <div class="enroute-field">
                 <label for="station_address"><?php esc_html_e( 'Address (Street & Number)', 'enroute_offers' ); ?></label>
@@ -300,7 +311,119 @@ function enroute_station_details_cb( WP_Post $post ): void {
             </div>
         </div>
 
+        <!-- Coordinates -->
+        <div class="enroute-field">
+            <label for="station_coordinates"><?php esc_html_e( 'Coordinates', 'enroute_offers' ); ?></label>
+            <input type="text" id="station_coordinates" name="station_coordinates"
+                   value="<?php echo esc_attr( $coordinates ); ?>"
+                   placeholder="<?php esc_attr_e( 'e.g. 47.376888, 8.541694', 'enroute_offers' ); ?>">
+            <p class="description"><?php esc_html_e( 'Geographical coordinates of the address (latitude, longitude).', 'enroute_offers' ); ?></p>
+        </div>
+
+        <!-- Contact -->
+        <div class="enroute-field-group">
+            <div class="enroute-field">
+                <label for="station_email"><?php esc_html_e( 'Email', 'enroute_offers' ); ?></label>
+                <input type="email" id="station_email" name="station_email" value="<?php echo esc_attr( $email ); ?>">
+            </div>
+            <div class="enroute-field">
+                <label for="station_phone"><?php esc_html_e( 'Phone', 'enroute_offers' ); ?></label>
+                <input type="text" id="station_phone" name="station_phone" value="<?php echo esc_attr( $phone ); ?>">
+            </div>
+        </div>
+
+        <!-- Website -->
+        <div class="enroute-field">
+            <label for="station_website"><?php esc_html_e( 'Website', 'enroute_offers' ); ?></label>
+            <input type="url" id="station_website" name="station_website"
+                   value="<?php echo esc_attr( $website ); ?>" placeholder="https://">
+        </div>
+
+        <!-- Contact person -->
+        <div class="enroute-field">
+            <label for="station_contact_person"><?php esc_html_e( 'Contact Person', 'enroute_offers' ); ?></label>
+            <input type="text" id="station_contact_person" name="station_contact_person"
+                   value="<?php echo esc_attr( $contact_person ); ?>">
+        </div>
+
+        <!-- Contact details -->
+        <div class="enroute-field">
+            <label for="station_contact_details"><?php esc_html_e( 'Contact Details', 'enroute_offers' ); ?></label>
+            <textarea id="station_contact_details" name="station_contact_details" rows="4"><?php echo esc_textarea( $contact_details ); ?></textarea>
+        </div>
+
+        <!-- Photo -->
+        <div class="enroute-field">
+            <label><?php esc_html_e( 'Photo', 'enroute_offers' ); ?></label>
+            <div>
+                <?php if ( $photo_url ) : ?>
+                    <img id="station_photo_preview" src="<?php echo esc_url( $photo_url ); ?>"
+                         style="max-width:200px; max-height:200px; display:block; margin-bottom:8px; object-fit:cover;">
+                <?php else : ?>
+                    <img id="station_photo_preview" src=""
+                         style="max-width:200px; max-height:200px; display:none; margin-bottom:8px; object-fit:cover;">
+                <?php endif; ?>
+                <input type="hidden" id="station_photo_id" name="station_photo_id"
+                       value="<?php echo esc_attr( (string) $photo_id ); ?>">
+                <button type="button" class="button" id="station_photo_select">
+                    <?php esc_html_e( $photo_id ? 'Change Photo' : 'Select Photo', 'enroute_offers' ); ?>
+                </button>
+                <?php if ( $photo_id ) : ?>
+                <button type="button" class="button" id="station_photo_remove" style="margin-left:4px;">
+                    <?php esc_html_e( 'Remove', 'enroute_offers' ); ?>
+                </button>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Active -->
+        <div class="enroute-field" style="margin-top:1rem;">
+            <label class="enroute-checkbox-label">
+                <input type="checkbox" name="station_active" value="1" <?php checked( $active, '1' ); ?>>
+                <?php esc_html_e( 'Active', 'enroute_offers' ); ?>
+            </label>
+            <p class="description"><?php esc_html_e( 'Uncheck to hide this station from front-end listings.', 'enroute_offers' ); ?></p>
+        </div>
+
     </div>
+
+    <script>
+    (function($){
+        $(function(){
+            var frame;
+            $('#station_photo_select').on('click', function(e){
+                e.preventDefault();
+                if ( frame ) { frame.open(); return; }
+                frame = wp.media({
+                    title: '<?php esc_html_e( 'Select Photo', 'enroute_offers' ); ?>',
+                    button: { text: '<?php esc_html_e( 'Use this photo', 'enroute_offers' ); ?>' },
+                    multiple: false
+                });
+                frame.on('select', function(){
+                    var att = frame.state().get('selection').first().toJSON();
+                    $('#station_photo_id').val(att.id);
+                    var src = (att.sizes && att.sizes.medium) ? att.sizes.medium.url : att.url;
+                    $('#station_photo_preview').attr('src', src).show();
+                    $('#station_photo_select').text('<?php esc_html_e( 'Change Photo', 'enroute_offers' ); ?>');
+                    if ( !$('#station_photo_remove').length ) {
+                        $('<button type="button" class="button" id="station_photo_remove" style="margin-left:4px;"><?php esc_html_e( 'Remove', 'enroute_offers' ); ?></button>')
+                            .insertAfter('#station_photo_select')
+                            .on('click', removePhoto);
+                    }
+                });
+                frame.open();
+            });
+            function removePhoto(e){
+                e.preventDefault();
+                $('#station_photo_id').val('');
+                $('#station_photo_preview').attr('src','').hide();
+                $('#station_photo_select').text('<?php esc_html_e( 'Select Photo', 'enroute_offers' ); ?>');
+                $(this).remove();
+            }
+            $('#station_photo_remove').on('click', removePhoto);
+        });
+    })(jQuery);
+    </script>
     <?php
 }
 

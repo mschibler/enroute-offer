@@ -90,17 +90,38 @@ function enroute_save_station_meta( int $post_id ): void {
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
     if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
-    $fields = [
-        '_station_portrait' => 'station_portrait',
-        '_station_address'  => 'station_address',
-        '_station_plz'      => 'station_plz',
-        '_station_place'    => 'station_place',
+    // Textarea / text fields
+    $textarea_fields = [
+        '_station_portrait'        => 'station_portrait',
+        '_station_contact_details' => 'station_contact_details',
     ];
-    foreach ( $fields as $meta_key => $field ) {
-        if ( isset( $_POST[ $field ] ) ) {
-            update_post_meta( $post_id, $meta_key, sanitize_textarea_field( $_POST[ $field ] ) );
-        }
+    foreach ( $textarea_fields as $meta_key => $field ) {
+        update_post_meta( $post_id, $meta_key, sanitize_textarea_field( $_POST[ $field ] ?? '' ) );
     }
+
+    $text_fields = [
+        '_station_address'        => 'station_address',
+        '_station_plz'            => 'station_plz',
+        '_station_place'          => 'station_place',
+        '_station_phone'          => 'station_phone',
+        '_station_contact_person' => 'station_contact_person',
+        '_station_coordinates'    => 'station_coordinates',
+    ];
+    foreach ( $text_fields as $meta_key => $field ) {
+        update_post_meta( $post_id, $meta_key, sanitize_text_field( $_POST[ $field ] ?? '' ) );
+    }
+
+    // Email
+    update_post_meta( $post_id, '_station_email', sanitize_email( $_POST['station_email'] ?? '' ) );
+
+    // Website
+    update_post_meta( $post_id, '_station_website', esc_url_raw( $_POST['station_website'] ?? '' ) );
+
+    // Photo
+    update_post_meta( $post_id, '_station_photo_id', absint( $_POST['station_photo_id'] ?? 0 ) );
+
+    // Active (checkbox: only present in POST when checked)
+    update_post_meta( $post_id, '_station_active', isset( $_POST['station_active'] ) ? '1' : '0' );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
