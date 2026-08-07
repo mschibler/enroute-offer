@@ -76,13 +76,14 @@ function enroute_guide_details_cb( WP_Post $post ): void {
 
         <!-- Description / Text -->
         <div class="enroute-field">
-            <label for="guide_description"><?php esc_html_e( 'Text', 'enroute_offers' ); ?></label>
-            <textarea
-                id="guide_description"
-                name="guide_description"
-                rows="6"
-                class="widefat"
-            ><?php echo esc_textarea( $desc ); ?></textarea>
+            <label><?php esc_html_e( 'Text', 'enroute_offers' ); ?></label>
+            <?php wp_editor( $desc, 'guide_description', [
+                'textarea_name' => 'guide_description',
+                'textarea_rows' => 8,
+                'media_buttons' => false,
+                'teeny'         => true,
+                'quicktags'     => true,
+            ] ); ?>
         </div>
 
         <!-- Language -->
@@ -170,8 +171,8 @@ add_action( 'save_post_guide', function( int $post_id ): void {
     $quote = isset( $_POST['guide_quote'] ) ? sanitize_text_field( $_POST['guide_quote'] ) : '';
     update_post_meta( $post_id, '_guide_quote', $quote );
 
-    // Description
-    $desc = isset( $_POST['guide_description'] ) ? sanitize_textarea_field( $_POST['guide_description'] ) : '';
+    // Description (allow basic HTML from WYSIWYG editor)
+    $desc = isset( $_POST['guide_description'] ) ? wp_kses_post( wp_unslash( $_POST['guide_description'] ) ) : '';
     update_post_meta( $post_id, '_guide_description', $desc );
 
     // Language

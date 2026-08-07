@@ -31,6 +31,11 @@ function enroute_save_offer_meta( int $post_id ): void {
     $email = isset( $_POST['offer_contact_email'] ) ? sanitize_email( $_POST['offer_contact_email'] ) : '';
     update_post_meta( $post_id, '_offer_contact_email', $email );
 
+    // Pricing description, recurrence, bookable
+    update_post_meta( $post_id, '_offer_pricing_description', sanitize_text_field( $_POST['offer_pricing_description'] ?? '' ) );
+    update_post_meta( $post_id, '_offer_recurrence',          sanitize_text_field( $_POST['offer_recurrence']         ?? '' ) );
+    update_post_meta( $post_id, '_offer_bookable',            isset( $_POST['offer_bookable'] ) ? '1' : '0' );
+
     // Station
     $station = isset( $_POST['offer_station'] ) ? absint( $_POST['offer_station'] ) : 0;
     update_post_meta( $post_id, '_offer_station', $station );
@@ -136,6 +141,9 @@ function enroute_save_resource_meta( int $post_id ): void {
 
     $file_id = isset( $_POST['resource_file_id'] ) ? absint( $_POST['resource_file_id'] ) : 0;
     update_post_meta( $post_id, '_resource_file_id', $file_id );
+
+    // External link
+    update_post_meta( $post_id, '_resource_external_link', esc_url_raw( $_POST['resource_external_link'] ?? '' ) );
 
     $allowed_langs = array_keys( enroute_get_languages() );
     $language = isset( $_POST['resource_language'] ) && in_array( $_POST['resource_language'], $allowed_langs, true )

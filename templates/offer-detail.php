@@ -43,8 +43,19 @@ $all_times = enroute_get_times_of_day();
 $time_labels = array_map( fn($t) => $all_times[$t] ?? $t, $times_of_day );
 
 // ── Featured image ─────────────────────────────────────────────────────────────
-$image_id  = get_post_thumbnail_id( $post_id );
+// Image: 1st priority = offer photo, 2nd priority = station photo
+$image_id  = get_post_meta( $post_id, '_offer_photo_id', true );
 $image_url = $image_id ? wp_get_attachment_image_url( $image_id, 'full' ) : '';
+if ( ! $image_url ) {
+    $station_id = get_post_meta( $post_id, '_offer_station', true );
+    if ( $station_id ) {
+        $station_photo_id = get_post_meta( $station_id, '_station_photo_id', true );
+        if ( $station_photo_id ) {
+            $image_id  = $station_photo_id;
+            $image_url = wp_get_attachment_image_url( $station_photo_id, 'full' ) ?: '';
+        }
+    }
+}
 $image_alt = $image_id ? get_post_meta( $image_id, '_wp_attachment_image_alt', true ) : get_the_title( $post_id );
 
 // ── Resources ─────────────────────────────────────────────────────────────────

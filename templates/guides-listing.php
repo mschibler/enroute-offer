@@ -37,7 +37,7 @@ foreach ( $guide_posts as $i => $g ) {
         'id'    => $g->ID,
         'name'  => $g->post_title,
         'quote' => get_post_meta( $g->ID, '_guide_quote',       true ),
-        'text'  => wpautop(get_post_meta( $g->ID, '_guide_description', true )),
+        'text'  => wpautop( get_post_meta( $g->ID, '_guide_description', true ) ),
         'photo' => $photo_src,
         'color' => $enroute_palette[ $g->ID % count( $enroute_palette ) ],
     ];
@@ -176,12 +176,11 @@ $uid = 'egl_' . uniqid();
                     ></p>
 
                     <!-- Text -->
-                    <p
+                    <div
                         x-show="active.text"
-                        x-html="active.text.replaceAll('<p>', '<br>')"
-                        style="line-height:1.6; margin:0; color:#222;"
-                        class="font-montserrat text-lg text-black"
-                    ></p>
+                        x-html="active.text"
+                        style="font-size:0.92rem; line-height:1.6; color:#222; margin-top:1rem;"
+                    ></div>
 
                 </div>
 

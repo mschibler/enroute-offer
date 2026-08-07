@@ -19,8 +19,18 @@ $enroute_palette = [ '#dbe442', '#fce300', '#fed141', '#ff6a39', '#ef4a81' ];
 
 $offers_data = [];
 foreach ( $offers as $i => $offer ) {
-    $image_id  = get_post_thumbnail_id( $offer->ID );
+    // Image: 1st priority = offer photo, 2nd priority = station photo
+    $image_id  = get_post_meta( $offer->ID, '_offer_photo_id', true );
     $image_url = $image_id ? wp_get_attachment_image_url( $image_id, 'large' ) : '';
+    if ( ! $image_url ) {
+        $station_id = get_post_meta( $offer->ID, '_offer_station', true );
+        if ( $station_id ) {
+            $station_photo_id = get_post_meta( $station_id, '_station_photo_id', true );
+            if ( $station_photo_id ) {
+                $image_url = wp_get_attachment_image_url( $station_photo_id, 'large' ) ?: '';
+            }
+        }
+    }
 
     $ot_terms = get_the_terms( $offer->ID, 'offer_type' );
     $ot_names = $ot_ids = [];

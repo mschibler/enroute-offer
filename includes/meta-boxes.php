@@ -71,12 +71,15 @@ function enroute_register_meta_boxes() {
 function enroute_offer_details_cb( WP_Post $post ): void {
     wp_nonce_field( 'enroute_offer_save', 'enroute_offer_nonce' );
 
-    $subtitle = get_post_meta( $post->ID, '_offer_subtitle',       true );
-    $desc     = get_post_meta( $post->ID, '_offer_description',   true );
-    $price    = get_post_meta( $post->ID, '_offer_price',         true );
-    $email    = get_post_meta( $post->ID, '_offer_contact_email', true );
-    $station  = get_post_meta( $post->ID, '_offer_station',       true );
-    $language = get_post_meta( $post->ID, '_offer_language',      true );
+    $subtitle     = get_post_meta( $post->ID, '_offer_subtitle',             true );
+    $desc         = get_post_meta( $post->ID, '_offer_description',          true );
+    $price        = get_post_meta( $post->ID, '_offer_price',                true );
+    $email        = get_post_meta( $post->ID, '_offer_contact_email',        true );
+    $station      = get_post_meta( $post->ID, '_offer_station',              true );
+    $language     = get_post_meta( $post->ID, '_offer_language',             true );
+    $bookable     = get_post_meta( $post->ID, '_offer_bookable',             true );
+    $pricing_desc = get_post_meta( $post->ID, '_offer_pricing_description',  true );
+    $recurrence   = get_post_meta( $post->ID, '_offer_recurrence',           true );
 
     $stations = get_posts([
         'post_type'   => 'station',
@@ -89,8 +92,9 @@ function enroute_offer_details_cb( WP_Post $post ): void {
     <div class="enroute-meta-wrap">
 
         <div class="enroute-field">
-            <label for="offer_subtitle"><?php esc_html_e( 'Subtitle', 'enroute_offers' ); ?></label>
-            <input type="text" id="offer_subtitle" name="offer_subtitle" value="<?php echo esc_attr( $subtitle ); ?>">
+            <label for="offer_subtitle"><?php esc_html_e( 'Short Description', 'enroute_offers' ); ?></label>
+            <textarea id="offer_subtitle" name="offer_subtitle" rows="3" class="widefat"><?php echo esc_textarea( $subtitle ); ?></textarea>
+            <p class="description"><?php esc_html_e( 'Brief summary shown in listings.', 'enroute_offers' ); ?></p>
         </div>
 
         <div class="enroute-field">
@@ -130,6 +134,25 @@ function enroute_offer_details_cb( WP_Post $post ): void {
                     </option>
                 <?php endforeach; ?>
             </select>
+        </div>
+
+        <div class="enroute-field">
+            <label for="offer_pricing_description"><?php esc_html_e( 'Pricing Description', 'enroute_offers' ); ?></label>
+            <input type="text" id="offer_pricing_description" name="offer_pricing_description" value="<?php echo esc_attr( $pricing_desc ); ?>">
+        </div>
+
+        <div class="enroute-field">
+            <label for="offer_recurrence"><?php esc_html_e( 'Recurrence', 'enroute_offers' ); ?></label>
+            <input type="text" id="offer_recurrence" name="offer_recurrence" value="<?php echo esc_attr( $recurrence ); ?>">
+            <p class="description"><?php esc_html_e( 'Short description of when/how often the offer takes place.', 'enroute_offers' ); ?></p>
+        </div>
+
+        <div class="enroute-field">
+            <label class="enroute-checkbox-label">
+                <input type="checkbox" name="offer_bookable" value="1" <?php checked( $bookable, '1' ); ?>>
+                <?php esc_html_e( 'Bookable', 'enroute_offers' ); ?>
+            </label>
+            <p class="description"><?php esc_html_e( 'Check if this offer can be booked directly.', 'enroute_offers' ); ?></p>
         </div>
 
     </div>
@@ -434,10 +457,11 @@ function enroute_station_details_cb( WP_Post $post ): void {
 function enroute_resource_details_cb( WP_Post $post ): void {
     wp_nonce_field( 'enroute_resource_save', 'enroute_resource_nonce' );
 
-    $file_id   = get_post_meta( $post->ID, '_resource_file_id',  true );
-    $file_url  = $file_id ? wp_get_attachment_url( $file_id ) : '';
-    $file_name = $file_id ? basename( get_attached_file( $file_id ) ) : '';
-    $language  = get_post_meta( $post->ID, '_resource_language', true );
+    $file_id       = get_post_meta( $post->ID, '_resource_file_id',      true );
+    $file_url      = $file_id ? wp_get_attachment_url( $file_id ) : '';
+    $file_name     = $file_id ? basename( get_attached_file( $file_id ) ) : '';
+    $external_link = get_post_meta( $post->ID, '_resource_external_link', true );
+    $language      = get_post_meta( $post->ID, '_resource_language',      true );
     ?>
     <div class="enroute-meta-wrap">
 
@@ -457,6 +481,15 @@ function enroute_resource_details_cb( WP_Post $post ): void {
                     </a>
                 <?php endif; ?>
             </div>
+        </div>
+
+        <div class="enroute-field">
+            <label for="resource_external_link"><?php esc_html_e( 'External Link (URL)', 'enroute_offers' ); ?></label>
+            <input type="url" id="resource_external_link" name="resource_external_link"
+                   value="<?php echo esc_attr( $external_link ); ?>"
+                   placeholder="https://"
+                   class="widefat">
+            <p class="description"><?php esc_html_e( 'For external resources (websites etc.). Leave empty if using a file upload.', 'enroute_offers' ); ?></p>
         </div>
 
         <div class="enroute-field">
