@@ -80,6 +80,7 @@ function enroute_offer_details_cb( WP_Post $post ): void {
     $bookable     = get_post_meta( $post->ID, '_offer_bookable',             true );
     $pricing_desc = get_post_meta( $post->ID, '_offer_pricing_description',  true );
     $recurrence   = get_post_meta( $post->ID, '_offer_recurrence',           true );
+    $featured     = get_post_meta( $post->ID, '_offer_featured',             true );
 
     $stations = get_posts([
         'post_type'   => 'station',
@@ -145,6 +146,19 @@ function enroute_offer_details_cb( WP_Post $post ): void {
             <label for="offer_recurrence"><?php esc_html_e( 'Recurrence', 'enroute_offers' ); ?></label>
             <input type="text" id="offer_recurrence" name="offer_recurrence" value="<?php echo esc_attr( $recurrence ); ?>">
             <p class="description"><?php esc_html_e( 'Short description of when/how often the offer takes place.', 'enroute_offers' ); ?></p>
+        </div>
+
+        <div class="enroute-field">
+            <label for="offer_featured"><?php esc_html_e( 'Featured', 'enroute_offers' ); ?></label>
+            <select id="offer_featured" name="offer_featured">
+                <option value=""><?php esc_html_e( '— Not featured —', 'enroute_offers' ); ?></option>
+                <?php for ( $n = 1; $n <= 5; $n++ ) : ?>
+                <option value="<?php echo $n; ?>" <?php selected( $featured, (string) $n ); ?>>
+                    <?php printf( esc_html__( 'Featured %d', 'enroute_offers' ), $n ); ?>
+                </option>
+                <?php endfor; ?>
+            </select>
+            <p class="description"><?php esc_html_e( 'Assign a featured position. Use [enroute_featured_offer number="1"] shortcode to display it.', 'enroute_offers' ); ?></p>
         </div>
 
         <div class="enroute-field">

@@ -12,10 +12,12 @@
     function registerComponents() {
 
         // ── OFFERS LISTING ────────────────────────────────────────────────
-        Alpine.data( 'enrouteOffersListing', ( offers ) => ({
+        Alpine.data( 'enrouteOffersListing', ( offers, currentLang ) => ({
 
-            all:        offers,
-            filterOpen: false,
+            all:         offers,
+            currentLang: currentLang || '',
+            filterOpen:  false,
+            searchQuery: '',
 
             pending: {
                 weekday:      [],
@@ -32,8 +34,13 @@
                 language:     [],
             },
 
+            perPage:       15,
+            visibleCount:  15,
+
             get filtered() {
+                const q = this.searchQuery.toLowerCase().trim();
                 return this.all.filter( offer => {
+                    if ( q && ! ( offer.title + ' ' + offer.subtitle + ' ' + offer.description ).toLowerCase().includes(q) ) return false;
                     if ( this.filters.weekday.length      && ! offer.weekdays.some( d => this.filters.weekday.includes(d) ) )                  return false;
                     if ( this.filters.language.length     && ! this.filters.language.includes( offer.language ) )                            return false;
                     if ( this.filters.subject.length      && ! offer.subject_ids.some( id => this.filters.subject.includes(id) ) )            return false;
@@ -47,6 +54,27 @@
                 return Object.values( this.filters ).reduce( (n, arr) => n + arr.length, 0 );
             },
 
+            get sorted() {
+                if ( ! this.currentLang ) return this.filtered;
+                const lang = this.currentLang;
+                return [
+                    ...this.filtered.filter( o => o.language === lang ),
+                    ...this.filtered.filter( o => o.language !== lang ),
+                ];
+            },
+
+            get visible() {
+                return this.sorted.slice( 0, this.visibleCount );
+            },
+
+            get hasMore() {
+                return this.visibleCount < this.filtered.length;
+            },
+
+            loadMore() {
+                this.visibleCount += this.perPage;
+            },
+
             toggleMultiFilter( key, value ) {
                 const idx = this.pending[ key ].indexOf( value );
                 if ( idx === -1 ) this.pending[ key ].push( value );
@@ -57,6 +85,7 @@
                 Object.keys( this.filters ).forEach( k => {
                     this.filters[ k ] = [ ...this.pending[ k ] ];
                 });
+                this.visibleCount = this.perPage;
             },
 
             resetFilters() {
@@ -64,14 +93,20 @@
                     this.filters[ k ]  = [];
                     this.pending[ k ]  = [];
                 });
+                this.visibleCount = this.perPage;
+                this.searchQuery  = '';
             },
         }) );
 
         // ── RESOURCES LISTING ─────────────────────────────────────────────
-        Alpine.data( 'enrouteResourcesListing', ( resources ) => ({
+        Alpine.data( 'enrouteResourcesListing', ( resources, currentLang ) => ({
 
-            all:        resources,
-            filterOpen: false,
+            all:          resources,
+            currentLang:  currentLang || '',
+            filterOpen:   false,
+            searchQuery:  '',
+            perPage:      15,
+            visibleCount: 15,
 
             pending: {
                 language:      [],
@@ -86,8 +121,13 @@
                 resource_type: [],
             },
 
+            perPage:       15,
+            visibleCount:  15,
+
             get filtered() {
+                const q = this.searchQuery.toLowerCase().trim();
                 return this.all.filter( res => {
+                    if ( q && ! res.title.toLowerCase().includes(q) ) return false;
                     if ( this.filters.language.length      && ! this.filters.language.includes( res.language ) )                              return false;
                     if ( this.filters.subject.length       && ! res.subject_ids.some( id => this.filters.subject.includes(id) ) )              return false;
                     if ( this.filters.target_group.length  && ! res.target_group_ids.some( id => this.filters.target_group.includes(id) ) )    return false;
@@ -100,6 +140,27 @@
                 return Object.values( this.filters ).reduce( (n, arr) => n + arr.length, 0 );
             },
 
+            get sorted() {
+                if ( ! this.currentLang ) return this.filtered;
+                const lang = this.currentLang;
+                return [
+                    ...this.filtered.filter( o => o.language === lang ),
+                    ...this.filtered.filter( o => o.language !== lang ),
+                ];
+            },
+
+            get visible() {
+                return this.sorted.slice( 0, this.visibleCount );
+            },
+
+            get hasMore() {
+                return this.visibleCount < this.filtered.length;
+            },
+
+            loadMore() {
+                this.visibleCount += this.perPage;
+            },
+
             toggleMultiFilter( key, value ) {
                 const idx = this.pending[ key ].indexOf( value );
                 if ( idx === -1 ) this.pending[ key ].push( value );
@@ -110,6 +171,7 @@
                 Object.keys( this.filters ).forEach( k => {
                     this.filters[ k ] = [ ...this.pending[ k ] ];
                 });
+                this.visibleCount = this.perPage;
             },
 
             resetFilters() {
@@ -117,6 +179,8 @@
                     this.filters[ k ]  = [];
                     this.pending[ k ]  = [];
                 });
+                this.visibleCount = this.perPage;
+                this.searchQuery  = '';
             },
         }) );
     }

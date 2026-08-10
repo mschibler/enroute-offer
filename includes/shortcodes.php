@@ -5,6 +5,7 @@ add_shortcode( 'enroute_offers_listing',    'enroute_offers_listing_sc'    );
 add_shortcode( 'enroute_resources_listing', 'enroute_resources_listing_sc' );
 add_shortcode( 'enroute_offer_detail',      'enroute_offer_detail_sc'      );
 add_shortcode( 'enroute_guides_listing',    'enroute_guides_listing_sc'    );
+add_shortcode( 'enroute_featured_offer',    'enroute_featured_offer_sc'    );
 
 // Auto-inject detail template on single offer posts (replaces/prepends content)
 add_filter( 'the_content', 'enroute_offer_detail_content_filter' );
@@ -68,4 +69,16 @@ function enroute_offer_detail_content_filter( string $content ): string {
     $output = ob_get_clean();
     $rendering = false;
     return $output;
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FEATURED OFFER
+// ══════════════════════════════════════════════════════════════════════════════
+
+function enroute_featured_offer_sc( array $atts ): string {
+    $args = shortcode_atts( [ 'number' => '1' ], $atts, 'enroute_featured_offer' );
+    ob_start();
+    include ENROUTE_OFFERS_PATH . 'templates/featured-offer.php';
+    return ob_get_clean();
 }

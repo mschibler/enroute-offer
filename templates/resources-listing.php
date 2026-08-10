@@ -63,7 +63,9 @@ foreach ( $resources as $res ) {
     ];
 }
 
-$uid  = 'erl_' . uniqid();
+$uid          = 'erl_' . uniqid();
+$current_lang = function_exists( 'pll_current_language' ) ? pll_current_language() : substr( get_locale(), 0, 2 );
+$current_lang = substr( $current_lang, 0, 2 );
 $json = wp_json_encode( $resources_data );
 ?>
 
@@ -83,19 +85,41 @@ $json = wp_json_encode( $resources_data );
 <script>window['<?php echo esc_js( $uid ); ?>'] = <?php echo $json; ?>;</script>
 
 <div
-    x-data="enrouteResourcesListing(window['<?php echo esc_js( $uid ); ?>'])"
+    x-data="enrouteResourcesListing(window['<?php echo esc_js( $uid ); ?>'], '<?php echo esc_js( $current_lang ); ?>')"
     id="<?php echo esc_attr( $uid ); ?>-wrap"
     class="enroute-resources-listing relative"
+    x-init="
+        const obs = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) loadMore();
+        }, { rootMargin: '200px' });
+        $nextTick(() => { if ($refs.sentinel) obs.observe($refs.sentinel); });
+    "
 >
 
     <!-- ── Toolbar ── -->
-    <div class="flex items-center justify-between mb-4">
-        <p class="text-sm text-gray-500">
-            <span x-text="filtered.length"></span> <?php esc_html_e( 'Ressourcen', 'enroute_offers' ); ?>
-        </p>
+    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap;">
+        <!-- Search -->
+        <div style="position:relative; flex:1; min-width:200px;">
+            <input
+                type="text"
+                x-model.debounce.300ms="searchQuery"
+                @input="visibleCount = perPage"
+                placeholder="<?php esc_attr_e( 'Suchen…', 'enroute_offers' ); ?>"
+                style="width:100%; padding:0.5rem 2rem 0.5rem 2.25rem; border:1px solid #000; font-size:0.875rem; box-sizing:border-box; outline:none;"
+            >
+            <svg style="position:absolute; left:0.625rem; top:0.625rem; width:1rem; height:1rem; color:#9ca3af; pointer-events:none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+            </svg>
+            <button
+                x-show="searchQuery"
+                @click="searchQuery = ''; visibleCount = perPage"
+                style="position:absolute; right:0.5rem; top:0.4rem; background:none; border:none; cursor:pointer; color:#9ca3af; font-size:1rem; line-height:1; padding:2px;"
+                aria-label="<?php esc_attr_e( 'Suche löschen', 'enroute_offers' ); ?>"
+            >✕</button>
+        </div>
         <button
             @click="filterOpen = true"
-            class="inline-flex items-center gap-2 px-4 py-2 border border-black text-sm font-medium bg-[#B5DFFC] hover:bg-black hover:text-white transition-colors"
+            class="inline-flex items-center gap-2 px-4 py-2 border border-black text-sm font-medium bg-[#B5DFFC] hover:bg-black hover:text-white transition-colors whitespace-nowrap"
         >
             <?php esc_html_e( 'Filter', 'enroute_offers' ); ?>
             <span
@@ -108,7 +132,7 @@ $json = wp_json_encode( $resources_data );
 
     <!-- ── Grid ── -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <template x-for="res in filtered" :key="res.id">
+        <template x-for="res in visible" :key="res.id">
             <a
                 :href="res.file_url || res.permalink"
                 :target="res.file_url ? '_blank' : '_self'"
@@ -134,6 +158,13 @@ $json = wp_json_encode( $resources_data );
                 </div>
             </a>
         </template>
+
+        <!-- Load more sentinel -->
+        <div
+            x-ref="sentinel"
+            x-show="hasMore"
+            style="height:1px; grid-column:1/-1;"
+        ></div>
 
         <template x-if="filtered.length === 0">
             <div class="col-span-full text-center py-16 text-gray-400">

@@ -35,6 +35,8 @@ function enroute_save_offer_meta( int $post_id ): void {
     update_post_meta( $post_id, '_offer_pricing_description', sanitize_text_field( $_POST['offer_pricing_description'] ?? '' ) );
     update_post_meta( $post_id, '_offer_recurrence',          sanitize_text_field( $_POST['offer_recurrence']         ?? '' ) );
     update_post_meta( $post_id, '_offer_bookable',            isset( $_POST['offer_bookable'] ) ? '1' : '0' );
+    $featured = isset( $_POST['offer_featured'] ) ? absint( $_POST['offer_featured'] ) : 0;
+    update_post_meta( $post_id, '_offer_featured', $featured ?: '' );
 
     // Station
     $station = isset( $_POST['offer_station'] ) ? absint( $_POST['offer_station'] ) : 0;

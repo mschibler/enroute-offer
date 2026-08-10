@@ -63,6 +63,22 @@ add_action( 'wp_enqueue_scripts', function() {
         @media (min-width: 769px) and (max-width: 1023px) {
             .enroute-offers-grid { grid-template-columns: repeat(2,1fr) !important; }
         }
+        /* Suppress browser search decorations */
+        .enroute-offers-listing input[type="text"]::-webkit-search-decoration,
+        .enroute-offers-listing input[type="text"]::-webkit-search-cancel-button,
+        .enroute-offers-listing input[type="text"]::-webkit-search-results-button,
+        .enroute-offers-listing input[type="text"]::-webkit-search-results-decoration,
+        .enroute-resources-listing input[type="text"]::-webkit-search-decoration,
+        .enroute-resources-listing input[type="text"]::-webkit-search-cancel-button {
+            display: none !important;
+            -webkit-appearance: none;
+        }
+        .enroute-offers-listing input[type="text"],
+        .enroute-resources-listing input[type="text"] {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
         .enroute-offers-listing a,
         .enroute-offers-listing a:focus,
         .enroute-offers-listing a:hover,

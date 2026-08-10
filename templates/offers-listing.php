@@ -55,6 +55,7 @@ foreach ( $offers as $i => $offer ) {
         'id'               => $offer->ID,
         'title'            => get_the_title( $offer->ID ),
         'subtitle'         => get_post_meta( $offer->ID, '_offer_subtitle', true ) ?: '',
+        'description'      => wp_strip_all_tags( get_post_meta( $offer->ID, '_offer_description', true ) ?: '' ),
         'permalink'        => get_permalink( $offer->ID ),
         'image'            => $image_url ?: '',
         'color'            => $enroute_palette[ $i % count( $enroute_palette ) ],
@@ -68,8 +69,10 @@ foreach ( $offers as $i => $offer ) {
     ];
 }
 
-$uid  = 'eol_' . uniqid();
-$json = wp_json_encode( $offers_data );
+$uid          = 'eol_' . uniqid();
+$json         = wp_json_encode( $offers_data );
+$current_lang = function_exists( 'pll_current_language' ) ? pll_current_language() : substr( get_locale(), 0, 2 );
+$current_lang = substr( $current_lang, 0, 2 ); // normalise de_CH → de
 
 // Whether to show the filter button + drawer (shortcode attr "filter", default "yes")
 $show_filter = ! isset( $args['filter'] ) || ! in_array( strtolower( (string) $args['filter'] ), [ 'no', 'false', '0' ], true );
@@ -77,20 +80,42 @@ $show_filter = ! isset( $args['filter'] ) || ! in_array( strtolower( (string) $a
 <script>window['<?php echo esc_js( $uid ); ?>'] = <?php echo $json; ?>;</script>
 
 <div
-    x-data="enrouteOffersListing(window['<?php echo esc_js( $uid ); ?>'])"
+    x-data="enrouteOffersListing(window['<?php echo esc_js( $uid ); ?>'], '<?php echo esc_js( $current_lang ); ?>')"
     id="<?php echo esc_attr( $uid ); ?>-wrap"
     class="enroute-offers-listing relative"
+    x-init="
+        const obs = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) loadMore();
+        }, { rootMargin: '200px' });
+        $nextTick(() => { if ($refs.sentinel) obs.observe($refs.sentinel); });
+    "
 >
 
     <!-- ── Toolbar ── -->
-    <div class="flex items-center justify-between mb-4">
-        <p class="text-sm text-gray-500">
-            <!--<span x-text="filtered.length"></span> <?php esc_html_e( 'Angebote', 'enroute_offers' ); ?>-->
-        </p>
+    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap;">
+        <!-- Search -->
+        <div style="position:relative; flex:1; min-width:200px;">
+            <input
+                type="text"
+                x-model.debounce.300ms="searchQuery"
+                @input="visibleCount = perPage"
+                placeholder="<?php esc_attr_e( 'Suchen…', 'enroute_offers' ); ?>"
+                style="width:100%; padding:0.5rem 2rem 0.5rem 2.25rem; border:1px solid #000; font-size:0.875rem; box-sizing:border-box; outline:none;"
+            >
+            <svg style="position:absolute; left:0.625rem; top:0.625rem; width:1rem; height:1rem; color:#9ca3af; pointer-events:none;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+            </svg>
+            <button
+                x-show="searchQuery"
+                @click="searchQuery = ''; visibleCount = perPage"
+                style="position:absolute; right:0.5rem; top:0.4rem; background:none; border:none; cursor:pointer; color:#9ca3af; font-size:1rem; line-height:1; padding:2px;"
+                aria-label="<?php esc_attr_e( 'Suche löschen', 'enroute_offers' ); ?>"
+            >✕</button>
+        </div>
         <?php if ( $show_filter ) : ?>
             <button
                 @click="filterOpen = true"
-                class="inline-flex items-center gap-2 px-4 py-2 border border-black text-sm font-medium hover:bg-black hover:text-white transition-colors bg-[#B5DFFC]"
+                class="inline-flex items-center gap-2 px-4 py-2 border border-black text-sm font-medium hover:bg-black hover:text-white transition-colors bg-[#B5DFFC] whitespace-nowrap"
             >
                 <?php esc_html_e( 'Filter', 'enroute_offers' ); ?>
                 <span
@@ -106,7 +131,7 @@ $show_filter = ! isset( $args['filter'] ) || ! in_array( strtolower( (string) $a
          subgrid on rows: row 0 = image (aspect-ratio box), row 1 = colored band.
          Every card in the same grid column shares identical row heights automatically. -->
     <div class="enroute-offers-grid" style="display:grid; grid-template-columns:repeat(3,1fr); column-gap:1rem; row-gap:0;">
-        <template x-for="offer in filtered" :key="offer.id">
+        <template x-for="offer in visible" :key="offer.id">
             <a :href="offer.permalink"
                class="enroute-card-wrap"
                style="display:grid; grid-row:span 2; grid-template-rows:subgrid; row-gap:0; text-decoration:none; color:inherit; border:none; outline:none; box-shadow:none; padding:0; margin:0 0 1rem 0; font-size:0; line-height:0; overflow:hidden;"
@@ -137,6 +162,13 @@ $show_filter = ! isset( $args['filter'] ) || ! in_array( strtolower( (string) $a
                 </div>
             </a>
         </template>
+
+        <!-- Load more sentinel — watched by IntersectionObserver -->
+        <div
+            x-ref="sentinel"
+            x-show="hasMore"
+            style="height:1px; grid-column:1/-1;"
+        ></div>
 
         <template x-if="filtered.length === 0">
             <div style="grid-column:1/-1; text-align:center; padding:4rem 0; color:#9ca3af;">
