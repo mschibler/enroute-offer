@@ -15,8 +15,6 @@ $offers = get_posts([
     'order'          => 'ASC',
 ]);
 
-$enroute_palette = [ '#dbe442', '#fce300', '#fed141', '#ff6a39', '#ef4a81' ];
-
 $offers_data = [];
 foreach ( $offers as $i => $offer ) {
     // Image priority: 1) offer photo, 2) station activities photo, 3) station main photo
@@ -64,7 +62,7 @@ foreach ( $offers as $i => $offer ) {
         'description'      => wp_strip_all_tags( get_post_meta( $offer->ID, '_offer_description', true ) ?: '' ),
         'permalink'        => get_permalink( $offer->ID ),
         'image'            => $image_url ?: '',
-        'color'            => $enroute_palette[ $i % count( $enroute_palette ) ],
+        'color'            => enroute_get_offer_color( $offer->ID, $i ),
         'offer_type_name'  => implode( ', ', $ot_names ),
         'offer_type_ids'   => $ot_ids,
         'subject_ids'      => $subj_ids,

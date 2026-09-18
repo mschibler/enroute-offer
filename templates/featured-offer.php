@@ -34,7 +34,8 @@ if ( empty( $offers ) ) {
 $offer   = $offers[0];
 $post_id = $offer->ID;
 
-$color = $band_color;
+// Band color: shortcode color param takes priority, then offer_type color, then palette
+$color = $band_color ?: enroute_get_offer_color( $post_id, $post_id );
 
 // Image: offer photo first, station photo as fallback
 // Image priority: 1) offer photo, 2) station activities photo, 3) station main photo

@@ -88,9 +88,8 @@ if ( $offer_types && ! is_wp_error( $offer_types ) ) {
     $offer_type_label = implode( ', ', wp_list_pluck( $offer_types, 'name' ) );
 }
 
-// ── Brand color palette (cycles across offers) ─────────────────────────────────
-$enroute_palette    = [ '#dbe442', '#fce300', '#fed141', '#ff6a39', '#ef4a81' ];
-$offer_color        = $enroute_palette[ $post_id % count( $enroute_palette ) ];
+// ── Offer colour from offer_type taxonomy, falls back to palette ─────────────
+$offer_color = enroute_get_offer_color( $post_id, $post_id );
 $button_color       = '#fce300'; // Pantone 102 — bright yellow for action buttons
 $button_color_green = '#c9d56b'; // green button
 ?>
