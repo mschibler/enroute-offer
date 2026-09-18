@@ -214,14 +214,36 @@ add_action( 'wp_enqueue_scripts', function() {
     }
 
     wp_localize_script( 'enroute-offers-front', 'enrouteUserVars', [
-        'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-        'nonce'       => wp_create_nonce( 'enroute_user_nonce' ),
-        'loggedIn'    => is_user_logged_in(),
-        'profile'     => $user_data['profile'],
-        'profileUrl'  => get_option( 'enroute_profile_page_url', '' ),
-        'bookingNonce'=> wp_create_nonce( 'enroute_booking_nonce' ),
+        'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
+        'nonce'        => wp_create_nonce( 'enroute_user_nonce' ),
+        'loggedIn'     => is_user_logged_in(),
+        'profile'      => $user_data['profile'],
+        'profileUrl'   => get_option( 'enroute_profile_page_url', '' ),
+        'userpassUrl'  => get_option( 'enroute_userpass_page_url', '' ),
+        'bookingNonce' => wp_create_nonce( 'enroute_booking_nonce' ),
     ] );
+    // Also expose userpass URL globally for booking form
+    wp_add_inline_script( 'enroute-offers-front',
+        'window.enrouteUserpassUrl = ' . wp_json_encode( get_option( 'enroute_userpass_page_url', '' ) ) . ';',
+        'before'
+    );
 }, 20 );
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AJAX — REFRESH NONCES (called after login to get user-specific nonces)
+// ══════════════════════════════════════════════════════════════════════════════
+
+add_action( 'wp_ajax_enroute_refresh_nonces',        'enroute_handle_refresh_nonces' );
+add_action( 'wp_ajax_nopriv_enroute_refresh_nonces', 'enroute_handle_refresh_nonces' );
+
+function enroute_handle_refresh_nonces(): void {
+    // No nonce check — this endpoint is called right after login when old nonces are stale.
+    // It only returns fresh nonces, so there's no security risk.
+    wp_send_json_success( [
+        'bookingNonce' => wp_create_nonce( 'enroute_booking_nonce' ),
+        'userNonce'    => wp_create_nonce( 'enroute_user_nonce' ),
+    ] );
+}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // REDIRECT after WP login to profile page

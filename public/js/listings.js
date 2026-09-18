@@ -194,6 +194,84 @@
      * 3. Alpine is loaded but init hasn't fired yet → listener still works
      */
     // ── USER PROFILE ──────────────────────────────────────────────────────────
+    // ── USERPASS BOOKING ──────────────────────────────────────────────────────
+    function registerUserpassBooking() {
+        Alpine.data( 'enrouteUserpassBooking', () => ({
+            submitted:  false,
+            loading:    false,
+            errorMsg:   '',
+            successMsg: '',
+            form: {
+                pass_type_id: '',
+                salutation:   '',
+                institution:  '',
+                first_name:   '',
+                last_name:    '',
+                street:       '',
+                zip:          '',
+                place:        '',
+                email:        '',
+                phone:        '',
+                remarks:      '',
+            },
+
+            init() {
+                // Prefill from profile if logged in
+                const p = window.enrouteUserpassProfile || {};
+                if ( p.enroute_first_name ) {
+                    this.form.salutation  = p.enroute_salutation  || '';
+                    this.form.institution = p.enroute_institution || '';
+                    this.form.first_name  = p.enroute_first_name  || '';
+                    this.form.last_name   = p.enroute_last_name   || '';
+                    this.form.street      = p.enroute_street      || '';
+                    this.form.zip         = p.enroute_zip         || '';
+                    this.form.place       = p.enroute_place       || '';
+                    this.form.email       = p.email               || '';
+                    this.form.phone       = p.enroute_phone       || '';
+                }
+                // Listen for login event to prefill
+                window.addEventListener('enroute:loggedin', (e) => {
+                    const pd = e.detail;
+                    this.form.salutation  = pd.enroute_salutation  || this.form.salutation;
+                    this.form.institution = pd.enroute_institution || this.form.institution;
+                    this.form.first_name  = pd.enroute_first_name  || this.form.first_name;
+                    this.form.last_name   = pd.enroute_last_name   || this.form.last_name;
+                    this.form.street      = pd.enroute_street      || this.form.street;
+                    this.form.zip         = pd.enroute_zip         || this.form.zip;
+                    this.form.place       = pd.enroute_place       || this.form.place;
+                    this.form.email       = pd.email               || this.form.email;
+                    this.form.phone       = pd.enroute_phone       || this.form.phone;
+                });
+            },
+
+            submit() {
+                this.errorMsg = '';
+                if ( ! this.form.pass_type_id ) { this.errorMsg = 'Bitte einen User Pass wählen.'; return; }
+                if ( ! this.form.first_name || ! this.form.last_name ) { this.errorMsg = 'Bitte Vor- und Nachname eingeben.'; return; }
+                if ( ! this.form.email ) { this.errorMsg = 'Bitte E-Mail eingeben.'; return; }
+
+                this.loading = true;
+                const data   = new FormData();
+                data.append('action', 'enroute_book_userpass');
+                data.append('nonce',  enrouteUserVars.nonce);
+                Object.entries(this.form).forEach(([k,v]) => data.append(k, v));
+
+                fetch(enrouteUserVars.ajaxUrl, { method:'POST', body:data })
+                    .then(r => r.json())
+                    .then(res => {
+                        this.loading = false;
+                        if (res.success) {
+                            this.submitted  = true;
+                            this.successMsg = res.data.message;
+                        } else {
+                            this.errorMsg = res.data.message || 'Fehler.';
+                        }
+                    })
+                    .catch(() => { this.loading = false; this.errorMsg = 'Verbindungsfehler.'; });
+            },
+        }) );
+    }
+
     function registerUserProfile() {
         Alpine.data( 'enrouteUserProfile', () => ({
             editing:  false,
@@ -288,8 +366,20 @@
                         if (res.success) {
                             this.loggedIn = true;
                             this.profile  = res.data.profile;
-                            // Dispatch event so booking form can prefill
-                            window.dispatchEvent(new CustomEvent('enroute:loggedin', { detail: res.data.profile }));
+                            // Refresh nonces so booking form works with new user session
+                            const nd = new FormData();
+                            nd.append('action', 'enroute_refresh_nonces');
+                            nd.append('nonce', enrouteUserVars.nonce);
+                            fetch(enrouteUserVars.ajaxUrl, { method:'POST', body:nd })
+                                .then(r2 => r2.json())
+                                .then(r2res => {
+                                    if (r2res.success) {
+                                        enrouteBookingVars.nonce = r2res.data.bookingNonce;
+                                        enrouteUserVars.nonce    = r2res.data.userNonce;
+                                    }
+                                    // Dispatch event so booking form can prefill
+                                    window.dispatchEvent(new CustomEvent('enroute:loggedin', { detail: res.data.profile }));
+                                });
                         } else {
                             this.errorMsg = res.data.message || 'Fehler.';
                         }
@@ -320,16 +410,21 @@
                 persons:     '',
                 remarks:     '',
             },
-            loading:    false,
-            submitted:  false,
-            errorMsg:   '',
-            successMsg: '',
+            loading:      false,
+            submitted:    false,
+            errorMsg:     '',
+            successMsg:   '',
+            wantsUserPass: false,
 
             init() {
                 // Prefill from profile if already logged in
                 if ( typeof enrouteUserVars !== 'undefined' && enrouteUserVars.loggedIn && enrouteUserVars.profile ) {
                     this.prefillFromProfile( enrouteUserVars.profile );
                 }
+            },
+
+            initUserPass() {
+                // nothing needed — wantsUserPass is reactive
             },
 
             prefillFromProfile( profile ) {
@@ -345,7 +440,20 @@
                 this.form.phone       = profile.enroute_phone       || '';
             },
 
-            submitBooking( offerId ) {
+            submitBookingAndPass( offerId ) {
+                // Submit booking, then redirect to pass page if checkbox checked
+                this.submitBooking( offerId, () => {
+                    const passUrl = (typeof enrouteUserVars !== 'undefined') ? enrouteUserVars.profileUrl : '';
+                    const userpassUrl = window.enrouteUserpassUrl || '';
+                    if ( this.wantsUserPass && userpassUrl ) {
+                        setTimeout(() => {
+                            window.location.href = userpassUrl + '?referer=' + encodeURIComponent( window.location.href );
+                        }, 1500);
+                    }
+                });
+            },
+
+            submitBooking( offerId, callback ) {
                 this.errorMsg = '';
 
                 // Client-side validation
@@ -377,6 +485,7 @@
                         if ( res.success ) {
                             this.submitted  = true;
                             this.successMsg = res.data.message || '';
+                            if ( typeof callback === 'function' ) callback();
                         } else {
                             this.errorMsg = res.data.message || 'Ein Fehler ist aufgetreten.';
                         }
@@ -389,7 +498,7 @@
         }) );
     }
 
-    const allComponents = [registerComponents, registerGuidesListing, registerUserProfile, registerUserAuth, registerBookingForm];
+    const allComponents = [registerComponents, registerGuidesListing, registerUserpassBooking, registerUserProfile, registerUserAuth, registerBookingForm];
     if ( window.Alpine ) {
         allComponents.forEach(fn => fn());
         allComponents.forEach(fn => document.addEventListener('alpine:init', fn));

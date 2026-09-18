@@ -155,6 +155,51 @@ $lbl = 'style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0
         </div>
     </div>
 
+    <!-- ── User Pass section ────────────────────────────────────────────────── -->
+    <?php
+    $user_pass = enroute_get_user_pass( $user_id );
+    $userpass_url = get_option( 'enroute_userpass_page_url', '' );
+    ?>
+    <div style="background:#f9f9f9; border:1px solid #e5e7eb; padding:1.5rem; margin-bottom:2rem;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+            <h3 style="margin:0; font-size:1rem; font-weight:700;"><?php esc_html_e( 'Mein User Pass', 'enroute_offers' ); ?></h3>
+            <?php if ( $userpass_url ) : ?>
+            <a href="<?php echo esc_url( $userpass_url ); ?>"
+               style="padding:0.4rem 1rem; border:1px solid #000; background:#fff; font-size:0.85rem; text-decoration:none; color:#111; display:inline-block;">
+                <?php esc_html_e( 'User Pass anfragen', 'enroute_offers' ); ?>
+            </a>
+            <?php endif; ?>
+        </div>
+
+        <?php if ( $user_pass ) : ?>
+        <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+            <tr>
+                <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280; width:130px;"><?php esc_html_e( 'Pass', 'enroute_offers' ); ?></td>
+                <td style="padding:0.4rem 0; font-weight:600;"><?php echo esc_html( $user_pass['pass_type'] ?: $user_pass['name'] ); ?></td>
+            </tr>
+            <tr>
+                <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'Gültig bis', 'enroute_offers' ); ?></td>
+                <td style="padding:0.4rem 0;">
+                    <?php echo esc_html( $user_pass['valid_till_f'] ?: '—' ); ?>
+                    <?php if ( $user_pass['valid_till'] ) : ?>
+                    <span style="margin-left:0.5rem; font-size:0.8rem; font-weight:600; color:<?php echo $user_pass['is_valid'] ? '#166534' : '#991b1b'; ?>;">
+                        (<?php echo $user_pass['is_valid'] ? esc_html__( 'Gültig', 'enroute_offers' ) : esc_html__( 'Abgelaufen', 'enroute_offers' ); ?>)
+                    </span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <?php if ( $user_pass['credit'] ) : ?>
+            <tr>
+                <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'Guthaben', 'enroute_offers' ); ?></td>
+                <td style="padding:0.4rem 0;"><?php echo esc_html( $user_pass['credit'] ); ?></td>
+            </tr>
+            <?php endif; ?>
+        </table>
+        <?php else : ?>
+        <p style="color:#6b7280; font-size:0.9rem; margin:0;"><?php esc_html_e( 'Noch kein User Pass.', 'enroute_offers' ); ?></p>
+        <?php endif; ?>
+    </div>
+
     <!-- ── Bookings section ───────────────────────────────────────────────── -->
     <h3 style="font-size:1rem; font-weight:700; margin-bottom:1rem;"><?php esc_html_e( 'Meine Buchungsanfragen', 'enroute_offers' ); ?></h3>
 

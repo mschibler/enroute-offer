@@ -7,6 +7,7 @@ add_shortcode( 'enroute_offer_detail',      'enroute_offer_detail_sc'      );
 add_shortcode( 'enroute_guides_listing',    'enroute_guides_listing_sc'    );
 add_shortcode( 'enroute_featured_offer',    'enroute_featured_offer_sc'    );
 add_shortcode( 'enroute_user_profile',      'enroute_user_profile_sc'      );
+add_shortcode( 'enroute_userpass_booking',  'enroute_userpass_booking_sc'  );
 
 // Auto-inject detail template on single offer posts (replaces/prepends content)
 add_filter( 'the_content', 'enroute_offer_detail_content_filter' );
@@ -108,5 +109,16 @@ function enroute_featured_offer_sc( array $atts ): string {
 function enroute_user_profile_sc(): string {
     ob_start();
     include ENROUTE_OFFERS_PATH . 'templates/user-profile.php';
+    return ob_get_clean();
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// USERPASS BOOKING PAGE
+// ══════════════════════════════════════════════════════════════════════════════
+
+function enroute_userpass_booking_sc( array $atts ): string {
+    ob_start();
+    include ENROUTE_OFFERS_PATH . 'templates/userpass-booking.php';
     return ob_get_clean();
 }

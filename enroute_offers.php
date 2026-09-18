@@ -26,6 +26,8 @@ require_once ENROUTE_OFFERS_PATH . 'includes/booking-settings.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/booking-ajax.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/guide-post-type.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/user-account.php';
+require_once ENROUTE_OFFERS_PATH . 'includes/userpass-cpt.php';
+require_once ENROUTE_OFFERS_PATH . 'includes/userpass-ajax.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/polylang.php';
 
 add_action( 'plugins_loaded', function() {

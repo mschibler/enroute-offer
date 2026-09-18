@@ -486,10 +486,43 @@ $button_color_green = '#c9d56b'; // green button
                             <textarea x-model="form.remarks" rows="4" <?php echo $inp; ?> style="width:100%; padding:0.5rem 0.6rem; border:1px solid rgba(0,0,0,0.3); background:#fff; font-size:0.9rem; box-sizing:border-box; resize:vertical;"></textarea>
                         </div>
 
+                        <!-- User Pass: logged-out checkbox -->
+                        <?php
+                        $userpass_url = get_option( 'enroute_userpass_page_url', '' );
+                        if ( ! is_user_logged_in() && $userpass_url ) : ?>
+                        <div style="margin-bottom:1rem; padding:0.75rem; background:rgba(0,0,0,0.05);">
+                            <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer;">
+                                <input type="checkbox" x-model="wantsUserPass" style="margin-top:0.15rem; flex-shrink:0;">
+                                <span style="font-size:0.875rem;"><?php esc_html_e( 'Ich möchte einen User Pass anfragen', 'enroute_offers' ); ?></span>
+                            </label>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- User Pass: logged-in valid pass -->
+                        <?php if ( is_user_logged_in() ) :
+                            $user_pass = enroute_get_user_pass( get_current_user_id() );
+                            if ( $user_pass ) : ?>
+                        <div style="margin-bottom:1rem; padding:0.75rem; background:rgba(0,0,0,0.05);">
+                            <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer;">
+                                <input type="checkbox" x-model="form.use_userpass" style="margin-top:0.15rem; flex-shrink:0;">
+                                <span style="font-size:0.875rem;">
+                                    <?php echo esc_html( sprintf(
+                                        __( 'User Pass verwenden (%s%s)', 'enroute_offers' ),
+                                        $user_pass['pass_type'] ?: $user_pass['name'],
+                                        $user_pass['valid_till_f'] ? ', ' . __( 'gültig bis', 'enroute_offers' ) . ' ' . $user_pass['valid_till_f'] : ''
+                                    ) ); ?>
+                                    <?php if ( ! $user_pass['is_valid'] ) : ?>
+                                    <span style="color:#991b1b; font-size:0.8rem;"> (<?php esc_html_e( 'abgelaufen', 'enroute_offers' ); ?>)</span>
+                                    <?php endif; ?>
+                                </span>
+                            </label>
+                        </div>
+                        <?php endif; endif; ?>
+
                         <!-- Submit -->
                         <button
                             type="button"
-                            @click="submitBooking(<?php echo (int) $post_id; ?>)"
+                            @click="submitBookingAndPass(<?php echo (int) $post_id; ?>)"
                             :disabled="loading"
                             style="width:100%; padding:0.875rem 1rem; background:#111; color:#fff; border:none; font-weight:700; font-size:1rem; cursor:pointer;"
                             :style="loading ? 'opacity:0.6; cursor:not-allowed;' : ''"
