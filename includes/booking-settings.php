@@ -27,6 +27,11 @@ function enroute_offers_settings_page() {
     if ( isset( $_POST['enroute_offers_settings_nonce'] )
         && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['enroute_offers_settings_nonce'] ) ), 'enroute_offers_settings_save' )
     ) {
+        // Profile page URL
+        if ( isset( $_POST['enroute_profile_page_url'] ) ) {
+            update_option( 'enroute_profile_page_url', esc_url_raw( $_POST['enroute_profile_page_url'] ) );
+        }
+
         // Save featured colours
         for ( $n = 1; $n <= 5; $n++ ) {
             $key = "enroute_featured_color_$n";
@@ -98,6 +103,19 @@ function enroute_offers_settings_page() {
         <h1><?php esc_html_e( 'Angebote – Einstellungen', 'enroute_offers' ); ?></h1>
         <form method="post">
             <?php wp_nonce_field( 'enroute_offers_settings_save', 'enroute_offers_settings_nonce' ); ?>
+
+            <h2><?php esc_html_e( 'Benutzerprofile', 'enroute_offers' ); ?></h2>
+            <table class="form-table">
+                <tr>
+                    <th><label for="enroute_profile_page_url"><?php esc_html_e( 'Profil-Seiten-URL', 'enroute_offers' ); ?></label></th>
+                    <td>
+                        <input type="url" id="enroute_profile_page_url" name="enroute_profile_page_url"
+                               value="<?php echo esc_attr( get_option( 'enroute_profile_page_url', '' ) ); ?>"
+                               class="regular-text" placeholder="https://...">
+                        <p class="description"><?php esc_html_e( 'URL der Seite mit dem Shortcode [enroute_user_profile]. Benutzer werden nach dem Login hierher weitergeleitet.', 'enroute_offers' ); ?></p>
+                    </td>
+                </tr>
+            </table>
 
             <h2><?php esc_html_e( 'Admin-E-Mail-Adresse', 'enroute_offers' ); ?></h2>
             <table class="form-table">

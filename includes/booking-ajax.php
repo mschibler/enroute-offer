@@ -88,6 +88,7 @@ function enroute_handle_booking_submission() {
         '_booking_persons'     => $persons,
         '_booking_remarks'     => $remarks,
         '_booking_submitted'   => date_i18n( 'd.m.Y H:i:s' ),
+        '_booking_user_id'     => get_current_user_id(), // 0 if not logged in
     ];
     foreach ( $meta as $key => $value ) {
         update_post_meta( $booking_id, $key, $value );

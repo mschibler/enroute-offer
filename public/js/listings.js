@@ -193,6 +193,48 @@
      * 2. This script runs AFTER Alpine has already initialised → call directly
      * 3. Alpine is loaded but init hasn't fired yet → listener still works
      */
+    // ── USER PROFILE ──────────────────────────────────────────────────────────
+    function registerUserProfile() {
+        Alpine.data( 'enrouteUserProfile', () => ({
+            editing:  false,
+            saving:   false,
+            message:  '',
+            errorMsg: '',
+            form:     window.enrouteInitialProfile || {},
+
+            saveProfile() {
+                this.saving  = true;
+                this.message = '';
+                this.errorMsg = '';
+                const data = new FormData();
+                data.append( 'action', 'enroute_save_profile' );
+                data.append( 'nonce',  enrouteUserVars.nonce );
+                Object.entries( this.form ).forEach( ([k,v]) => { if (k !== 'email') data.append(k, v); } );
+                fetch( enrouteUserVars.ajaxUrl, { method:'POST', body:data } )
+                    .then(r => r.json())
+                    .then(res => {
+                        this.saving = false;
+                        if (res.success) {
+                            this.message = res.data.message;
+                            this.editing = false;
+                            setTimeout(() => this.message = '', 4000);
+                        } else {
+                            this.errorMsg = res.data.message || 'Fehler.';
+                        }
+                    })
+                    .catch(() => { this.saving = false; this.errorMsg = 'Verbindungsfehler.'; });
+            },
+
+            logout() {
+                const data = new FormData();
+                data.append('action', 'enroute_logout');
+                data.append('nonce', enrouteUserVars.nonce);
+                fetch(enrouteUserVars.ajaxUrl, { method:'POST', body:data })
+                    .then(() => { window.location.reload(); });
+            },
+        }) );
+    }
+
     function registerGuidesListing() {
 
         // ── GUIDES LISTING ────────────────────────────────────────────────────
@@ -212,6 +254,47 @@
                 this.modalOpen = false;
                 this.active    = null;
                 document.body.style.overflow = '';
+            },
+        }) );
+    }
+
+    // ── USER AUTH (login/register drawer) ────────────────────────────────────
+    function registerUserAuth() {
+        Alpine.data( 'enrouteUserAuth', () => ({
+            mode:       'login',   // 'login' | 'register'
+            loading:    false,
+            errorMsg:   '',
+            loggedIn:   (typeof enrouteUserVars !== 'undefined') && enrouteUserVars.loggedIn,
+            profile:    (typeof enrouteUserVars !== 'undefined') ? enrouteUserVars.profile : {},
+            form: {
+                email: '', password: '', password2: '',
+                enroute_first_name: '', enroute_last_name: '',
+                enroute_salutation: '', enroute_institution: '',
+                enroute_street: '', enroute_zip: '', enroute_place: '', enroute_phone: '',
+            },
+
+            submit() {
+                this.errorMsg = '';
+                this.loading  = true;
+                const action  = this.mode === 'login' ? 'enroute_login' : 'enroute_register';
+                const data    = new FormData();
+                data.append('action', action);
+                data.append('nonce', enrouteUserVars.nonce);
+                Object.entries(this.form).forEach(([k,v]) => data.append(k,v));
+                fetch(enrouteUserVars.ajaxUrl, { method:'POST', body:data })
+                    .then(r => r.json())
+                    .then(res => {
+                        this.loading = false;
+                        if (res.success) {
+                            this.loggedIn = true;
+                            this.profile  = res.data.profile;
+                            // Dispatch event so booking form can prefill
+                            window.dispatchEvent(new CustomEvent('enroute:loggedin', { detail: res.data.profile }));
+                        } else {
+                            this.errorMsg = res.data.message || 'Fehler.';
+                        }
+                    })
+                    .catch(() => { this.loading = false; this.errorMsg = 'Verbindungsfehler.'; });
             },
         }) );
     }
@@ -241,6 +324,26 @@
             submitted:  false,
             errorMsg:   '',
             successMsg: '',
+
+            init() {
+                // Prefill from profile if already logged in
+                if ( typeof enrouteUserVars !== 'undefined' && enrouteUserVars.loggedIn && enrouteUserVars.profile ) {
+                    this.prefillFromProfile( enrouteUserVars.profile );
+                }
+            },
+
+            prefillFromProfile( profile ) {
+                if ( ! profile ) return;
+                this.form.salutation  = profile.enroute_salutation  || '';
+                this.form.institution = profile.enroute_institution || '';
+                this.form.first_name  = profile.enroute_first_name  || '';
+                this.form.last_name   = profile.enroute_last_name   || '';
+                this.form.street      = profile.enroute_street      || '';
+                this.form.zip         = profile.enroute_zip         || '';
+                this.form.place       = profile.enroute_place       || '';
+                this.form.email       = profile.email               || '';
+                this.form.phone       = profile.enroute_phone       || '';
+            },
 
             submitBooking( offerId ) {
                 this.errorMsg = '';
@@ -286,17 +389,12 @@
         }) );
     }
 
+    const allComponents = [registerComponents, registerGuidesListing, registerUserProfile, registerUserAuth, registerBookingForm];
     if ( window.Alpine ) {
-        registerComponents();
-        registerGuidesListing();
-        registerBookingForm();
-        document.addEventListener( 'alpine:init', registerComponents );
-        document.addEventListener( 'alpine:init', registerGuidesListing );
-        document.addEventListener( 'alpine:init', registerBookingForm );
+        allComponents.forEach(fn => fn());
+        allComponents.forEach(fn => document.addEventListener('alpine:init', fn));
     } else {
-        document.addEventListener( 'alpine:init', registerComponents );
-        document.addEventListener( 'alpine:init', registerGuidesListing );
-        document.addEventListener( 'alpine:init', registerBookingForm );
+        allComponents.forEach(fn => document.addEventListener('alpine:init', fn));
     }
 
 })();
