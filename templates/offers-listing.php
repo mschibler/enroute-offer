@@ -119,7 +119,9 @@ $show_filter = ! isset( $args['filter'] ) || ! in_array( strtolower( (string) $a
         <?php if ( $show_filter ) : ?>
             <button
                 @click="filterOpen = true"
-                class="inline-flex items-center gap-2 px-4 py-2 border border-black text-sm font-medium hover:bg-black hover:text-white transition-colors bg-[#B5DFFC] whitespace-nowrap"
+                style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.75rem 1.5rem; border:1px solid #000; font-size:1rem; font-weight:500; background:#B5DFFC; white-space:nowrap; cursor:pointer; transition:background 0.2s, color 0.2s;"
+                onmouseover="this.style.background='#000';this.style.color='#fff'"
+                onmouseout="this.style.background='#B5DFFC';this.style.color=''"
             >
                 <?php esc_html_e( 'Filter', 'enroute_offers' ); ?>
                 <span
