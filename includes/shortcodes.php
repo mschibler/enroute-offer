@@ -76,8 +76,24 @@ function enroute_offer_detail_content_filter( string $content ): string {
 // FEATURED OFFER
 // ══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Get a featured offer colour by number (1-5).
+ * Falls back to defaults if not set in options.
+ */
+function enroute_get_featured_color( int $n ): string {
+    $defaults = [
+        1 => '#F8ED84',
+        2 => '#E8AB58',
+        3 => '#C9D56B',
+        4 => '#D0687B',
+        5 => '#D4735D',
+    ];
+    $n = max( 1, min( 5, $n ) ); // clamp to 1-5
+    return get_option( "enroute_featured_color_$n", $defaults[ $n ] );
+}
+
 function enroute_featured_offer_sc( array $atts ): string {
-    $args = shortcode_atts( [ 'number' => '1' ], $atts, 'enroute_featured_offer' );
+    $args = shortcode_atts( [ 'number' => '1', 'color' => '1' ], $atts, 'enroute_featured_offer' );
     ob_start();
     include ENROUTE_OFFERS_PATH . 'templates/featured-offer.php';
     return ob_get_clean();

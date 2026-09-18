@@ -125,7 +125,8 @@ function enroute_save_station_meta( int $post_id ): void {
     update_post_meta( $post_id, '_station_website', esc_url_raw( $_POST['station_website'] ?? '' ) );
 
     // Photo
-    update_post_meta( $post_id, '_station_photo_id', absint( $_POST['station_photo_id'] ?? 0 ) );
+    update_post_meta( $post_id, '_station_photo_id',            absint( $_POST['station_photo_id']            ?? 0 ) );
+    update_post_meta( $post_id, '_station_activities_photo_id', absint( $_POST['station_activities_photo_id'] ?? 0 ) );
 
     // Active (checkbox: only present in POST when checked)
     update_post_meta( $post_id, '_station_active', isset( $_POST['station_active'] ) ? '1' : '0' );

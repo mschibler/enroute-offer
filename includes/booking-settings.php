@@ -27,6 +27,14 @@ function enroute_offers_settings_page() {
     if ( isset( $_POST['enroute_offers_settings_nonce'] )
         && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['enroute_offers_settings_nonce'] ) ), 'enroute_offers_settings_save' )
     ) {
+        // Save featured colours
+        for ( $n = 1; $n <= 5; $n++ ) {
+            $key = "enroute_featured_color_$n";
+            if ( isset( $_POST[ $key ] ) && preg_match( '/^#[0-9A-Fa-f]{6}$/', $_POST[ $key ] ) ) {
+                update_option( $key, sanitize_hex_color( $_POST[ $key ] ) );
+            }
+        }
+
         $fields = [
             'enroute_booking_admin_email',
             'enroute_booking_customer_subject_de',
@@ -146,6 +154,47 @@ function enroute_offers_settings_page() {
                 </tr>
             </table>
             <?php endforeach; ?>
+
+            <h2><?php esc_html_e( 'Featured Offer Colours', 'enroute_offers' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Colours used for the text band in featured offer blocks. Use with shortcode: [enroute_featured_offer number="1" color="1"]', 'enroute_offers' ); ?></p>
+            <table class="form-table">
+                <?php
+                $default_colors = [
+                    1 => '#F8ED84',
+                    2 => '#E8AB58',
+                    3 => '#C9D56B',
+                    4 => '#D0687B',
+                    5 => '#D4735D',
+                ];
+                for ( $n = 1; $n <= 5; $n++ ) :
+                    $val = get_option( "enroute_featured_color_$n", $default_colors[ $n ] );
+                ?>
+                <tr>
+                    <th><label for="enroute_featured_color_<?php echo $n; ?>"><?php printf( esc_html__( 'Color %d', 'enroute_offers' ), $n ); ?></label></th>
+                    <td style="display:flex; align-items:center; gap:0.75rem; padding-top:8px;">
+                        <input
+                            type="color"
+                            id="enroute_featured_color_<?php echo $n; ?>"
+                            name="enroute_featured_color_<?php echo $n; ?>"
+                            value="<?php echo esc_attr( $val ); ?>"
+                            style="width:48px; height:32px; padding:2px; border:1px solid #ccc; cursor:pointer;"
+                        >
+                        <input
+                            type="text"
+                            name="enroute_featured_color_<?php echo $n; ?>"
+                            value="<?php echo esc_attr( $val ); ?>"
+                            class="small-text"
+                            maxlength="7"
+                            pattern="#[0-9A-Fa-f]{6}"
+                            placeholder="#000000"
+                            oninput="document.getElementById('enroute_featured_color_<?php echo $n; ?>').value=this.value"
+                            style="font-family:monospace;"
+                        >
+                        <span style="display:inline-block; width:32px; height:32px; background:<?php echo esc_attr( $val ); ?>; border:1px solid #ccc; vertical-align:middle;" id="enroute_featured_color_preview_<?php echo $n; ?>"></span>
+                    </td>
+                </tr>
+                <?php endfor; ?>
+            </table>
 
             <?php submit_button( __( 'Einstellungen speichern', 'enroute_offers' ) ); ?>
         </form>

@@ -7,6 +7,8 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 $featured_number = isset( $args['number'] ) ? absint( $args['number'] ) : 1;
+$color_number    = isset( $args['color'] )  ? absint( $args['color'] )  : 1;
+$band_color      = enroute_get_featured_color( $color_number );
 
 $offers = get_posts( [
     'post_type'   => 'offer',
@@ -32,18 +34,24 @@ if ( empty( $offers ) ) {
 $offer   = $offers[0];
 $post_id = $offer->ID;
 
-$enroute_palette = [ '#dbe442', '#fce300', '#fed141', '#ff6a39', '#ef4a81' ];
-$color           = $enroute_palette[ $post_id % count( $enroute_palette ) ];
+$color = $band_color;
 
 // Image: offer photo first, station photo as fallback
+// Image priority: 1) offer photo, 2) station activities photo, 3) station main photo
 $image_id  = get_post_meta( $post_id, '_offer_photo_id', true );
 $image_url = $image_id ? wp_get_attachment_image_url( $image_id, 'large' ) : '';
 if ( ! $image_url ) {
     $station_id = get_post_meta( $post_id, '_offer_station', true );
     if ( $station_id ) {
-        $station_photo_id = get_post_meta( $station_id, '_station_photo_id', true );
-        if ( $station_photo_id ) {
-            $image_url = wp_get_attachment_image_url( $station_photo_id, 'large' ) ?: '';
+        $act_photo_id = get_post_meta( $station_id, '_station_activities_photo_id', true );
+        if ( $act_photo_id ) {
+            $image_url = wp_get_attachment_image_url( $act_photo_id, 'large' ) ?: '';
+        }
+        if ( ! $image_url ) {
+            $main_photo_id = get_post_meta( $station_id, '_station_photo_id', true );
+            if ( $main_photo_id ) {
+                $image_url = wp_get_attachment_image_url( $main_photo_id, 'large' ) ?: '';
+            }
         }
     }
 }

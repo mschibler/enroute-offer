@@ -152,7 +152,7 @@ function enroute_offer_details_cb( WP_Post $post ): void {
             <label for="offer_featured"><?php esc_html_e( 'Featured', 'enroute_offers' ); ?></label>
             <select id="offer_featured" name="offer_featured">
                 <option value=""><?php esc_html_e( '— Not featured —', 'enroute_offers' ); ?></option>
-                <?php for ( $n = 1; $n <= 5; $n++ ) : ?>
+                <?php for ( $n = 1; $n <= 12; $n++ ) : ?>
                 <option value="<?php echo $n; ?>" <?php selected( $featured, (string) $n ); ?>>
                     <?php printf( esc_html__( 'Featured %d', 'enroute_offers' ), $n ); ?>
                 </option>
@@ -321,8 +321,10 @@ function enroute_station_details_cb( WP_Post $post ): void {
     $contact_details = get_post_meta( $post->ID, '_station_contact_details', true );
     $coordinates     = get_post_meta( $post->ID, '_station_coordinates',     true );
     $active          = get_post_meta( $post->ID, '_station_active',          true );
-    $photo_id        = get_post_meta( $post->ID, '_station_photo_id',        true );
-    $photo_url       = $photo_id ? wp_get_attachment_image_url( $photo_id, 'medium' ) : '';
+    $photo_id               = get_post_meta( $post->ID, '_station_photo_id',            true );
+    $photo_url              = $photo_id ? wp_get_attachment_image_url( $photo_id, 'medium' ) : '';
+    $activities_photo_id    = get_post_meta( $post->ID, '_station_activities_photo_id', true );
+    $activities_photo_url   = $activities_photo_id ? wp_get_attachment_image_url( $activities_photo_id, 'medium' ) : '';
     ?>
     <div class="enroute-meta-wrap">
 
@@ -407,6 +409,31 @@ function enroute_station_details_cb( WP_Post $post ): void {
                 </button>
                 <?php if ( $photo_id ) : ?>
                 <button type="button" class="button" id="station_photo_remove" style="margin-left:4px;">
+                    <?php esc_html_e( 'Remove', 'enroute_offers' ); ?>
+                </button>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Activities Photo -->
+        <div class="enroute-field">
+            <label><?php esc_html_e( 'Activities Photo', 'enroute_offers' ); ?></label>
+            <p class="description" style="margin-bottom:6px;"><?php esc_html_e( 'Photo used as fallback for offer listings (activities image).', 'enroute_offers' ); ?></p>
+            <div>
+                <?php if ( $activities_photo_url ) : ?>
+                    <img id="station_activities_photo_preview" src="<?php echo esc_url( $activities_photo_url ); ?>"
+                         style="max-width:200px; max-height:200px; display:block; margin-bottom:8px; object-fit:cover;">
+                <?php else : ?>
+                    <img id="station_activities_photo_preview" src=""
+                         style="max-width:200px; max-height:200px; display:none; margin-bottom:8px; object-fit:cover;">
+                <?php endif; ?>
+                <input type="hidden" id="station_activities_photo_id" name="station_activities_photo_id"
+                       value="<?php echo esc_attr( (string) $activities_photo_id ); ?>">
+                <button type="button" class="button" id="station_activities_photo_select">
+                    <?php esc_html_e( $activities_photo_id ? 'Change Photo' : 'Select Photo', 'enroute_offers' ); ?>
+                </button>
+                <?php if ( $activities_photo_id ) : ?>
+                <button type="button" class="button" id="station_activities_photo_remove" style="margin-left:4px;">
                     <?php esc_html_e( 'Remove', 'enroute_offers' ); ?>
                 </button>
                 <?php endif; ?>
