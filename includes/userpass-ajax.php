@@ -35,9 +35,10 @@ function enroute_handle_userpass_booking(): void {
         wp_send_json_error( [ 'message' => __( 'User Pass nicht gefunden.', 'enroute_offers' ) ] );
     }
 
-    // Get pass defaults
-    $valid_till = get_post_meta( $pass_type_id, '_userpass_valid_till', true );
-    $credit     = get_post_meta( $pass_type_id, '_userpass_credit',     true );
+    // Calculate valid_till from validity
+    $validity   = get_post_meta( $pass_type_id, '_userpass_validity', true ) ?: '1year';
+    $valid_till = enroute_calculate_valid_till( $validity );
+    $credit     = get_post_meta( $pass_type_id, '_userpass_credit',   true );
     $user_id    = get_current_user_id(); // 0 if not logged in
 
     // Create booked pass post
@@ -116,23 +117,35 @@ add_action( 'wp_ajax_nopriv_enroute_get_userpasses', 'enroute_get_userpasses' );
 
 function enroute_get_userpasses(): void {
     $lang = sanitize_key( $_POST['lang'] ?? 'de' );
-    $passes = get_posts([
+
+    $args = [
         'post_type'   => 'enroute_userpass',
         'post_status' => 'publish',
         'numberposts' => -1,
         'orderby'     => 'title',
         'order'       => 'ASC',
-        'meta_query'  => [
+    ];
+
+    // Use Polylang to filter by language if available, otherwise fall back to meta
+    if ( function_exists( 'pll_get_post_language' ) ) {
+        $args['lang'] = $lang;
+    } else {
+        $args['meta_query'] = [
             [ 'key' => '_userpass_language', 'value' => $lang, 'compare' => '=' ],
-        ],
-    ]);
+        ];
+    }
+
+    $passes = get_posts( $args );
 
     $data = array_map( function( $p ) {
+        $validity = get_post_meta( $p->ID, '_userpass_validity', true ) ?: '1year';
+        $options  = enroute_userpass_validity_options();
         return [
             'id'          => $p->ID,
             'name'        => $p->post_title,
             'description' => get_post_meta( $p->ID, '_userpass_description', true ),
-            'valid_till'  => get_post_meta( $p->ID, '_userpass_valid_till',  true ),
+            'validity'    => $validity,
+            'validity_label' => $options[ $validity ] ?? $validity,
             'credit'      => get_post_meta( $p->ID, '_userpass_credit',      true ),
         ];
     }, $passes );

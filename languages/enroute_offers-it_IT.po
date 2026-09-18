@@ -214,3 +214,149 @@ msgstr "Cancella tutto"
 
 msgid "Show results"
 msgstr "Mostra risultati"
+
+# Booking form strings
+
+msgid "Buchungsanfrage"
+msgstr "Richiesta di prenotazione"
+
+msgid "Buchen"
+msgstr "Prenotare"
+
+msgid "Drucken"
+msgstr "Stampare"
+
+msgid "Abmelden"
+msgstr "Disconnettersi"
+
+msgid "Anmelden"
+msgstr "Accedere"
+
+msgid "Registrieren"
+msgstr "Registrarsi"
+
+msgid "Konto erstellen"
+msgstr "Crea account"
+
+msgid "Passwort"
+msgstr "Password"
+
+msgid "Passwort *"
+msgstr "Password *"
+
+msgid "Wiederholen *"
+msgstr "Ripeti *"
+
+msgid "Optional — Sie können auch ohne Konto buchen."
+msgstr "Facoltativo — è possibile prenotare anche senza account."
+
+msgid "Profil"
+msgstr "Profilo"
+
+msgid "Ich möchte einen User Pass anfragen"
+msgstr "Vorrei richiedere un User Pass"
+
+msgid "abgelaufen"
+msgstr "scaduto"
+
+msgid "Kontaktperson"
+msgstr "Persona di contatto"
+
+msgid "Anrede"
+msgstr "Titolo"
+
+msgid "Bitte wählen"
+msgstr "Si prega di scegliere"
+
+msgid "Herr"
+msgstr "Signore"
+
+msgid "Frau"
+msgstr "Signora"
+
+msgid "Divers"
+msgstr "Altro"
+
+msgid "Institution"
+msgstr "Istituzione"
+
+msgid "Vorname"
+msgstr "Nome"
+
+msgid "Vorname *"
+msgstr "Nome *"
+
+msgid "Nachname"
+msgstr "Cognome"
+
+msgid "Nachname *"
+msgstr "Cognome *"
+
+msgid "Strasse"
+msgstr "Via"
+
+msgid "PLZ"
+msgstr "CAP"
+
+msgid "Ort"
+msgstr "Località"
+
+msgid "E-Mail"
+msgstr "E-mail"
+
+msgid "E-Mail *"
+msgstr "E-mail *"
+
+msgid "Telefon"
+msgstr "Telefono"
+
+msgid "Wunschdatum"
+msgstr "Data desiderata"
+
+msgid "Datum"
+msgstr "Data"
+
+msgid "Uhrzeit"
+msgstr "Ora"
+
+msgid "Ersatzdatum"
+msgstr "Data alternativa"
+
+msgid "Gruppe"
+msgstr "Gruppo"
+
+msgid "Anzahl Personen"
+msgstr "Numero di persone"
+
+msgid "Weitere Angaben"
+msgstr "Ulteriori informazioni"
+
+msgid "Anfrage Senden"
+msgstr "Invia richiesta"
+
+msgid "Wird gesendet…"
+msgstr "Invio in corso…"
+
+msgid "Pflichtfelder"
+msgstr "Campi obbligatori"
+
+msgid "Anfrage übermittelt!"
+msgstr "Richiesta inviata!"
+
+msgid "Schliessen"
+msgstr "Chiudere"
+
+msgid "Zielgruppe"
+msgstr "Gruppo target"
+
+msgid "Preis"
+msgstr "Prezzo"
+
+msgid "Links"
+msgstr "Link"
+
+msgid "Lehrmittel"
+msgstr "Materiale didattico"
+
+msgid "Daten"
+msgstr "Dati"

@@ -25,6 +25,31 @@ function enroute_register_userpass_cpt() {
 }
 add_action( 'init', 'enroute_register_userpass_cpt' );
 
+// Enable Polylang translation for userpass post type
+add_filter( 'pll_get_post_types', function( $post_types ) {
+    $post_types['enroute_userpass'] = 'enroute_userpass';
+    return $post_types;
+});
+
+// Helper: get validity options
+function enroute_userpass_validity_options(): array {
+    return [
+        '1year'  => __( '1 Year',    'enroute_offers' ),
+        '2years' => __( '2 Years',   'enroute_offers' ),
+        '6months'=> __( '6 Months',  'enroute_offers' ),
+    ];
+}
+
+// Helper: calculate valid_till date from validity key
+function enroute_calculate_valid_till( string $validity ): string {
+    switch ( $validity ) {
+        case '6months': return date( 'Y-m-d', strtotime( '+6 months' ) );
+        case '2years':  return date( 'Y-m-d', strtotime( '+2 years' ) );
+        case '1year':
+        default:        return date( 'Y-m-d', strtotime( '+1 year' ) );
+    }
+}
+
 // ── Meta box ──────────────────────────────────────────────────────────────────
 
 add_action( 'add_meta_boxes', function() {
@@ -35,9 +60,8 @@ add_action( 'add_meta_boxes', function() {
 function enroute_userpass_details_cb( WP_Post $post ): void {
     wp_nonce_field( 'enroute_userpass_save', 'enroute_userpass_nonce' );
     $description = get_post_meta( $post->ID, '_userpass_description', true );
-    $valid_till  = get_post_meta( $post->ID, '_userpass_valid_till',  true );
+    $validity    = get_post_meta( $post->ID, '_userpass_validity',    true ) ?: '1year';
     $credit      = get_post_meta( $post->ID, '_userpass_credit',      true );
-    $language    = get_post_meta( $post->ID, '_userpass_language',    true );
     ?>
     <div class="enroute-meta-wrap">
         <div class="enroute-field">
@@ -46,9 +70,13 @@ function enroute_userpass_details_cb( WP_Post $post ): void {
         </div>
         <div class="enroute-field-group">
             <div class="enroute-field">
-                <label for="userpass_valid_till"><?php esc_html_e( 'Valid Till', 'enroute_offers' ); ?></label>
-                <input type="date" id="userpass_valid_till" name="userpass_valid_till" value="<?php echo esc_attr( $valid_till ); ?>">
-                <p class="description"><?php esc_html_e( 'Default validity date when a pass is booked.', 'enroute_offers' ); ?></p>
+                <label for="userpass_validity"><?php esc_html_e( 'Validity', 'enroute_offers' ); ?></label>
+                <select id="userpass_validity" name="userpass_validity" class="widefat">
+                    <?php foreach ( enroute_userpass_validity_options() as $key => $label ) : ?>
+                    <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $validity, $key ); ?>><?php echo esc_html( $label ); ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="description"><?php esc_html_e( 'How long the pass is valid from the booking date.', 'enroute_offers' ); ?></p>
             </div>
             <div class="enroute-field">
                 <label for="userpass_credit"><?php esc_html_e( 'Credit', 'enroute_offers' ); ?></label>
@@ -56,13 +84,9 @@ function enroute_userpass_details_cb( WP_Post $post ): void {
             </div>
         </div>
         <div class="enroute-field">
-            <label for="userpass_language"><?php esc_html_e( 'Language', 'enroute_offers' ); ?></label>
-            <select id="userpass_language" name="userpass_language" class="widefat">
-                <option value=""><?php esc_html_e( '— Select —', 'enroute_offers' ); ?></option>
-                <?php foreach ( enroute_get_languages() as $code => $label ) : ?>
-                <option value="<?php echo esc_attr( $code ); ?>" <?php selected( $language, $code ); ?>><?php echo esc_html( $label ); ?></option>
-                <?php endforeach; ?>
-            </select>
+            <p class="description" style="margin:0; padding:0.5rem; background:#f0f0f0; border-left:3px solid #2271b1;">
+                <?php esc_html_e( 'Language is managed by Polylang — set it using the Language meta box on the right.', 'enroute_offers' ); ?>
+            </p>
         </div>
     </div>
     <?php
@@ -75,12 +99,12 @@ add_action( 'save_post_enroute_userpass', function( int $post_id ): void {
     if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
     update_post_meta( $post_id, '_userpass_description', sanitize_textarea_field( $_POST['userpass_description'] ?? '' ) );
-    update_post_meta( $post_id, '_userpass_valid_till',  sanitize_text_field( $_POST['userpass_valid_till']  ?? '' ) );
-    update_post_meta( $post_id, '_userpass_credit',      sanitize_text_field( $_POST['userpass_credit']      ?? '' ) );
-    $allowed_langs = array_keys( enroute_get_languages() );
-    $lang = isset( $_POST['userpass_language'] ) && in_array( $_POST['userpass_language'], $allowed_langs, true )
-        ? sanitize_key( $_POST['userpass_language'] ) : '';
-    update_post_meta( $post_id, '_userpass_language', $lang );
+    $validity_options = array_keys( enroute_userpass_validity_options() );
+    $validity = isset( $_POST['userpass_validity'] ) && in_array( $_POST['userpass_validity'], $validity_options, true )
+        ? $_POST['userpass_validity'] : '1year';
+    update_post_meta( $post_id, '_userpass_validity', $validity );
+    update_post_meta( $post_id, '_userpass_credit',   sanitize_text_field( $_POST['userpass_credit'] ?? '' ) );
+    // Language is managed by Polylang
 });
 
 // ══════════════════════════════════════════════════════════════════════════════

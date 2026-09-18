@@ -214,3 +214,149 @@ msgstr "Tout effacer"
 
 msgid "Show results"
 msgstr "Afficher les résultats"
+
+# Booking form strings
+
+msgid "Buchungsanfrage"
+msgstr "Demande de réservation"
+
+msgid "Buchen"
+msgstr "Réserver"
+
+msgid "Drucken"
+msgstr "Imprimer"
+
+msgid "Abmelden"
+msgstr "Se déconnecter"
+
+msgid "Anmelden"
+msgstr "Se connecter"
+
+msgid "Registrieren"
+msgstr "S'inscrire"
+
+msgid "Konto erstellen"
+msgstr "Créer un compte"
+
+msgid "Passwort"
+msgstr "Mot de passe"
+
+msgid "Passwort *"
+msgstr "Mot de passe *"
+
+msgid "Wiederholen *"
+msgstr "Répéter *"
+
+msgid "Optional — Sie können auch ohne Konto buchen."
+msgstr "Facultatif — vous pouvez aussi réserver sans compte."
+
+msgid "Profil"
+msgstr "Profil"
+
+msgid "Ich möchte einen User Pass anfragen"
+msgstr "Je souhaite demander un User Pass"
+
+msgid "abgelaufen"
+msgstr "expiré"
+
+msgid "Kontaktperson"
+msgstr "Personne de contact"
+
+msgid "Anrede"
+msgstr "Civilité"
+
+msgid "Bitte wählen"
+msgstr "Veuillez choisir"
+
+msgid "Herr"
+msgstr "Monsieur"
+
+msgid "Frau"
+msgstr "Madame"
+
+msgid "Divers"
+msgstr "Autre"
+
+msgid "Institution"
+msgstr "Institution"
+
+msgid "Vorname"
+msgstr "Prénom"
+
+msgid "Vorname *"
+msgstr "Prénom *"
+
+msgid "Nachname"
+msgstr "Nom"
+
+msgid "Nachname *"
+msgstr "Nom *"
+
+msgid "Strasse"
+msgstr "Rue"
+
+msgid "PLZ"
+msgstr "NPA"
+
+msgid "Ort"
+msgstr "Localité"
+
+msgid "E-Mail"
+msgstr "E-mail"
+
+msgid "E-Mail *"
+msgstr "E-mail *"
+
+msgid "Telefon"
+msgstr "Téléphone"
+
+msgid "Wunschdatum"
+msgstr "Date souhaitée"
+
+msgid "Datum"
+msgstr "Date"
+
+msgid "Uhrzeit"
+msgstr "Heure"
+
+msgid "Ersatzdatum"
+msgstr "Date de remplacement"
+
+msgid "Gruppe"
+msgstr "Groupe"
+
+msgid "Anzahl Personen"
+msgstr "Nombre de personnes"
+
+msgid "Weitere Angaben"
+msgstr "Informations complémentaires"
+
+msgid "Anfrage Senden"
+msgstr "Envoyer la demande"
+
+msgid "Wird gesendet…"
+msgstr "Envoi en cours…"
+
+msgid "Pflichtfelder"
+msgstr "Champs obligatoires"
+
+msgid "Anfrage übermittelt!"
+msgstr "Demande transmise !"
+
+msgid "Schliessen"
+msgstr "Fermer"
+
+msgid "Zielgruppe"
+msgstr "Groupe cible"
+
+msgid "Preis"
+msgstr "Prix"
+
+msgid "Links"
+msgstr "Liens"
+
+msgid "Lehrmittel"
+msgstr "Matériel didactique"
+
+msgid "Daten"
+msgstr "Données"

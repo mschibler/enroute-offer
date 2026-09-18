@@ -8,17 +8,22 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 $current_lang = function_exists( 'pll_current_language' ) ? pll_current_language() : substr( get_locale(), 0, 2 );
 $current_lang = substr( $current_lang, 0, 2 );
 
-// Get available passes for current language
-$passes = get_posts([
+// Get available passes for current language (Polylang or meta fallback)
+$pass_args = [
     'post_type'   => 'enroute_userpass',
     'post_status' => 'publish',
     'numberposts' => -1,
     'orderby'     => 'title',
     'order'       => 'ASC',
-    'meta_query'  => [
+];
+if ( function_exists( 'pll_get_post_language' ) ) {
+    $pass_args['lang'] = $current_lang;
+} else {
+    $pass_args['meta_query'] = [
         [ 'key' => '_userpass_language', 'value' => $current_lang, 'compare' => '=' ],
-    ],
-]);
+    ];
+}
+$passes = get_posts( $pass_args );
 
 // Referer URL — where to go back after booking
 $referer = isset( $_GET['referer'] ) ? esc_url_raw( wp_unslash( $_GET['referer'] ) ) : '';
@@ -68,9 +73,8 @@ if ( is_user_logged_in() ) {
         <div style="margin-bottom:1.5rem;">
             <label <?php echo $lbl; ?>><?php esc_html_e( 'User Pass wählen', 'enroute_offers' ); ?> *</label>
             <?php foreach ( $passes as $pass ) :
-                $desc       = get_post_meta( $pass->ID, '_userpass_description', true );
-                $valid_till = get_post_meta( $pass->ID, '_userpass_valid_till',  true );
-                $credit     = get_post_meta( $pass->ID, '_userpass_credit',      true );
+                $desc   = get_post_meta( $pass->ID, '_userpass_description', true );
+                $credit = get_post_meta( $pass->ID, '_userpass_credit',      true );
             ?>
             <label style="display:block; border:2px solid #e5e7eb; padding:1rem; margin-bottom:0.5rem; cursor:pointer;"
                    :style="form.pass_type_id == '<?php echo $pass->ID; ?>' ? 'border-color:#111; background:#f9f9f9;' : ''">
@@ -83,8 +87,13 @@ if ( is_user_logged_in() ) {
                         <p style="margin:0.3rem 0 0; font-size:0.85rem; color:#4b5563;"><?php echo esc_html( $desc ); ?></p>
                         <?php endif; ?>
                         <p style="margin:0.3rem 0 0; font-size:0.8rem; color:#6b7280;">
-                            <?php if ( $valid_till ) echo esc_html__( 'Gültig bis:', 'enroute_offers' ) . ' ' . esc_html( date_i18n( 'd.m.Y', strtotime( $valid_till ) ) ) . ' &nbsp;|&nbsp; '; ?>
-                            <?php if ( $credit ) echo esc_html__( 'Guthaben:', 'enroute_offers' ) . ' ' . esc_html( $credit ); ?>
+                            <?php
+                            $validity      = get_post_meta( $pass->ID, '_userpass_validity', true ) ?: '1year';
+                            $validity_opts = enroute_userpass_validity_options();
+                            $validity_lbl  = $validity_opts[ $validity ] ?? $validity;
+                            echo esc_html__( 'Validity:', 'enroute_offers' ) . ' ' . esc_html( $validity_lbl );
+                            if ( $credit ) echo ' &nbsp;|&nbsp; ' . esc_html__( 'Guthaben:', 'enroute_offers' ) . ' ' . esc_html( $credit );
+                            ?>
                         </p>
                     </div>
                 </div>
