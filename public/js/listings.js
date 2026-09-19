@@ -394,21 +394,23 @@
         // ── BOOKING FORM ──────────────────────────────────────────────────────
         Alpine.data( 'enrouteBookingForm', () => ({
             form: {
-                salutation:  '',
-                institution: '',
-                first_name:  '',
-                last_name:   '',
-                street:      '',
-                zip:         '',
-                place:       '',
-                email:       '',
-                phone:       '',
-                date_1:      '',
-                time_1:      '',
-                date_2:      '',
-                time_2:      '',
-                persons:     '',
-                remarks:     '',
+                salutation:          '',
+                institution:         '',
+                first_name:          '',
+                last_name:           '',
+                street:              '',
+                zip:                 '',
+                place:               '',
+                email:               '',
+                phone:               '',
+                date_1:              '',
+                time_1:              '',
+                date_2:              '',
+                time_2:              '',
+                persons:             '',
+                remarks:             '',
+                use_userpass:        false,
+                booking_pass_type_id: '',
             },
             loading:      false,
             submitted:    false,
@@ -441,14 +443,24 @@
             },
 
             submitBookingAndPass( offerId ) {
-                // Submit booking, then redirect to pass page if checkbox checked
                 this.submitBooking( offerId, () => {
-                    const passUrl = (typeof enrouteUserVars !== 'undefined') ? enrouteUserVars.profileUrl : '';
-                    const userpassUrl = window.enrouteUserpassUrl || '';
-                    if ( this.wantsUserPass && userpassUrl ) {
-                        setTimeout(() => {
-                            window.location.href = userpassUrl + '?referer=' + encodeURIComponent( window.location.href );
-                        }, 1500);
+                    // If a pass was selected inline, book it automatically
+                    if ( this.form.booking_pass_type_id ) {
+                        const pd = new FormData();
+                        pd.append('action',       'enroute_book_userpass');
+                        pd.append('nonce',        enrouteUserVars.nonce);
+                        pd.append('pass_type_id', this.form.booking_pass_type_id);
+                        pd.append('salutation',   this.form.salutation);
+                        pd.append('first_name',   this.form.first_name);
+                        pd.append('last_name',    this.form.last_name);
+                        pd.append('institution',  this.form.institution);
+                        pd.append('street',       this.form.street);
+                        pd.append('zip',          this.form.zip);
+                        pd.append('place',        this.form.place);
+                        pd.append('email',        this.form.email);
+                        pd.append('phone',        this.form.phone);
+                        fetch(enrouteUserVars.ajaxUrl, { method:'POST', body:pd });
+                        // fire-and-forget — booking is the main action
                     }
                 });
             },

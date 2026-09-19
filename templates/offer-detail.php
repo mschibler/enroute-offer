@@ -486,23 +486,37 @@ $button_color_green = '#c9d56b'; // green button
                             <textarea x-model="form.remarks" rows="4" <?php echo $inp; ?> style="width:100%; padding:0.5rem 0.6rem; border:1px solid rgba(0,0,0,0.3); background:#fff; font-size:0.9rem; box-sizing:border-box; resize:vertical;"></textarea>
                         </div>
 
-                        <!-- User Pass: logged-out checkbox -->
+                        <!-- User Pass section -->
                         <?php
-                        $userpass_url = get_option( 'enroute_userpass_page_url', '' );
-                        if ( ! is_user_logged_in() && $userpass_url ) : ?>
-                        <div style="margin-bottom:1rem; padding:0.75rem; background:rgba(0,0,0,0.05);">
-                            <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer;">
-                                <input type="checkbox" x-model="wantsUserPass" style="margin-top:0.15rem; flex-shrink:0;">
-                                <span style="font-size:0.875rem;"><?php esc_html_e( 'Ich möchte einen User Pass anfragen', 'enroute_offers' ); ?></span>
-                            </label>
-                        </div>
-                        <?php endif; ?>
+                        $current_lang  = function_exists( 'pll_current_language' ) ? pll_current_language() : substr( get_locale(), 0, 2 );
+                        $current_lang  = substr( $current_lang, 0, 2 );
+                        $userpass_url  = get_option( 'enroute_userpass_page_url', '' );
 
-                        <!-- User Pass: logged-in valid pass -->
-                        <?php if ( is_user_logged_in() ) :
+                        // Get available passes for current language
+                        $pass_args = [
+                            'post_type'   => 'enroute_userpass',
+                            'post_status' => 'publish',
+                            'numberposts' => -1,
+                            'orderby'     => 'title',
+                            'order'       => 'ASC',
+                        ];
+                        if ( function_exists( 'pll_get_post_language' ) ) {
+                            $pass_args['lang'] = $current_lang;
+                        } else {
+                            $pass_args['meta_query'] = [[ 'key' => '_userpass_language', 'value' => $current_lang, 'compare' => '=' ]];
+                        }
+                        $available_passes = get_posts( $pass_args );
+
+                        if ( is_user_logged_in() ) :
                             $user_pass = enroute_get_user_pass( get_current_user_id() );
-                            if ( $user_pass ) : ?>
-                        <div style="margin-bottom:1rem; padding:0.75rem; background:rgba(0,0,0,0.05);">
+                        else :
+                            $user_pass = null;
+                        endif;
+                        ?>
+
+                        <?php if ( $user_pass ) : ?>
+                        <!-- Logged in WITH pass: checkbox to use it -->
+                        <div style="margin-bottom:1rem; padding:0.75rem; background:rgba(0,0,0,0.05); border-left:3px solid #2271b1;">
                             <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer;">
                                 <input type="checkbox" x-model="form.use_userpass" style="margin-top:0.15rem; flex-shrink:0;">
                                 <span style="font-size:0.875rem;">
@@ -517,7 +531,50 @@ $button_color_green = '#c9d56b'; // green button
                                 </span>
                             </label>
                         </div>
-                        <?php endif; endif; ?>
+
+                        <?php elseif ( ! empty( $available_passes ) ) : ?>
+                        <!-- No pass yet (logged in or out): offer pass selection inline -->
+                        <div style="margin-bottom:1rem; padding:0.75rem 1rem; background:rgba(0,0,0,0.05); border-left:3px solid #e5a00d;">
+                            <p style="margin:0 0 0.6rem; font-size:0.875rem; font-weight:600;">
+                                <?php esc_html_e( 'Möchten Sie einen User Pass hinzufügen?', 'enroute_offers' ); ?>
+                            </p>
+                            <?php foreach ( $available_passes as $bp ) :
+                                $bp_validity = get_post_meta( $bp->ID, '_userpass_validity', true ) ?: '1year';
+                                $bp_credit   = get_post_meta( $bp->ID, '_userpass_credit',   true );
+                                $bp_desc     = get_post_meta( $bp->ID, '_userpass_description', true );
+                                $vp_opts     = enroute_userpass_validity_options();
+                                $vp_label    = $vp_opts[ $bp_validity ] ?? $bp_validity;
+                            ?>
+                            <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer; margin-bottom:0.4rem;">
+                                <input type="radio" name="booking_pass_type" x-model="form.booking_pass_type_id"
+                                       value="<?php echo (int) $bp->ID; ?>"
+                                       style="margin-top:0.2rem; flex-shrink:0;">
+                                <span style="font-size:0.85rem;">
+                                    <strong><?php echo esc_html( $bp->post_title ); ?></strong>
+                                    <span style="color:#6b7280; font-size:0.8rem;">
+                                        — <?php echo esc_html( $vp_label ); ?>
+                                        <?php if ( $bp_credit ) echo ' | ' . esc_html( $bp_credit ); ?>
+                                    </span>
+                                    <?php if ( $bp_desc ) : ?>
+                                    <br><span style="color:#4b5563; font-size:0.8rem;"><?php echo esc_html( $bp_desc ); ?></span>
+                                    <?php endif; ?>
+                                </span>
+                            </label>
+                            <?php endforeach; ?>
+                            <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer; margin-top:0.4rem;">
+                                <input type="radio" name="booking_pass_type" x-model="form.booking_pass_type_id"
+                                       value=""
+                                       style="margin-top:0.2rem; flex-shrink:0;">
+                                <span style="font-size:0.85rem; color:#6b7280;"><?php esc_html_e( 'Kein User Pass', 'enroute_offers' ); ?></span>
+                            </label>
+                            <?php if ( $userpass_url ) : ?>
+                            <p style="margin:0.6rem 0 0; font-size:0.78rem; color:#6b7280;">
+                                <?php esc_html_e( 'Sie können den User Pass auch separat', 'enroute_offers' ); ?>
+                                <a href="<?php echo esc_url( $userpass_url ); ?>" style="color:#2271b1;"><?php esc_html_e( 'hier anfragen', 'enroute_offers' ); ?></a>.
+                            </p>
+                            <?php endif; ?>
+                        </div>
+                        <?php endif; ?>
 
                         <!-- Submit -->
                         <button

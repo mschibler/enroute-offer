@@ -360,3 +360,15 @@ msgstr "Materiale didattico"
 
 msgid "Daten"
 msgstr "Dati"
+
+msgid "Möchten Sie einen User Pass hinzufügen?"
+msgstr "Desiderate aggiungere un User Pass ?"
+
+msgid "Kein User Pass"
+msgstr "Nessun User Pass"
+
+msgid "Sie können den User Pass auch separat"
+msgstr "Potete richiedere il User Pass anche separatamente"
+
+msgid "hier anfragen"
+msgstr "qui"
