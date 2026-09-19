@@ -372,3 +372,15 @@ msgstr "Vous pouvez également demander le User Pass séparément"
 
 msgid "hier anfragen"
 msgstr "ici"
+
+msgid "Ihr User Pass hat kein Guthaben mehr. Möchten Sie einen neuen Pass buchen?"
+msgstr "Votre User Pass n'a plus de crédit. Souhaitez-vous en réserver un nouveau ?"
+
+msgid "Ihr User Pass ist nicht mehr gültig. Möchten Sie einen neuen Pass buchen?"
+msgstr "Votre User Pass n'est plus valable. Souhaitez-vous en réserver un nouveau ?"
+
+msgid "gleiche Auswahl wie letztes Mal"
+msgstr "même choix que la dernière fois"
+
+msgid "kein Guthaben mehr"
+msgstr "plus de crédit"

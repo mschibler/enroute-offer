@@ -230,6 +230,117 @@ add_action( 'wp_enqueue_scripts', function() {
 }, 20 );
 
 // ══════════════════════════════════════════════════════════════════════════════
+// AJAX — GET PASS SECTION HTML (called after login to refresh the pass UI)
+// ══════════════════════════════════════════════════════════════════════════════
+
+add_action( 'wp_ajax_enroute_get_pass_section', 'enroute_handle_get_pass_section' );
+
+function enroute_handle_get_pass_section(): void {
+    $post_id      = absint( $_POST['offer_id'] ?? 0 );
+    $current_lang = sanitize_key( $_POST['lang'] ?? 'de' );
+
+    // Get user's pass
+    $user_pass = is_user_logged_in() ? enroute_get_user_pass( get_current_user_id() ) : null;
+
+    // Get available passes for language
+    $pass_args = [
+        'post_type'   => 'enroute_userpass',
+        'post_status' => 'publish',
+        'numberposts' => -1,
+        'orderby'     => 'title',
+        'order'       => 'ASC',
+    ];
+    if ( function_exists( 'pll_get_post_language' ) ) {
+        $pass_args['lang'] = $current_lang;
+    } else {
+        $pass_args['meta_query'] = [[ 'key' => '_userpass_language', 'value' => $current_lang, 'compare' => '=' ]];
+    }
+    $available_passes = get_posts( $pass_args );
+    $userpass_url     = get_option( 'enroute_userpass_page_url', '' );
+
+    ob_start();
+    $pass_ok        = $user_pass && $user_pass['is_valid'] && $user_pass['has_credit'];
+    $pass_expired   = $user_pass && ! $user_pass['is_valid'];
+    $pass_no_credit = $user_pass && $user_pass['is_valid'] && ! $user_pass['has_credit'];
+    $pass_bad       = $pass_expired || $pass_no_credit;
+    $vp_opts        = enroute_userpass_validity_options();
+
+    if ( $pass_ok ) : ?>
+        <div style="margin-bottom:1rem; padding:0.75rem 1rem; background:rgba(0,0,0,0.05); border-left:3px solid #2271b1;">
+            <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer;">
+                <input type="checkbox" x-model="form.use_userpass" style="margin-top:0.2rem; flex-shrink:0;">
+                <span style="font-size:0.875rem;">
+                    <?php echo esc_html( sprintf(
+                        __( 'User Pass verwenden (%s%s)', 'enroute_offers' ),
+                        $user_pass['pass_type'] ?: $user_pass['name'],
+                        $user_pass['valid_till_f'] ? ', ' . __( 'gültig bis', 'enroute_offers' ) . ' ' . $user_pass['valid_till_f'] : ''
+                    ) ); ?>
+                </span>
+            </label>
+        </div>
+    <?php elseif ( $pass_bad || ! empty( $available_passes ) ) : ?>
+        <div style="margin-bottom:1rem; padding:0.75rem 1rem; background:rgba(0,0,0,0.05); border-left:3px solid #e5a00d;">
+            <?php if ( $pass_no_credit ) : ?>
+                <p style="margin:0 0 0.6rem; font-size:0.875rem; font-weight:600; color:#991b1b;">
+                    <?php esc_html_e( 'Ihr User Pass hat kein Guthaben mehr. Möchten Sie einen neuen Pass buchen?', 'enroute_offers' ); ?>
+                </p>
+            <?php elseif ( $pass_expired ) : ?>
+                <p style="margin:0 0 0.6rem; font-size:0.875rem; font-weight:600; color:#991b1b;">
+                    <?php esc_html_e( 'Ihr User Pass ist nicht mehr gültig. Möchten Sie einen neuen Pass buchen?', 'enroute_offers' ); ?>
+                </p>
+            <?php else : ?>
+                <p style="margin:0 0 0.6rem; font-size:0.875rem; font-weight:600;">
+                    <?php esc_html_e( 'Möchten Sie einen User Pass hinzufügen?', 'enroute_offers' ); ?>
+                </p>
+            <?php endif; ?>
+            <?php foreach ( $available_passes as $bp ) :
+                $bp_validity = get_post_meta( $bp->ID, '_userpass_validity', true ) ?: '1year';
+                $bp_credit   = get_post_meta( $bp->ID, '_userpass_credit',   true );
+                $bp_desc     = get_post_meta( $bp->ID, '_userpass_description', true );
+                $vp_label    = $vp_opts[ $bp_validity ] ?? $bp_validity;
+                $is_same     = $user_pass && (int) $user_pass['pass_type_id'] === (int) $bp->ID;
+                $is_old_bad  = $is_same && $pass_bad;
+            ?>
+            <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer; margin-bottom:0.5rem;">
+                <input type="radio" name="booking_pass_type" x-model="form.booking_pass_type_id"
+                       value="<?php echo (int) $bp->ID; ?>" style="margin-top:0.2rem; flex-shrink:0;">
+                <span style="font-size:0.85rem;">
+                    <strong style="<?php echo $is_old_bad ? 'color:#991b1b;' : ''; ?>">
+                        <?php echo esc_html( $bp->post_title ); ?>
+                        <?php if ( $is_old_bad ) : ?>
+                        <span style="font-size:0.78rem; color:#991b1b;">
+                            (<?php echo $pass_no_credit ? esc_html__( 'kein Guthaben mehr', 'enroute_offers' ) : esc_html__( 'abgelaufen', 'enroute_offers' ); ?>)
+                        </span>
+                        <?php endif; ?>
+                        <?php if ( $is_same ) : ?>
+                        <span style="font-size:0.78rem; color:#6b7280; font-weight:400;">
+                            — <?php esc_html_e( 'gleiche Auswahl wie letztes Mal', 'enroute_offers' ); ?>
+                        </span>
+                        <?php endif; ?>
+                    </strong>
+                    <span style="color:#6b7280; font-size:0.8rem;">
+                        — <?php echo esc_html( $vp_label ); ?>
+                        <?php if ( $bp_credit ) echo ' | ' . esc_html( $bp_credit ); ?>
+                    </span>
+                    <?php if ( $bp_desc ) : ?>
+                    <br><span style="color:#4b5563; font-size:0.8rem;"><?php echo esc_html( $bp_desc ); ?></span>
+                    <?php endif; ?>
+                </span>
+            </label>
+            <?php endforeach; ?>
+            <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer; margin-top:0.25rem;">
+                <input type="radio" name="booking_pass_type" x-model="form.booking_pass_type_id"
+                       value="" style="margin-top:0.2rem; flex-shrink:0;">
+                <span style="font-size:0.85rem; color:#6b7280;"><?php esc_html_e( 'Kein User Pass', 'enroute_offers' ); ?></span>
+            </label>
+        </div>
+    <?php endif;
+
+    $html = ob_get_clean();
+    wp_send_json_success( [ 'html' => $html ] );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // AJAX — REFRESH NONCES (called after login to get user-specific nonces)
 // ══════════════════════════════════════════════════════════════════════════════
 

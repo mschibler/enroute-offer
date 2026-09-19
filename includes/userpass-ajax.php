@@ -55,6 +55,15 @@ function enroute_handle_userpass_booking(): void {
 
     update_post_meta( $booked_id, '_booked_pass_type_id',  $pass_type_id );
     update_post_meta( $booked_id, '_booked_pass_user_id',  $user_id );
+
+    // If user already had a previous pass, link them (so admin sees them grouped)
+    if ( $user_id ) {
+        $prev = enroute_get_user_pass( $user_id );
+        if ( $prev ) {
+            update_post_meta( $booked_id, '_booked_pass_previous_id', $prev['id'] );
+            update_post_meta( $prev['id'], '_booked_pass_renewed_by', $booked_id );
+        }
+    }
     update_post_meta( $booked_id, '_booked_pass_email',    $email );
     update_post_meta( $booked_id, '_booked_pass_valid_till', $valid_till );
     update_post_meta( $booked_id, '_booked_pass_credit',   $credit );

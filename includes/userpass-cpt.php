@@ -218,13 +218,31 @@ add_action( 'manage_enroute_booked_pass_posts_custom_column', function( $col, $p
             echo esc_html( get_post_meta( $post_id, '_booked_pass_credit', true ) ?: '—' );
             break;
         case 'booked_pass_status':
-            $valid_till = get_post_meta( $post_id, '_booked_pass_valid_till', true );
+            $valid_till  = get_post_meta( $post_id, '_booked_pass_valid_till', true );
+            $credit      = get_post_meta( $post_id, '_booked_pass_credit',     true );
+            $credit_num  = (float) preg_replace( '/[^0-9.]/', '', $credit );
+            $no_credit   = $credit !== '' && $credit !== null && $credit_num === 0.0;
+            $renewed_by  = get_post_meta( $post_id, '_booked_pass_renewed_by',  true );
+            $previous_id = get_post_meta( $post_id, '_booked_pass_previous_id', true );
+
             if ( ! $valid_till ) {
                 echo '<span style="color:#6b7280;">—</span>';
-            } elseif ( strtotime( $valid_till ) >= time() ) {
-                echo '<span style="color:#166534; font-weight:600;">' . esc_html__( 'Valid', 'enroute_offers' ) . '</span>';
+            } elseif ( strtotime( $valid_till ) < time() ) {
+                echo '<span style="color:#991b1b; font-weight:600;">' . esc_html__( 'Expired', 'enroute_offers' ) . '</span>';
+            } elseif ( $no_credit ) {
+                echo '<span style="color:#991b1b; font-weight:600;">' . esc_html__( 'No Credit', 'enroute_offers' ) . '</span>';
             } else {
-                echo '<span style="color:#991b1b;">' . esc_html__( 'Expired', 'enroute_offers' ) . '</span>';
+                echo '<span style="color:#166534; font-weight:600;">' . esc_html__( 'Valid', 'enroute_offers' ) . '</span>';
+            }
+
+            // Show renewal links
+            if ( $renewed_by ) {
+                $new_url = get_edit_post_link( $renewed_by );
+                echo '<br><small><a href="' . esc_url( $new_url ) . '" style="color:#2271b1;">' . esc_html__( '→ Renewed', 'enroute_offers' ) . '</a></small>';
+            }
+            if ( $previous_id ) {
+                $old_url = get_edit_post_link( $previous_id );
+                echo '<br><small><a href="' . esc_url( $old_url ) . '" style="color:#6b7280;">' . esc_html__( '← Previous pass', 'enroute_offers' ) . '</a></small>';
             }
             break;
     }
@@ -316,13 +334,19 @@ function enroute_get_user_pass( int $user_id ): ?array {
     $credit     = get_post_meta( $p->ID, '_booked_pass_credit',     true );
     $pass_id    = get_post_meta( $p->ID, '_booked_pass_type_id',    true );
 
+    // Detect zero credit: strip non-numeric, check if 0
+    $credit_num  = (float) preg_replace( '/[^0-9.]/', '', $credit );
+    $has_credit  = $credit === '' || $credit === null || $credit_num > 0;
+
     return [
         'id'          => $p->ID,
         'name'        => get_the_title( $p->ID ),
         'pass_type'   => $pass_id ? get_the_title( $pass_id ) : '',
+        'pass_type_id'=> (int) $pass_id,
         'valid_till'  => $valid_till,
         'valid_till_f'=> $valid_till ? date_i18n( 'd.m.Y', strtotime( $valid_till ) ) : '',
         'credit'      => $credit,
+        'has_credit'  => $has_credit,
         'is_valid'    => $valid_till && strtotime( $valid_till ) >= time(),
         'edit_url'    => get_edit_post_link( $p->ID ),
     ];

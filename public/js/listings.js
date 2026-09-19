@@ -442,6 +442,25 @@
                 this.form.phone       = profile.enroute_phone       || '';
             },
 
+            refreshPassSection( offerId, lang ) {
+                const el = this.$refs.passSection;
+                if ( ! el ) return;
+                const data = new FormData();
+                data.append( 'action',   'enroute_get_pass_section' );
+                data.append( 'nonce',    enrouteUserVars.nonce );
+                data.append( 'offer_id', offerId );
+                data.append( 'lang',     lang );
+                fetch( enrouteUserVars.ajaxUrl, { method: 'POST', body: data } )
+                    .then( r => r.json() )
+                    .then( res => {
+                        if ( res.success && el ) {
+                            el.innerHTML = res.data.html;
+                            // Re-initialize Alpine on new content
+                            Alpine.initTree( el );
+                        }
+                    } );
+            },
+
             submitBookingAndPass( offerId ) {
                 this.submitBooking( offerId, () => {
                     // If a pass was selected inline, book it automatically

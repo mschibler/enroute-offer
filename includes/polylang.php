@@ -14,4 +14,14 @@ function enroute_polylang_register() {
     }
 }
 
+// Exclude offer, resource, station from Polylang language filtering.
+// These post types show all languages in listings — language sorting is handled
+// client-side in Alpine. Polylang filtering would hide entries from other languages.
+add_filter( 'pll_get_post_types', function( array $post_types ): array {
+    unset( $post_types['offer'] );
+    unset( $post_types['resource'] );
+    unset( $post_types['station'] );
+    return $post_types;
+}, 20 );
+
 ?>
