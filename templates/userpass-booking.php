@@ -73,8 +73,9 @@ if ( is_user_logged_in() ) {
         <div style="margin-bottom:1.5rem;">
             <label <?php echo $lbl; ?>><?php esc_html_e( 'User Pass wählen', 'enroute_offers' ); ?> *</label>
             <?php foreach ( $passes as $pass ) :
-                $desc   = get_post_meta( $pass->ID, '_userpass_description', true );
-                $credit = get_post_meta( $pass->ID, '_userpass_credit',      true );
+                $desc        = get_post_meta( $pass->ID, '_userpass_description', true );
+                $credit_type = get_post_meta( $pass->ID, '_userpass_credit_type', true ) ?: 'flat_rate';
+                $credit      = $credit_type === 'credits' ? get_post_meta( $pass->ID, '_userpass_credit', true ) : '';
             ?>
             <label style="display:block; border:2px solid #e5e7eb; padding:1rem; margin-bottom:0.5rem; cursor:pointer;"
                    :style="form.pass_type_id == '<?php echo $pass->ID; ?>' ? 'border-color:#111; background:#f9f9f9;' : ''">
@@ -92,7 +93,7 @@ if ( is_user_logged_in() ) {
                             $validity_opts = enroute_userpass_validity_options();
                             $validity_lbl  = $validity_opts[ $validity ] ?? $validity;
                             echo esc_html__( 'Validity:', 'enroute_offers' ) . ' ' . esc_html( $validity_lbl );
-                            if ( $credit ) echo ' &nbsp;|&nbsp; ' . esc_html__( 'Guthaben:', 'enroute_offers' ) . ' ' . esc_html( $credit );
+                            if ( $credit_type === 'credits' && $credit ) echo ' &nbsp;|&nbsp; ' . esc_html__( 'Guthaben:', 'enroute_offers' ) . ' ' . esc_html( $credit );
                             ?>
                         </p>
                     </div>

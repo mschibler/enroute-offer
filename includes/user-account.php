@@ -295,7 +295,8 @@ function enroute_handle_get_pass_section(): void {
             <?php endif; ?>
             <?php foreach ( $available_passes as $bp ) :
                 $bp_validity = get_post_meta( $bp->ID, '_userpass_validity', true ) ?: '1year';
-                $bp_credit   = get_post_meta( $bp->ID, '_userpass_credit',   true );
+                $bp_credit_type = get_post_meta( $bp->ID, '_userpass_credit_type', true ) ?: 'flat_rate';
+                $bp_credit   = $bp_credit_type === 'credits' ? get_post_meta( $bp->ID, '_userpass_credit', true ) : '';
                 $bp_desc     = get_post_meta( $bp->ID, '_userpass_description', true );
                 $vp_label    = $vp_opts[ $bp_validity ] ?? $bp_validity;
                 $is_same     = $user_pass && (int) $user_pass['pass_type_id'] === (int) $bp->ID;
@@ -303,15 +304,14 @@ function enroute_handle_get_pass_section(): void {
             ?>
             <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer; margin-bottom:0.5rem;">
                 <input type="radio" name="booking_pass_type" x-model="form.booking_pass_type_id"
-                       value="<?php echo (int) $bp->ID; ?>" style="margin-top:0.2rem; flex-shrink:0;">
+                       value="<?php echo (int) $bp->ID; ?>"
+                       <?php if ( $is_same ) : ?>
+                       x-init="form.booking_pass_type_id = '<?php echo (int) $bp->ID; ?>'"
+                       <?php endif; ?>
+                       style="margin-top:0.2rem; flex-shrink:0;">
                 <span style="font-size:0.85rem;">
-                    <strong style="<?php echo $is_old_bad ? 'color:#991b1b;' : ''; ?>">
+                    <strong>
                         <?php echo esc_html( $bp->post_title ); ?>
-                        <?php if ( $is_old_bad ) : ?>
-                        <span style="font-size:0.78rem; color:#991b1b;">
-                            (<?php echo $pass_no_credit ? esc_html__( 'kein Guthaben mehr', 'enroute_offers' ) : esc_html__( 'abgelaufen', 'enroute_offers' ); ?>)
-                        </span>
-                        <?php endif; ?>
                         <?php if ( $is_same ) : ?>
                         <span style="font-size:0.78rem; color:#6b7280; font-weight:400;">
                             — <?php esc_html_e( 'gleiche Auswahl wie letztes Mal', 'enroute_offers' ); ?>

@@ -188,10 +188,16 @@ $lbl = 'style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0
                     <?php endif; ?>
                 </td>
             </tr>
-            <?php if ( $user_pass['credit'] ) : ?>
+            <?php if ( $user_pass['uses_credits'] ) : ?>
             <tr>
                 <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'Guthaben', 'enroute_offers' ); ?></td>
-                <td style="padding:0.4rem 0;"><?php echo esc_html( $user_pass['credit'] ); ?></td>
+                <td style="padding:0.4rem 0;">
+                    <?php if ( $user_pass['has_credit'] ) : ?>
+                        <?php echo esc_html( $user_pass['credit'] ); ?>
+                    <?php else : ?>
+                        <span style="color:#991b1b; font-weight:600;"><?php esc_html_e( 'Kein Guthaben mehr', 'enroute_offers' ); ?></span>
+                    <?php endif; ?>
+                </td>
             </tr>
             <?php endif; ?>
         </table>

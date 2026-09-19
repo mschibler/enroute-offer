@@ -147,15 +147,17 @@ function enroute_get_userpasses(): void {
     $passes = get_posts( $args );
 
     $data = array_map( function( $p ) {
-        $validity = get_post_meta( $p->ID, '_userpass_validity', true ) ?: '1year';
-        $options  = enroute_userpass_validity_options();
+        $validity    = get_post_meta( $p->ID, '_userpass_validity',    true ) ?: '1year';
+        $credit_type = get_post_meta( $p->ID, '_userpass_credit_type', true ) ?: 'flat_rate';
+        $options     = enroute_userpass_validity_options();
         return [
-            'id'          => $p->ID,
-            'name'        => $p->post_title,
-            'description' => get_post_meta( $p->ID, '_userpass_description', true ),
-            'validity'    => $validity,
+            'id'             => $p->ID,
+            'name'           => $p->post_title,
+            'description'    => get_post_meta( $p->ID, '_userpass_description', true ),
+            'validity'       => $validity,
             'validity_label' => $options[ $validity ] ?? $validity,
-            'credit'      => get_post_meta( $p->ID, '_userpass_credit',      true ),
+            'credit_type'    => $credit_type,
+            'credit'         => $credit_type === 'credits' ? get_post_meta( $p->ID, '_userpass_credit', true ) : '',
         ];
     }, $passes );
 

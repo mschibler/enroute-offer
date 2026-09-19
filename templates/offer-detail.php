@@ -569,19 +569,16 @@ $button_color_green = '#c9d56b'; // green button
                                 // Mark red if user's old pass was this type and it's now bad
                                 $is_old_bad   = $is_same && $pass_bad;
                             ?>
-                            <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer; margin-bottom:0.5rem;
-                                          <?php echo $is_old_bad ? 'opacity:0.7;' : ''; ?>">
+                            <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer; margin-bottom:0.5rem;">
                                 <input type="radio" name="booking_pass_type" x-model="form.booking_pass_type_id"
                                        value="<?php echo (int) $bp->ID; ?>"
+                                       <?php if ( $is_same ) : ?>
+                                       x-init="form.booking_pass_type_id = '<?php echo (int) $bp->ID; ?>'"
+                                       <?php endif; ?>
                                        style="margin-top:0.2rem; flex-shrink:0;">
                                 <span style="font-size:0.85rem;">
-                                    <strong style="<?php echo $is_old_bad ? 'color:#991b1b;' : ''; ?>">
+                                    <strong>
                                         <?php echo esc_html( $bp->post_title ); ?>
-                                        <?php if ( $is_old_bad ) : ?>
-                                        <span style="font-size:0.78rem; color:#991b1b;">
-                                            (<?php echo $pass_no_credit ? esc_html__( 'kein Guthaben mehr', 'enroute_offers' ) : esc_html__( 'abgelaufen', 'enroute_offers' ); ?>)
-                                        </span>
-                                        <?php endif; ?>
                                         <?php if ( $is_same ) : ?>
                                         <span style="font-size:0.78rem; color:#6b7280; font-weight:400;">
                                             — <?php esc_html_e( 'gleiche Auswahl wie letztes Mal', 'enroute_offers' ); ?>
@@ -590,7 +587,7 @@ $button_color_green = '#c9d56b'; // green button
                                     </strong>
                                     <span style="color:#6b7280; font-size:0.8rem;">
                                         — <?php echo esc_html( $vp_label ); ?>
-                                        <?php if ( $bp_credit ) echo ' | ' . esc_html( $bp_credit ); ?>
+                                        <?php if ( isset( $bp_credit_type ) && $bp_credit_type === 'credits' && $bp_credit ) echo ' | ' . esc_html( $bp_credit ); ?>
                                     </span>
                                     <?php if ( $bp_desc ) : ?>
                                     <br><span style="color:#4b5563; font-size:0.8rem;"><?php echo esc_html( $bp_desc ); ?></span>

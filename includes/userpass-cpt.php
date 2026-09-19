@@ -31,6 +31,14 @@ add_filter( 'pll_get_post_types', function( $post_types ) {
     return $post_types;
 });
 
+// Helper: credit type options
+function enroute_userpass_credit_type_options(): array {
+    return [
+        'flat_rate' => __( 'Flat Rate', 'enroute_offers' ),
+        'credits'   => __( 'Credits',   'enroute_offers' ),
+    ];
+}
+
 // Helper: get validity options
 function enroute_userpass_validity_options(): array {
     return [
@@ -61,6 +69,7 @@ function enroute_userpass_details_cb( WP_Post $post ): void {
     wp_nonce_field( 'enroute_userpass_save', 'enroute_userpass_nonce' );
     $description = get_post_meta( $post->ID, '_userpass_description', true );
     $validity    = get_post_meta( $post->ID, '_userpass_validity',    true ) ?: '1year';
+    $credit_type = get_post_meta( $post->ID, '_userpass_credit_type', true ) ?: 'flat_rate';
     $credit      = get_post_meta( $post->ID, '_userpass_credit',      true );
     ?>
     <div class="enroute-meta-wrap">
@@ -79,8 +88,18 @@ function enroute_userpass_details_cb( WP_Post $post ): void {
                 <p class="description"><?php esc_html_e( 'How long the pass is valid from the booking date.', 'enroute_offers' ); ?></p>
             </div>
             <div class="enroute-field">
-                <label for="userpass_credit"><?php esc_html_e( 'Credit', 'enroute_offers' ); ?></label>
+                <label for="userpass_credit_type"><?php esc_html_e( 'Credit System', 'enroute_offers' ); ?></label>
+                <select id="userpass_credit_type" name="userpass_credit_type"
+                        onchange="document.getElementById('userpass_credit_wrap').style.display = this.value === 'credits' ? 'block' : 'none';">
+                    <?php foreach ( enroute_userpass_credit_type_options() as $key => $label ) : ?>
+                    <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $credit_type, $key ); ?>><?php echo esc_html( $label ); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="enroute-field" id="userpass_credit_wrap" style="<?php echo $credit_type === 'credits' ? '' : 'display:none;'; ?>">
+                <label for="userpass_credit"><?php esc_html_e( 'Credit Value', 'enroute_offers' ); ?></label>
                 <input type="text" id="userpass_credit" name="userpass_credit" value="<?php echo esc_attr( $credit ); ?>" placeholder="<?php esc_attr_e( 'e.g. 350 CHF', 'enroute_offers' ); ?>">
+                <p class="description"><?php esc_html_e( 'Starting credit when a pass is booked.', 'enroute_offers' ); ?></p>
             </div>
         </div>
         <div class="enroute-field">
@@ -103,7 +122,14 @@ add_action( 'save_post_enroute_userpass', function( int $post_id ): void {
     $validity = isset( $_POST['userpass_validity'] ) && in_array( $_POST['userpass_validity'], $validity_options, true )
         ? $_POST['userpass_validity'] : '1year';
     update_post_meta( $post_id, '_userpass_validity', $validity );
-    update_post_meta( $post_id, '_userpass_credit',   sanitize_text_field( $_POST['userpass_credit'] ?? '' ) );
+
+    $credit_type_options = array_keys( enroute_userpass_credit_type_options() );
+    $credit_type = isset( $_POST['userpass_credit_type'] ) && in_array( $_POST['userpass_credit_type'], $credit_type_options, true )
+        ? $_POST['userpass_credit_type'] : 'flat_rate';
+    update_post_meta( $post_id, '_userpass_credit_type', $credit_type );
+    // Only save credit value if credit system is selected
+    $credit = $credit_type === 'credits' ? sanitize_text_field( $_POST['userpass_credit'] ?? '' ) : '';
+    update_post_meta( $post_id, '_userpass_credit', $credit );
     // Language is managed by Polylang
 });
 
@@ -220,8 +246,10 @@ add_action( 'manage_enroute_booked_pass_posts_custom_column', function( $col, $p
         case 'booked_pass_status':
             $valid_till  = get_post_meta( $post_id, '_booked_pass_valid_till', true );
             $credit      = get_post_meta( $post_id, '_booked_pass_credit',     true );
+            $pass_type_id_col = get_post_meta( $post_id, '_booked_pass_type_id', true );
+            $col_credit_type  = $pass_type_id_col ? get_post_meta( (int) $pass_type_id_col, '_userpass_credit_type', true ) : 'flat_rate';
             $credit_num  = (float) preg_replace( '/[^0-9.]/', '', $credit );
-            $no_credit   = $credit !== '' && $credit !== null && $credit_num === 0.0;
+            $no_credit   = $col_credit_type === 'credits' && $credit_num === 0.0 && $credit !== '';
             $renewed_by  = get_post_meta( $post_id, '_booked_pass_renewed_by',  true );
             $previous_id = get_post_meta( $post_id, '_booked_pass_previous_id', true );
 
@@ -334,9 +362,12 @@ function enroute_get_user_pass( int $user_id ): ?array {
     $credit     = get_post_meta( $p->ID, '_booked_pass_credit',     true );
     $pass_id    = get_post_meta( $p->ID, '_booked_pass_type_id',    true );
 
-    // Detect zero credit: strip non-numeric, check if 0
-    $credit_num  = (float) preg_replace( '/[^0-9.]/', '', $credit );
-    $has_credit  = $credit === '' || $credit === null || $credit_num > 0;
+    // Get credit type from the pass type definition
+    $pass_type_meta  = $pass_id ? get_post_meta( (int) $pass_id, '_userpass_credit_type', true ) : '';
+    $credit_type     = $pass_type_meta ?: ( $credit !== '' ? 'credits' : 'flat_rate' ); // fallback for old data
+    $uses_credits    = $credit_type === 'credits';
+    $credit_num      = (float) preg_replace( '/[^0-9.]/', '', $credit );
+    $has_credit      = ! $uses_credits || $credit === '' || $credit_num > 0;
 
     return [
         'id'          => $p->ID,
@@ -346,6 +377,8 @@ function enroute_get_user_pass( int $user_id ): ?array {
         'valid_till'  => $valid_till,
         'valid_till_f'=> $valid_till ? date_i18n( 'd.m.Y', strtotime( $valid_till ) ) : '',
         'credit'      => $credit,
+        'credit_type' => $credit_type,
+        'uses_credits'=> $uses_credits,
         'has_credit'  => $has_credit,
         'is_valid'    => $valid_till && strtotime( $valid_till ) >= time(),
         'edit_url'    => get_edit_post_link( $p->ID ),
