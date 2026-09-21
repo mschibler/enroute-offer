@@ -638,6 +638,7 @@ $button_color_green = '#c9d56b'; // green button
            EduPass Midi: 500 CHF zahlen - für 750 CHF nutzen<br>
            EduPass Maxi: 1000 CHF zahlen - für 1550 CHF nutzen<br>
            Das Guthaben ist ein Jahr ab Bestelldatum gültig.
+           <p><a href="/user-passes/">Benutzerpass buchen</a></p>
        </div>
        <div class="text-sm pl-6 pr-6">Ein Upgrade auf einen höheren Pass ist jederzeit möglich, das Ablaufdatum bleibt dabei unverändert. Nicht genutztes Guthaben verfällt nach Ablauf und wird nicht rückerstattet. Bei Überschreitung wird der Differenzbetrag in Rechnung gestellt.
        </div>
