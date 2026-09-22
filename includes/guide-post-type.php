@@ -53,10 +53,11 @@ add_action( 'add_meta_boxes', function() {
 function enroute_guide_details_cb( WP_Post $post ): void {
     wp_nonce_field( 'enroute_guide_save', 'enroute_guide_nonce' );
 
-    $quote    = get_post_meta( $post->ID, '_guide_quote',    true );
-    $desc     = get_post_meta( $post->ID, '_guide_description', true );
-    $photo_id = get_post_meta( $post->ID, '_guide_photo_id', true );
-    $language = get_post_meta( $post->ID, '_guide_language', true );
+    $quote      = get_post_meta( $post->ID, '_guide_quote',       true );
+    $desc       = get_post_meta( $post->ID, '_guide_description', true );
+    $photo_id   = get_post_meta( $post->ID, '_guide_photo_id',    true );
+    $language   = get_post_meta( $post->ID, '_guide_language',    true );
+    $old_cms_id = get_post_meta( $post->ID, '_old_cms_id',        true );
 
     $photo_url = $photo_id ? wp_get_attachment_image_url( $photo_id, 'medium' ) : '';
     ?>
@@ -184,6 +185,11 @@ add_action( 'save_post_guide', function( int $post_id ): void {
     // Photo
     $photo_id = isset( $_POST['guide_photo_id'] ) ? absint( $_POST['guide_photo_id'] ) : 0;
     update_post_meta( $post_id, '_guide_photo_id', $photo_id );
+
+    // Old CMS ID
+    if ( isset( $_POST['guide_old_cms_id'] ) ) {
+        update_post_meta( $post_id, '_old_cms_id', sanitize_text_field( $_POST['guide_old_cms_id'] ) );
+    }
 });
 
 // ══════════════════════════════════════════════════════════════════════════════

@@ -49,7 +49,7 @@ foreach ( $guide_posts as $i => $g ) {
 // Use single-quoted window key so it is safe inside an HTML attribute value.
 $uid = 'egl_' . uniqid();
 ?>
-<script>window['<?php echo esc_js( $uid ); ?>'] = <?php echo wp_json_encode( $guides_data ); ?>;</script>
+<script>window['<?php echo esc_js( $uid ); ?>'] = <?php echo json_encode( $guides_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_APOS | JSON_HEX_QUOT ); ?>;</script>
 
 <div
     class="enroute-guides-listing"
