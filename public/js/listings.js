@@ -279,6 +279,7 @@
             message:  '',
             errorMsg: '',
             form:     window.enrouteInitialProfile || {},
+            saved:    window.enrouteInitialProfile || {},
 
             saveProfile() {
                 this.saving  = true;
@@ -295,6 +296,11 @@
                         if (res.success) {
                             this.message = res.data.message;
                             this.editing = false;
+                            // Update view data from server response
+                            if (res.data.profile) {
+                                Object.assign(this.form, res.data.profile);
+                                this.saved = res.data.profile;
+                            }
                             setTimeout(() => this.message = '', 4000);
                         } else {
                             this.errorMsg = res.data.message || 'Fehler.';

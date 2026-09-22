@@ -250,11 +250,8 @@ function enroute_handle_get_pass_section(): void {
         'orderby'     => 'title',
         'order'       => 'ASC',
     ];
-    if ( function_exists( 'pll_get_post_language' ) ) {
-        $pass_args['lang'] = $current_lang;
-    } else {
-        $pass_args['meta_query'] = [[ 'key' => '_userpass_language', 'value' => $current_lang, 'compare' => '=' ]];
-    }
+    // Always filter by language meta field — Polylang is only for translation, not filtering
+    $pass_args['meta_query'] = [[ 'key' => '_userpass_language', 'value' => $current_lang, 'compare' => '=' ]];
     $available_passes = get_posts( $pass_args );
     $userpass_url     = get_option( 'enroute_userpass_page_url', '' );
 
@@ -368,23 +365,5 @@ add_filter( 'login_redirect', function( string $redirect_to, string $requested_r
     return $redirect_to;
 }, 10, 3 );
 
-// ══════════════════════════════════════════════════════════════════════════════
-// Protect profile page — redirect to home if not logged in
-// (shortcode handles this too but this catches direct URL access)
-// ══════════════════════════════════════════════════════════════════════════════
-
-add_action( 'template_redirect', function(): void {
-    $profile_url = get_option( 'enroute_profile_page_url', '' );
-    if ( ! $profile_url ) return;
-    if ( is_user_logged_in() ) return;
-
-    // Check if current page is the profile page
-    $current_url = ( is_ssl() ? 'https' : 'http' ) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    $current_url = strtok( $current_url, '?' );
-    $profile_url_clean = strtok( $profile_url, '?' );
-
-    if ( rtrim( $current_url, '/' ) === rtrim( $profile_url_clean, '/' ) ) {
-        // Not logged in on profile page — show page but shortcode will handle the message
-        // (we let the page render so any custom content above/below the shortcode is visible)
-    }
-});
+// Profile page is no longer protected by redirect — non-logged-in users see the
+// login/register form rendered by the [enroute_user_profile] shortcode.

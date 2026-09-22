@@ -68,27 +68,37 @@ $lbl = 'style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0
             ></button>
         </div>
 
-        <!-- View mode -->
+        <!-- View mode — driven from Alpine saved state so it updates without page refresh -->
         <div x-show="!editing">
             <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
-                <?php
-                $view_fields = [
-                    __( 'Anrede',      'enroute_offers' ) => $profile['enroute_salutation'],
-                    __( 'Name',        'enroute_offers' ) => trim( $profile['enroute_first_name'] . ' ' . $profile['enroute_last_name'] ),
-                    __( 'Institution', 'enroute_offers' ) => $profile['enroute_institution'],
-                    __( 'Adresse',     'enroute_offers' ) => $profile['enroute_street'],
-                    __( 'PLZ / Ort',   'enroute_offers' ) => trim( $profile['enroute_zip'] . ' ' . $profile['enroute_place'] ),
-                    __( 'E-Mail',      'enroute_offers' ) => $profile['email'],
-                    __( 'Telefon',     'enroute_offers' ) => $profile['enroute_phone'],
-                ];
-                foreach ( $view_fields as $label => $value ) :
-                    if ( ! $value ) continue;
-                ?>
-                <tr>
-                    <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280; width:130px; vertical-align:top;"><?php echo esc_html( $label ); ?></td>
-                    <td style="padding:0.4rem 0;"><?php echo esc_html( $value ); ?></td>
+                <tr x-show="saved.enroute_salutation">
+                    <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280; width:130px;"><?php esc_html_e( 'Anrede', 'enroute_offers' ); ?></td>
+                    <td style="padding:0.4rem 0;" x-text="saved.enroute_salutation"></td>
                 </tr>
-                <?php endforeach; ?>
+                <tr x-show="saved.enroute_first_name || saved.enroute_last_name">
+                    <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'Name', 'enroute_offers' ); ?></td>
+                    <td style="padding:0.4rem 0;" x-text="(saved.enroute_first_name || '') + ' ' + (saved.enroute_last_name || '')"></td>
+                </tr>
+                <tr x-show="saved.enroute_institution">
+                    <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'Institution', 'enroute_offers' ); ?></td>
+                    <td style="padding:0.4rem 0;" x-text="saved.enroute_institution"></td>
+                </tr>
+                <tr x-show="saved.enroute_street">
+                    <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'Adresse', 'enroute_offers' ); ?></td>
+                    <td style="padding:0.4rem 0;" x-text="saved.enroute_street"></td>
+                </tr>
+                <tr x-show="saved.enroute_zip || saved.enroute_place">
+                    <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'PLZ / Ort', 'enroute_offers' ); ?></td>
+                    <td style="padding:0.4rem 0;" x-text="(saved.enroute_zip || '') + ' ' + (saved.enroute_place || '')"></td>
+                </tr>
+                <tr x-show="saved.email">
+                    <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'E-Mail', 'enroute_offers' ); ?></td>
+                    <td style="padding:0.4rem 0;" x-text="saved.email"></td>
+                </tr>
+                <tr x-show="saved.enroute_phone">
+                    <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'Telefon', 'enroute_offers' ); ?></td>
+                    <td style="padding:0.4rem 0;" x-text="saved.enroute_phone"></td>
+                </tr>
             </table>
         </div>
 
@@ -154,6 +164,7 @@ $lbl = 'style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0
             </button>
         </div>
     </div>
+
 
     <!-- ── User Pass section ────────────────────────────────────────────────── -->
     <?php

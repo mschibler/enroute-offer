@@ -71,6 +71,7 @@ function enroute_userpass_details_cb( WP_Post $post ): void {
     $validity    = get_post_meta( $post->ID, '_userpass_validity',    true ) ?: '1year';
     $credit_type = get_post_meta( $post->ID, '_userpass_credit_type', true ) ?: 'flat_rate';
     $credit      = get_post_meta( $post->ID, '_userpass_credit',      true );
+    $language    = get_post_meta( $post->ID, '_userpass_language',    true );
     ?>
     <div class="enroute-meta-wrap">
         <div class="enroute-field">
@@ -103,9 +104,14 @@ function enroute_userpass_details_cb( WP_Post $post ): void {
             </div>
         </div>
         <div class="enroute-field">
-            <p class="description" style="margin:0; padding:0.5rem; background:#f0f0f0; border-left:3px solid #2271b1;">
-                <?php esc_html_e( 'Language is managed by Polylang — set it using the Language meta box on the right.', 'enroute_offers' ); ?>
-            </p>
+            <label for="userpass_language"><?php esc_html_e( 'Language', 'enroute_offers' ); ?></label>
+            <select id="userpass_language" name="userpass_language">
+                <option value=""><?php esc_html_e( '— Select —', 'enroute_offers' ); ?></option>
+                <option value="de" <?php selected( $language, 'de' ); ?>><?php esc_html_e( 'Deutsch', 'enroute_offers' ); ?></option>
+                <option value="fr" <?php selected( $language, 'fr' ); ?>><?php esc_html_e( 'Français', 'enroute_offers' ); ?></option>
+                <option value="it" <?php selected( $language, 'it' ); ?>><?php esc_html_e( 'Italiano', 'enroute_offers' ); ?></option>
+            </select>
+            <p class="description"><?php esc_html_e( 'Determines on which language page this pass is shown. Independent of Polylang translation.', 'enroute_offers' ); ?></p>
         </div>
     </div>
     <?php
@@ -130,7 +136,11 @@ add_action( 'save_post_enroute_userpass', function( int $post_id ): void {
     // Only save credit value if credit system is selected
     $credit = $credit_type === 'credits' ? sanitize_text_field( $_POST['userpass_credit'] ?? '' ) : '';
     update_post_meta( $post_id, '_userpass_credit', $credit );
-    // Language is managed by Polylang
+    // Language field (determines which language page shows this pass)
+    $allowed_langs = [ 'de', 'fr', 'it' ];
+    $lang = isset( $_POST['userpass_language'] ) && in_array( $_POST['userpass_language'], $allowed_langs, true )
+        ? sanitize_key( $_POST['userpass_language'] ) : '';
+    update_post_meta( $post_id, '_userpass_language', $lang );
 });
 
 // ══════════════════════════════════════════════════════════════════════════════

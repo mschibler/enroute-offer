@@ -136,13 +136,10 @@ function enroute_get_userpasses(): void {
     ];
 
     // Use Polylang to filter by language if available, otherwise fall back to meta
-    if ( function_exists( 'pll_get_post_language' ) ) {
-        $args['lang'] = $lang;
-    } else {
-        $args['meta_query'] = [
-            [ 'key' => '_userpass_language', 'value' => $lang, 'compare' => '=' ],
-        ];
-    }
+    // Always filter by language meta field
+    $args['meta_query'] = [
+        [ 'key' => '_userpass_language', 'value' => $lang, 'compare' => '=' ],
+    ];
 
     $passes = get_posts( $args );
 

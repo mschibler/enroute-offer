@@ -16,13 +16,9 @@ $pass_args = [
     'orderby'     => 'title',
     'order'       => 'ASC',
 ];
-if ( function_exists( 'pll_get_post_language' ) ) {
-    $pass_args['lang'] = $current_lang;
-} else {
-    $pass_args['meta_query'] = [
-        [ 'key' => '_userpass_language', 'value' => $current_lang, 'compare' => '=' ],
-    ];
-}
+$pass_args['meta_query'] = [
+    [ 'key' => '_userpass_language', 'value' => $current_lang, 'compare' => '=' ],
+];
 $passes = get_posts( $pass_args );
 
 // Referer URL — where to go back after booking
