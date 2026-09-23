@@ -535,7 +535,38 @@
         }) );
     }
 
-    const allComponents = [registerComponents, registerGuidesListing, registerUserpassBooking, registerUserProfile, registerUserAuth, registerBookingForm];
+    // ── BLOG LISTING ──────────────────────────────────────────────────────────
+    function registerBlogListing() {
+        Alpine.data( 'enrouteBlogListing', ( posts ) => ({
+            all:            posts,
+            activeCategory: null,
+            perPage:        15,
+            visibleCount:   15,
+
+            get filtered() {
+                if ( ! this.activeCategory ) return this.all;
+                return this.all.filter( p => p.cat_ids.includes( this.activeCategory ) );
+            },
+
+            get sorted() {
+                return this.filtered; // already ordered by date from PHP
+            },
+
+            get visible() {
+                return this.sorted.slice( 0, this.visibleCount );
+            },
+
+            get hasMore() {
+                return this.visibleCount < this.filtered.length;
+            },
+
+            loadMore() {
+                this.visibleCount += this.perPage;
+            },
+        }) );
+    }
+
+    const allComponents = [registerComponents, registerGuidesListing, registerUserpassBooking, registerUserProfile, registerUserAuth, registerBookingForm, registerBlogListing];
     if ( window.Alpine ) {
         allComponents.forEach(fn => fn());
         allComponents.forEach(fn => document.addEventListener('alpine:init', fn));
