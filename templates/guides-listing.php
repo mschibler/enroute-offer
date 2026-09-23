@@ -16,6 +16,12 @@ $query_args = [
     'numberposts'    => -1,
     'orderby'        => $order_mode === 'random' ? 'rand' : 'title',
     'order'          => 'ASC',
+    'meta_query'     => [
+        'relation' => 'OR',
+        [ 'key' => '_guide_active', 'value' => '1', 'compare' => '=' ],
+        // Also show guides without the meta (manually created, not imported)
+        [ 'key' => '_guide_active', 'compare' => 'NOT EXISTS' ],
+    ],
 ];
 $guide_posts = get_posts( $query_args );
 

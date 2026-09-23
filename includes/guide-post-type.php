@@ -58,6 +58,7 @@ function enroute_guide_details_cb( WP_Post $post ): void {
     $photo_id   = get_post_meta( $post->ID, '_guide_photo_id',    true );
     $language   = get_post_meta( $post->ID, '_guide_language',    true );
     $old_cms_id = get_post_meta( $post->ID, '_old_cms_id',        true );
+    $active     = get_post_meta( $post->ID, '_guide_active',      true );
 
     $photo_url = $photo_id ? wp_get_attachment_image_url( $photo_id, 'medium' ) : '';
     ?>
@@ -120,6 +121,23 @@ function enroute_guide_details_cb( WP_Post $post ): void {
                 </button>
                 <?php endif; ?>
             </div>
+        </div>
+
+        <!-- Active -->
+        <div class="enroute-field" style="margin-top:0.5rem;">
+            <label class="enroute-checkbox-label">
+                <input type="checkbox" name="guide_active" value="1" <?php checked( $active, '1' ); ?>>
+                <?php esc_html_e( 'Active', 'enroute_offers' ); ?>
+            </label>
+        </div>
+
+        <!-- Old CMS ID -->
+        <div class="enroute-field">
+            <label for="guide_old_cms_id"><?php esc_html_e( 'Old CMS ID', 'enroute_offers' ); ?></label>
+            <input type="text" id="guide_old_cms_id" name="guide_old_cms_id"
+                   value="<?php echo esc_attr( $old_cms_id ); ?>"
+                   class="small-text">
+            <p class="description"><?php esc_html_e( 'ID from old CMS for import matching.', 'enroute_offers' ); ?></p>
         </div>
 
     </div><!-- /.enroute-meta-wrap -->
@@ -187,6 +205,7 @@ add_action( 'save_post_guide', function( int $post_id ): void {
     update_post_meta( $post_id, '_guide_photo_id', $photo_id );
 
     // Old CMS ID
+    update_post_meta( $post_id, '_guide_active', isset( $_POST['guide_active'] ) ? '1' : '0' );
     if ( isset( $_POST['guide_old_cms_id'] ) ) {
         update_post_meta( $post_id, '_old_cms_id', sanitize_text_field( $_POST['guide_old_cms_id'] ) );
     }
