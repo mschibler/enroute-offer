@@ -161,8 +161,8 @@ $show_filter = ! isset( $args['filter'] ) || ! in_array( strtolower( (string) $a
                 <div :style="'display:block; font-size:1rem; line-height:1.5; padding:0.6rem 1rem 0.75rem; background:' + offer.color + ';'">
                     <span x-show="offer.offer_type_name" x-text="offer.offer_type_name" class="text-xs leading-5 tracking-widest"
                           style="display:block; font-weight:700; text-transform:uppercase; color:rgba(0,0,0,0.6);"></span>
-                    <p x-text="offer.title" class="text-lg leading-5 pt-3"
-                       style="margin:0; font-weight:700; color:#111827;"></p>
+                    <a :href="offer.permalink" x-text="offer.title" class="text-lg leading-5 pt-3"
+                       style="display:block; margin:0; font-weight:700; color:#111827; text-decoration:none;"></a>
                     <p x-show="offer.subtitle" x-text="offer.subtitle" class="text-xs leading-4 pt-2 pb-3"
                        style="margin:0.15rem 0 0; color:#1f2937"></p>
                 </div>

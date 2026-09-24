@@ -222,3 +222,61 @@ add_action( 'admin_enqueue_scripts', function( string $hook ) {
     wp_enqueue_media();
     wp_enqueue_style( 'enroute-admin', ENROUTE_OFFERS_URL . 'admin/admin.css', [], ENROUTE_OFFERS_VERSION );
 });
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GUIDE LIST — Active/Inactive filter
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Add filter dropdown to guide list
+add_action( 'restrict_manage_posts', function( string $post_type ): void {
+    if ( $post_type !== 'guide' ) return;
+    $selected = $_GET['filter_guide_active'] ?? '';
+    ?>
+    <select name="filter_guide_active">
+        <option value=""><?php esc_html_e( 'All (active &amp; inactive)', 'enroute_offers' ); ?></option>
+        <option value="1" <?php selected( $selected, '1' ); ?>><?php esc_html_e( 'Active', 'enroute_offers' ); ?></option>
+        <option value="0" <?php selected( $selected, '0' ); ?>><?php esc_html_e( 'Inactive', 'enroute_offers' ); ?></option>
+    </select>
+    <?php
+} );
+
+// Apply the filter to the query
+add_action( 'pre_get_posts', function( WP_Query $query ): void {
+    if ( ! is_admin() || ! $query->is_main_query() ) return;
+    if ( $query->get( 'post_type' ) !== 'guide' ) return;
+    if ( ! isset( $_GET['filter_guide_active'] ) || $_GET['filter_guide_active'] === '' ) return;
+
+    $val = $_GET['filter_guide_active'] === '1' ? '1' : '0';
+
+    if ( $val === '1' ) {
+        $query->set( 'meta_query', [
+            [ 'key' => '_guide_active', 'value' => '1', 'compare' => '=' ],
+        ] );
+    } else {
+        // Inactive = explicitly set to 0, or meta doesn't exist
+        $query->set( 'meta_query', [
+            'relation' => 'OR',
+            [ 'key' => '_guide_active', 'value' => '0', 'compare' => '=' ],
+            [ 'key' => '_guide_active', 'compare' => 'NOT EXISTS' ],
+        ] );
+    }
+} );
+
+// Add Active column to guide list table
+add_filter( 'manage_guide_posts_columns', function( array $cols ): array {
+    $cols['guide_active'] = __( 'Active', 'enroute_offers' );
+    return $cols;
+} );
+
+add_action( 'manage_guide_posts_custom_column', function( string $col, int $post_id ): void {
+    if ( $col !== 'guide_active' ) return;
+    $active = get_post_meta( $post_id, '_guide_active', true );
+    if ( $active === '1' ) {
+        echo '<span style="color:#166534; font-weight:600;">✓ ' . esc_html__( 'Active', 'enroute_offers' ) . '</span>';
+    } elseif ( $active === '0' ) {
+        echo '<span style="color:#991b1b;">✗ ' . esc_html__( 'Inactive', 'enroute_offers' ) . '</span>';
+    } else {
+        echo '<span style="color:#9ca3af;">—</span>';
+    }
+}, 10, 2 );

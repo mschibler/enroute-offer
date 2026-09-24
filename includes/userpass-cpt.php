@@ -31,6 +31,15 @@ add_filter( 'pll_get_post_types', function( $post_types ) {
     return $post_types;
 });
 
+// Helper: booked pass status options
+function enroute_booked_pass_status_options(): array {
+    return [
+        'new'      => __( 'New',      'enroute_offers' ),
+        'active'   => __( 'Active',   'enroute_offers' ),
+        'inactive' => __( 'Inactive', 'enroute_offers' ),
+    ];
+}
+
 // Helper: credit type options
 function enroute_userpass_credit_type_options(): array {
     return [
@@ -182,6 +191,7 @@ function enroute_booked_pass_details_cb( WP_Post $post ): void {
     $credit      = get_post_meta( $post->ID, '_booked_pass_credit',   true );
     $email       = get_post_meta( $post->ID, '_booked_pass_email',    true );
     $submitted   = get_post_meta( $post->ID, '_booked_pass_submitted', true );
+    $status      = get_post_meta( $post->ID, '_booked_pass_status',   true ) ?: 'new';
 
     $pass_name   = $pass_id ? get_the_title( $pass_id ) : '—';
     $user        = $user_id ? get_userdata( (int) $user_id ) : null;
@@ -192,6 +202,16 @@ function enroute_booked_pass_details_cb( WP_Post $post ): void {
             <tr><th><?php esc_html_e( 'Pass Type', 'enroute_offers' ); ?></th><td><?php echo esc_html( $pass_name ); ?></td></tr>
             <tr><th><?php esc_html_e( 'User', 'enroute_offers' ); ?></th><td><?php echo esc_html( $user_name ); ?></td></tr>
             <tr><th><?php esc_html_e( 'Booked', 'enroute_offers' ); ?></th><td><?php echo esc_html( $submitted ); ?></td></tr>
+            <tr>
+                <th><label for="booked_pass_status"><?php esc_html_e( 'Status', 'enroute_offers' ); ?></label></th>
+                <td>
+                    <select id="booked_pass_status" name="booked_pass_status">
+                        <?php foreach ( enroute_booked_pass_status_options() as $key => $label ) : ?>
+                        <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $status, $key ); ?>><?php echo esc_html( $label ); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
         </table>
         <div class="enroute-field-group">
             <div class="enroute-field">
@@ -217,6 +237,10 @@ add_action( 'save_post_enroute_booked_pass', function( int $post_id ): void {
 
     update_post_meta( $post_id, '_booked_pass_valid_till', sanitize_text_field( $_POST['booked_pass_valid_till'] ?? '' ) );
     update_post_meta( $post_id, '_booked_pass_credit',     sanitize_text_field( $_POST['booked_pass_credit']     ?? '' ) );
+    $status_options = array_keys( enroute_booked_pass_status_options() );
+    $status = isset( $_POST['booked_pass_status'] ) && in_array( $_POST['booked_pass_status'], $status_options, true )
+        ? $_POST['booked_pass_status'] : 'new';
+    update_post_meta( $post_id, '_booked_pass_status', $status );
 });
 
 // ── Custom columns for booked passes list ─────────────────────────────────────
@@ -254,24 +278,19 @@ add_action( 'manage_enroute_booked_pass_posts_custom_column', function( $col, $p
             echo esc_html( get_post_meta( $post_id, '_booked_pass_credit', true ) ?: '—' );
             break;
         case 'booked_pass_status':
-            $valid_till  = get_post_meta( $post_id, '_booked_pass_valid_till', true );
-            $credit      = get_post_meta( $post_id, '_booked_pass_credit',     true );
-            $pass_type_id_col = get_post_meta( $post_id, '_booked_pass_type_id', true );
-            $col_credit_type  = $pass_type_id_col ? get_post_meta( (int) $pass_type_id_col, '_userpass_credit_type', true ) : 'flat_rate';
-            $credit_num  = (float) preg_replace( '/[^0-9.]/', '', $credit );
-            $no_credit   = $col_credit_type === 'credits' && $credit_num === 0.0 && $credit !== '';
+            $status      = get_post_meta( $post_id, '_booked_pass_status', true ) ?: 'new';
             $renewed_by  = get_post_meta( $post_id, '_booked_pass_renewed_by',  true );
             $previous_id = get_post_meta( $post_id, '_booked_pass_previous_id', true );
 
-            if ( ! $valid_till ) {
-                echo '<span style="color:#6b7280;">—</span>';
-            } elseif ( strtotime( $valid_till ) < time() ) {
-                echo '<span style="color:#991b1b; font-weight:600;">' . esc_html__( 'Expired', 'enroute_offers' ) . '</span>';
-            } elseif ( $no_credit ) {
-                echo '<span style="color:#991b1b; font-weight:600;">' . esc_html__( 'No Credit', 'enroute_offers' ) . '</span>';
-            } else {
-                echo '<span style="color:#166534; font-weight:600;">' . esc_html__( 'Valid', 'enroute_offers' ) . '</span>';
-            }
+            $status_colors = [
+                'new'      => '#92400e',
+                'active'   => '#166534',
+                'inactive' => '#991b1b',
+            ];
+            $status_labels = enroute_booked_pass_status_options();
+            $color = $status_colors[ $status ] ?? '#6b7280';
+            $label = $status_labels[ $status ] ?? $status;
+            echo '<span style="color:' . esc_attr( $color ) . '; font-weight:600;">' . esc_html( $label ) . '</span>';
 
             // Show renewal links
             if ( $renewed_by ) {
@@ -316,12 +335,13 @@ add_action( 'restrict_manage_posts', function() {
     }
     echo '</select>';
 
-    // Validity filter
-    $filter_valid = $_GET['filter_valid'] ?? '';
-    echo '<select name="filter_valid">';
+    // Status filter
+    $filter_status = $_GET['filter_status'] ?? '';
+    echo '<select name="filter_status">';
     echo '<option value="">' . esc_html__( 'All Statuses', 'enroute_offers' ) . '</option>';
-    echo '<option value="valid"'   . selected( $filter_valid, 'valid', false )   . '>' . esc_html__( 'Valid',   'enroute_offers' ) . '</option>';
-    echo '<option value="expired"' . selected( $filter_valid, 'expired', false ) . '>' . esc_html__( 'Expired', 'enroute_offers' ) . '</option>';
+    foreach ( enroute_booked_pass_status_options() as $key => $label ) {
+        echo '<option value="' . esc_attr( $key ) . '"' . selected( $filter_status, $key, false ) . '>' . esc_html( $label ) . '</option>';
+    }
     echo '</select>';
 });
 
@@ -335,16 +355,15 @@ add_action( 'pre_get_posts', function( WP_Query $query ) {
         $meta_query[] = [ 'key' => '_booked_pass_type_id', 'value' => absint( $_GET['filter_pass_id'] ), 'compare' => '=' ];
     }
 
-    if ( ! empty( $_GET['filter_valid'] ) ) {
-        $today = date('Y-m-d');
-        if ( $_GET['filter_valid'] === 'valid' ) {
-            $meta_query[] = [ 'key' => '_booked_pass_valid_till', 'value' => $today, 'compare' => '>=', 'type' => 'DATE' ];
-        } else {
-            $meta_query[] = [ 'key' => '_booked_pass_valid_till', 'value' => $today, 'compare' => '<',  'type' => 'DATE' ];
+    if ( ! empty( $_GET['filter_status'] ) ) {
+        $allowed = array_keys( enroute_booked_pass_status_options() );
+        if ( in_array( $_GET['filter_status'], $allowed, true ) ) {
+            $meta_query[] = [ 'key' => '_booked_pass_status', 'value' => sanitize_key( $_GET['filter_status'] ), 'compare' => '=' ];
         }
     }
 
     if ( $meta_query ) {
+        $meta_query['relation'] = 'AND';
         $query->set( 'meta_query', $meta_query );
     }
 });
@@ -353,11 +372,15 @@ add_action( 'pre_get_posts', function( WP_Query $query ) {
 // HELPER — get user's active booked pass
 // ══════════════════════════════════════════════════════════════════════════════
 
-function enroute_get_user_pass( int $user_id ): ?array {
+/**
+ * Get all booked passes for a user, newest first.
+ * Returns array of pass arrays. First element is the most recent.
+ */
+function enroute_get_user_passes( int $user_id ): array {
     $posts = get_posts([
         'post_type'   => 'enroute_booked_pass',
         'post_status' => 'publish',
-        'numberposts' => 1,
+        'numberposts' => -1,
         'meta_query'  => [
             [ 'key' => '_booked_pass_user_id', 'value' => $user_id, 'compare' => '=' ],
         ],
@@ -365,32 +388,45 @@ function enroute_get_user_pass( int $user_id ): ?array {
         'order'       => 'DESC',
     ]);
 
-    if ( empty( $posts ) ) return null;
+    $result = [];
+    foreach ( $posts as $p ) {
+        $valid_till  = get_post_meta( $p->ID, '_booked_pass_valid_till', true );
+        $credit      = get_post_meta( $p->ID, '_booked_pass_credit',     true );
+        $pass_id     = get_post_meta( $p->ID, '_booked_pass_type_id',    true );
+        $status      = get_post_meta( $p->ID, '_booked_pass_status',     true ) ?: 'new';
 
-    $p          = $posts[0];
-    $valid_till = get_post_meta( $p->ID, '_booked_pass_valid_till', true );
-    $credit     = get_post_meta( $p->ID, '_booked_pass_credit',     true );
-    $pass_id    = get_post_meta( $p->ID, '_booked_pass_type_id',    true );
+        $pass_type_meta = $pass_id ? get_post_meta( (int) $pass_id, '_userpass_credit_type', true ) : '';
+        $credit_type    = $pass_type_meta ?: ( $credit !== '' ? 'credits' : 'flat_rate' );
+        $uses_credits   = $credit_type === 'credits';
+        $credit_num     = (float) preg_replace( '/[^0-9.]/', '', $credit );
+        $has_credit     = ! $uses_credits || $credit === '' || $credit_num > 0;
+        $date_expired   = $valid_till && strtotime( $valid_till ) < time();
 
-    // Get credit type from the pass type definition
-    $pass_type_meta  = $pass_id ? get_post_meta( (int) $pass_id, '_userpass_credit_type', true ) : '';
-    $credit_type     = $pass_type_meta ?: ( $credit !== '' ? 'credits' : 'flat_rate' ); // fallback for old data
-    $uses_credits    = $credit_type === 'credits';
-    $credit_num      = (float) preg_replace( '/[^0-9.]/', '', $credit );
-    $has_credit      = ! $uses_credits || $credit === '' || $credit_num > 0;
+        $result[] = [
+            'id'           => $p->ID,
+            'name'         => get_the_title( $p->ID ),
+            'pass_type'    => $pass_id ? get_the_title( $pass_id ) : '',
+            'pass_type_id' => (int) $pass_id,
+            'valid_till'   => $valid_till,
+            'valid_till_f' => $valid_till ? date_i18n( 'd.m.Y', strtotime( $valid_till ) ) : '',
+            'credit'       => $credit,
+            'credit_type'  => $credit_type,
+            'uses_credits' => $uses_credits,
+            'has_credit'   => $has_credit,
+            'status'       => $status,
+            // is_valid: new or active status (not inactive), and date not expired
+            'is_valid'     => in_array( $status, [ 'new', 'active' ], true ) && ! $date_expired,
+            'date_expired' => $date_expired,
+            'edit_url'     => get_edit_post_link( $p->ID ),
+        ];
+    }
+    return $result;
+}
 
-    return [
-        'id'          => $p->ID,
-        'name'        => get_the_title( $p->ID ),
-        'pass_type'   => $pass_id ? get_the_title( $pass_id ) : '',
-        'pass_type_id'=> (int) $pass_id,
-        'valid_till'  => $valid_till,
-        'valid_till_f'=> $valid_till ? date_i18n( 'd.m.Y', strtotime( $valid_till ) ) : '',
-        'credit'      => $credit,
-        'credit_type' => $credit_type,
-        'uses_credits'=> $uses_credits,
-        'has_credit'  => $has_credit,
-        'is_valid'    => $valid_till && strtotime( $valid_till ) >= time(),
-        'edit_url'    => get_edit_post_link( $p->ID ),
-    ];
+/**
+ * Backwards-compatible: get the user's most recent pass (or null).
+ */
+function enroute_get_user_pass( int $user_id ): ?array {
+    $passes = enroute_get_user_passes( $user_id );
+    return $passes[0] ?? null;
 }

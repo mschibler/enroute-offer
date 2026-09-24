@@ -168,7 +168,8 @@ $lbl = 'style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0
 
     <!-- ── User Pass section ────────────────────────────────────────────────── -->
     <?php
-    $user_pass = enroute_get_user_pass( $user_id );
+    $user_passes = enroute_get_user_passes( $user_id );
+    $user_pass   = $user_passes[0] ?? null; // most recent for booking form logic
     $userpass_url = get_option( 'enroute_userpass_page_url', '' );
     ?>
     <div style="background:#f9f9f9; border:1px solid #e5e7eb; padding:1.5rem; margin-bottom:2rem;">
@@ -182,29 +183,45 @@ $lbl = 'style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0
             <?php endif; ?>
         </div>
 
-        <?php if ( $user_pass ) : ?>
-        <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+        <?php if ( empty( $user_passes ) ) : ?>
+        <p style="color:#6b7280; font-size:0.9rem; margin:0;"><?php esc_html_e( 'Noch kein User Pass.', 'enroute_offers' ); ?></p>
+        <?php else :
+            // Split into active/new and inactive/others
+            $passes_current  = array_filter( $user_passes, fn($p) => in_array( $p['status'], [ 'new', 'active' ], true ) );
+            $passes_inactive = array_filter( $user_passes, fn($p) => ! in_array( $p['status'], [ 'new', 'active' ], true ) );
+        ?>
+
+        <?php foreach ( $passes_current as $up ) : ?>
+        <table style="width:100%; border-collapse:collapse; font-size:0.9rem; margin-bottom:0.75rem;">
             <tr>
-                <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280; width:130px;"><?php esc_html_e( 'Pass', 'enroute_offers' ); ?></td>
-                <td style="padding:0.4rem 0; font-weight:600;"><?php echo esc_html( $user_pass['pass_type'] ?: $user_pass['name'] ); ?></td>
+                <td style="padding:0.3rem 1rem 0.3rem 0; color:#6b7280; width:130px;"><?php esc_html_e( 'Pass', 'enroute_offers' ); ?></td>
+                <td style="padding:0.3rem 0; font-weight:600;"><?php echo esc_html( $up['pass_type'] ?: $up['name'] ); ?></td>
             </tr>
             <tr>
-                <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'Gültig bis', 'enroute_offers' ); ?></td>
-                <td style="padding:0.4rem 0;">
-                    <?php echo esc_html( $user_pass['valid_till_f'] ?: '—' ); ?>
-                    <?php if ( $user_pass['valid_till'] ) : ?>
-                    <span style="margin-left:0.5rem; font-size:0.8rem; font-weight:600; color:<?php echo $user_pass['is_valid'] ? '#166534' : '#991b1b'; ?>;">
-                        (<?php echo $user_pass['is_valid'] ? esc_html__( 'Gültig', 'enroute_offers' ) : esc_html__( 'Abgelaufen', 'enroute_offers' ); ?>)
-                    </span>
+                <td style="padding:0.3rem 1rem 0.3rem 0; color:#6b7280;"><?php esc_html_e( 'Status', 'enroute_offers' ); ?></td>
+                <td style="padding:0.3rem 0;">
+                    <?php if ( $up['status'] === 'new' ) : ?>
+                    <span style="color:#92400e; font-weight:600;"><?php esc_html_e( 'Neu — wird bearbeitet', 'enroute_offers' ); ?></span>
+                    <?php else : ?>
+                    <span style="color:#166534; font-weight:600;"><?php esc_html_e( 'Aktiv', 'enroute_offers' ); ?></span>
                     <?php endif; ?>
                 </td>
             </tr>
-            <?php if ( $user_pass['uses_credits'] ) : ?>
             <tr>
-                <td style="padding:0.4rem 1rem 0.4rem 0; color:#6b7280;"><?php esc_html_e( 'Guthaben', 'enroute_offers' ); ?></td>
-                <td style="padding:0.4rem 0;">
-                    <?php if ( $user_pass['has_credit'] ) : ?>
-                        <?php echo esc_html( $user_pass['credit'] ); ?>
+                <td style="padding:0.3rem 1rem 0.3rem 0; color:#6b7280;"><?php esc_html_e( 'Gültig bis', 'enroute_offers' ); ?></td>
+                <td style="padding:0.3rem 0;">
+                    <?php echo esc_html( $up['valid_till_f'] ?: '—' ); ?>
+                    <?php if ( $up['date_expired'] ) : ?>
+                    <span style="margin-left:0.5rem; font-size:0.8rem; color:#991b1b;">(<?php esc_html_e( 'Abgelaufen', 'enroute_offers' ); ?>)</span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <?php if ( $up['uses_credits'] ) : ?>
+            <tr>
+                <td style="padding:0.3rem 1rem 0.3rem 0; color:#6b7280;"><?php esc_html_e( 'Guthaben', 'enroute_offers' ); ?></td>
+                <td style="padding:0.3rem 0;">
+                    <?php if ( $up['has_credit'] ) : ?>
+                        <?php echo esc_html( $up['credit'] ); ?>
                     <?php else : ?>
                         <span style="color:#991b1b; font-weight:600;"><?php esc_html_e( 'Kein Guthaben mehr', 'enroute_offers' ); ?></span>
                     <?php endif; ?>
@@ -212,8 +229,25 @@ $lbl = 'style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0
             </tr>
             <?php endif; ?>
         </table>
-        <?php else : ?>
-        <p style="color:#6b7280; font-size:0.9rem; margin:0;"><?php esc_html_e( 'Noch kein User Pass.', 'enroute_offers' ); ?></p>
+        <?php endforeach; ?>
+
+        <?php if ( $passes_inactive ) : ?>
+        <details style="margin-top:0.75rem;">
+            <summary style="font-size:0.85rem; color:#6b7280; cursor:pointer; margin-bottom:0.5rem;">
+                <?php printf( esc_html__( 'Frühere Pässe (%d)', 'enroute_offers' ), count( $passes_inactive ) ); ?>
+            </summary>
+            <?php foreach ( $passes_inactive as $up ) : ?>
+            <div style="padding:0.5rem 0; border-top:1px solid #e5e7eb; font-size:0.85rem; color:#6b7280;">
+                <span style="font-weight:600;"><?php echo esc_html( $up['pass_type'] ?: $up['name'] ); ?></span>
+                — <?php esc_html_e( 'Inaktiv', 'enroute_offers' ); ?>
+                <?php if ( $up['valid_till_f'] ) : ?>
+                &nbsp;|&nbsp; <?php echo esc_html( $up['valid_till_f'] ); ?>
+                <?php endif; ?>
+            </div>
+            <?php endforeach; ?>
+        </details>
+        <?php endif; ?>
+
         <?php endif; ?>
     </div>
 
@@ -225,7 +259,9 @@ $lbl = 'style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0
     <?php else : ?>
     <div style="display:flex; flex-direction:column; gap:0.75rem;">
         <?php foreach ( $bookings as $booking ) :
+            $offer_id    = get_post_meta( $booking->ID, '_booking_offer_id',    true );
             $offer_title = get_post_meta( $booking->ID, '_booking_offer_title', true );
+            $offer_url   = $offer_id ? get_permalink( (int) $offer_id ) : '';
             $date_1      = get_post_meta( $booking->ID, '_booking_date_1', true );
             $time_1      = get_post_meta( $booking->ID, '_booking_time_1', true );
             $date_2      = get_post_meta( $booking->ID, '_booking_date_2', true );
@@ -235,7 +271,11 @@ $lbl = 'style="display:block; font-size:0.8rem; font-weight:600; margin-bottom:0
         <div style="border:1px solid #e5e7eb; padding:1rem 1.25rem; background:#fff;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
                 <div>
+                    <?php if ( $offer_url ) : ?>
+                    <a href="<?php echo esc_url( $offer_url ); ?>" style="font-weight:700; font-size:0.95rem; color:#111; text-decoration:none;"><?php echo esc_html( $offer_title ); ?></a>
+                    <?php else : ?>
                     <p style="margin:0; font-weight:700; font-size:0.95rem;"><?php echo esc_html( $offer_title ); ?></p>
+                    <?php endif; ?>
                     <p style="margin:0.25rem 0 0; font-size:0.85rem; color:#6b7280;">
                         <?php esc_html_e( 'Wunschdatum:', 'enroute_offers' ); ?>
                         <?php echo esc_html( trim( "$date_1 $time_1" ) ); ?>

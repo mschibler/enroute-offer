@@ -415,7 +415,7 @@
                 time_2:              '',
                 persons:             '',
                 remarks:             '',
-                use_userpass:        false,
+                use_userpass:        true,
                 booking_pass_type_id: '',
             },
             loading:      false,

@@ -53,15 +53,17 @@ function enroute_handle_userpass_booking(): void {
         wp_send_json_error( [ 'message' => __( 'Fehler beim Speichern.', 'enroute_offers' ) ] );
     }
 
-    update_post_meta( $booked_id, '_booked_pass_type_id',  $pass_type_id );
-    update_post_meta( $booked_id, '_booked_pass_user_id',  $user_id );
+    update_post_meta( $booked_id, '_booked_pass_type_id', $pass_type_id );
+    update_post_meta( $booked_id, '_booked_pass_user_id', $user_id );
+    update_post_meta( $booked_id, '_booked_pass_status',  'new' );
 
-    // If user already had a previous pass, link them (so admin sees them grouped)
+    // If user already had a previous pass, link them and set old pass to inactive
     if ( $user_id ) {
         $prev = enroute_get_user_pass( $user_id );
         if ( $prev ) {
             update_post_meta( $booked_id, '_booked_pass_previous_id', $prev['id'] );
             update_post_meta( $prev['id'], '_booked_pass_renewed_by', $booked_id );
+            update_post_meta( $prev['id'], '_booked_pass_status',     'inactive' );
         }
     }
     update_post_meta( $booked_id, '_booked_pass_email',    $email );
