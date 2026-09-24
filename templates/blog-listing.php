@@ -18,10 +18,8 @@ $query_args = [
     'posts_per_page' => -1,
     'orderby'        => 'date',
     'order'          => 'DESC',
-    // Only import posts (exclude default WP sample post etc.) by requiring _old_cms_id
-    'meta_query'     => [
-        [ 'key' => '_old_cms_id', 'compare' => 'EXISTS' ],
-    ],
+    // Exclude uncategorised default WP posts by requiring at least one category
+    'cat'            => implode( ',', array_map( fn($t) => $t->term_id, get_terms( [ 'taxonomy' => 'category', 'hide_empty' => true, 'fields' => 'all' ] ) ) ) ?: '-1',
 ];
 if ( function_exists( 'pll_current_language' ) ) {
     $query_args['lang'] = $current_lang;
@@ -29,14 +27,16 @@ if ( function_exists( 'pll_current_language' ) ) {
 
 $all_posts = get_posts( $query_args );
 
-// Build category list from actual posts
-$cat_ids_used = [];
-foreach ( $all_posts as $p ) {
-    $cats = wp_get_post_categories( $p->ID );
-    foreach ( $cats as $cid ) $cat_ids_used[] = $cid;
+// Get all categories that have at least one published post
+$categories = get_categories( [ 'hide_empty' => true, 'orderby' => 'name', 'order' => 'ASC' ] );
+
+// Build category image map: cat_id => image_url (from term meta or fallback)
+$cat_images = [];
+foreach ( $categories as $cat ) {
+    $img_id  = get_term_meta( $cat->term_id, 'category_image_id', true );
+    $img_url = $img_id ? wp_get_attachment_image_url( (int) $img_id, 'large' ) : '';
+    $cat_images[ $cat->term_id ] = $img_url ?: '';
 }
-$cat_ids_used = array_unique( $cat_ids_used );
-$categories   = $cat_ids_used ? get_categories( [ 'include' => $cat_ids_used, 'orderby' => 'name', 'hide_empty' => true ] ) : [];
 
 // Build data for Alpine
 $uid       = 'ebl_' . uniqid();
@@ -46,17 +46,45 @@ foreach ( $all_posts as $p ) {
     $cat_ids  = array_map( fn($c) => (int) $c->term_id, $cats );
     $cat_name = $cats ? $cats[0]->name : '';
 
+    // a) Post's own featured image
     $thumb_url = get_the_post_thumbnail_url( $p->ID, 'large' ) ?: '';
 
+    // b) Guide author's photo if no post image
+    if ( ! $thumb_url ) {
+        $guide_id = get_post_meta( $p->ID, '_blog_guide_author_id', true );
+        if ( $guide_id ) {
+            $guide_photo_id = get_post_meta( (int) $guide_id, '_guide_photo_id', true );
+            if ( $guide_photo_id ) {
+                $thumb_url = wp_get_attachment_image_url( (int) $guide_photo_id, 'large' ) ?: '';
+            }
+        }
+    }
+
+    // c) Category default image
+    if ( ! $thumb_url && $cat_ids ) {
+        foreach ( $cat_ids as $cid ) {
+            if ( ! empty( $cat_images[ $cid ] ) ) {
+                $thumb_url = $cat_images[ $cid ];
+                break;
+            }
+        }
+    }
+
+    // Determine image type for display style
+    $has_post_image  = (bool) get_the_post_thumbnail_url( $p->ID, 'large' );
+    $guide_id_check  = get_post_meta( $p->ID, '_blog_guide_author_id', true );
+    $is_guide_photo  = ! $has_post_image && $guide_id_check && get_post_meta( (int) $guide_id_check, '_guide_photo_id', true );
+
     $posts_data[] = [
-        'id'        => $p->ID,
-        'title'     => html_entity_decode( get_the_title( $p->ID ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
-        'excerpt'   => html_entity_decode( wp_trim_words( $p->post_excerpt ?: wp_strip_all_tags( $p->post_content ), 20, '…' ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
-        'permalink' => get_permalink( $p->ID ),
-        'image'     => $thumb_url,
-        'cat_ids'   => $cat_ids,
-        'cat_name'  => $cat_name,
-        'date'      => get_the_date( 'd.m.Y', $p->ID ),
+        'id'           => $p->ID,
+        'title'        => html_entity_decode( get_the_title( $p->ID ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
+        'excerpt'      => html_entity_decode( wp_trim_words( $p->post_excerpt ?: wp_strip_all_tags( $p->post_content ), 20, '…' ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
+        'permalink'    => get_permalink( $p->ID ),
+        'image'        => $thumb_url,
+        'is_guide_photo' => (bool) $is_guide_photo,
+        'cat_ids'      => $cat_ids,
+        'cat_name'     => $cat_name,
+        'date'         => get_the_date( 'd.m.Y', $p->ID ),
     ];
 }
 ?>
@@ -98,28 +126,30 @@ foreach ( $all_posts as $p ) {
         <template x-for="post in visible" :key="post.id">
             <a
                 :href="post.permalink"
-                style="display:block; text-decoration:none; color:inherit; overflow:hidden; background:#fff;"
+                style="display:block; text-decoration:none; color:inherit; background:#fff; margin:0; padding:0; box-sizing:border-box; overflow:hidden;"
             >
                 <!-- Image -->
-                <div style="width:100%; aspect-ratio:16/10; overflow:hidden; background:#e5e7eb;">
-                    <img
-                        x-show="post.image"
-                        :src="post.image"
-                        :alt="post.title"
-                        style="width:100%; height:100%; object-fit:cover; display:block;"
-                    >
-                    <div
-                        x-show="!post.image"
-                        style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#9ca3af;"
-                    >
-                        <svg style="width:2rem;height:2rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
+                <div style="width:100%; padding-top:56.25%; overflow:hidden; background:#e5e7eb; position:relative; display:block; margin:0; padding-left:0; padding-right:0; padding-bottom:0;">
+                    <template x-if="post.image">
+                        <img
+                            :src="post.image"
+                            :alt="post.title"
+                            :style="post.is_guide_photo
+                                ? 'position:absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; object-position:center; display:block; margin:0; padding:0; border:none; vertical-align:top;'
+                                : 'position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; margin:0; padding:0; border:none; vertical-align:top;'"
+                        >
+                    </template>
+                    <template x-if="!post.image">
+                        <div style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#9ca3af;">
+                            <svg style="width:2rem;height:2rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </template>
                 </div>
 
                 <!-- Text -->
-                <div style="padding:0.875rem 1rem 1rem;">
+                <div style="padding:0.875rem 1rem 1rem; line-height:1.4;">
                     <p
                         x-show="post.cat_name"
                         x-text="post.cat_name"
