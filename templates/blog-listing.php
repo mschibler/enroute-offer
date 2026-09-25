@@ -47,15 +47,42 @@ foreach ( $all_posts as $p ) {
     $cat_name = $cats ? $cats[0]->name : '';
 
     // a) Post's own featured image
-    $thumb_url = get_the_post_thumbnail_url( $p->ID, 'large' ) ?: '';
+    $thumb_url      = get_the_post_thumbnail_url( $p->ID, 'large' ) ?: '';
+    $is_guide_photo = false;
 
-    // b) Guide author's photo if no post image
+    // b) Guide author's photo if no post image — generate square crop on demand
     if ( ! $thumb_url ) {
         $guide_id = get_post_meta( $p->ID, '_blog_guide_author_id', true );
         if ( $guide_id ) {
             $guide_photo_id = get_post_meta( (int) $guide_id, '_guide_photo_id', true );
             if ( $guide_photo_id ) {
-                $thumb_url = wp_get_attachment_image_url( (int) $guide_photo_id, 'large' ) ?: '';
+                require_once ABSPATH . 'wp-admin/includes/image.php';
+
+                // Check if square crop already exists in metadata
+                $meta    = wp_get_attachment_metadata( (int) $guide_photo_id );
+                $sq_url  = '';
+
+                if ( ! empty( $meta['sizes']['enroute-guide-square'] ) ) {
+                    // Already generated — build URL
+                    $upload_dir = wp_upload_dir();
+                    $base_dir   = dirname( get_attached_file( (int) $guide_photo_id ) );
+                    $sq_url     = str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $base_dir . '/' . $meta['sizes']['enroute-guide-square']['file'] );
+                } else {
+                    // Generate it now
+                    $img_path = get_attached_file( (int) $guide_photo_id );
+                    if ( $img_path && file_exists( $img_path ) ) {
+                        $resized = image_make_intermediate_size( $img_path, 600, 600, [ 'center', 'top' ] );
+                        if ( $resized ) {
+                            $meta['sizes']['enroute-guide-square'] = $resized;
+                            wp_update_attachment_metadata( (int) $guide_photo_id, $meta );
+                            $upload_dir = wp_upload_dir();
+                            $sq_url     = str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], dirname( $img_path ) . '/' . $resized['file'] );
+                        }
+                    }
+                }
+
+                $thumb_url      = $sq_url ?: wp_get_attachment_image_url( (int) $guide_photo_id, 'large' ) ?: '';
+                $is_guide_photo = ! empty( $sq_url ); // only treat as guide photo if we have a square
             }
         }
     }
@@ -70,10 +97,7 @@ foreach ( $all_posts as $p ) {
         }
     }
 
-    // Determine image type for display style
-    $has_post_image  = (bool) get_the_post_thumbnail_url( $p->ID, 'large' );
-    $guide_id_check  = get_post_meta( $p->ID, '_blog_guide_author_id', true );
-    $is_guide_photo  = ! $has_post_image && $guide_id_check && get_post_meta( (int) $guide_id_check, '_guide_photo_id', true );
+    // is_guide_photo is set inside the guide photo block above when square crop succeeds
 
     $posts_data[] = [
         'id'           => $p->ID,
@@ -128,15 +152,20 @@ foreach ( $all_posts as $p ) {
                 :href="post.permalink"
                 style="display:block; text-decoration:none; color:inherit; background:#fff; margin:0; padding:0; box-sizing:border-box; overflow:hidden;"
             >
-                <!-- Image -->
-                <div style="width:100%; padding-top:56.25%; overflow:hidden; background:#e5e7eb; position:relative; display:block; margin:0; padding-left:0; padding-right:0; padding-bottom:0;">
-                    <template x-if="post.image">
+                <!-- Image container: all 16/9; guide photos are square so contain shows grey bars -->
+                <div style="width:100%; padding-top:56.25%; overflow:hidden; background:#e5e7eb; position:relative;">
+                    <template x-if="post.image && !post.is_guide_photo">
                         <img
                             :src="post.image"
                             :alt="post.title"
-                            :style="post.is_guide_photo
-                                ? 'position:absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; object-position:center; display:block; margin:0; padding:0; border:none; vertical-align:top;'
-                                : 'position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; margin:0; padding:0; border:none; vertical-align:top;'"
+                            style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; margin:0; padding:0; border:none;"
+                        >
+                    </template>
+                    <template x-if="post.image && post.is_guide_photo">
+                        <img
+                            :src="post.image"
+                            :alt="post.title"
+                            style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; object-position:center; display:block; margin:0; padding:0; border:none;"
                         >
                     </template>
                     <template x-if="!post.image">

@@ -1,6 +1,11 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// Register square crop for guide portrait photos
+add_action( 'after_setup_theme', function() {
+    add_image_size( 'enroute-guide-square', 600, 600, [ 'center', 'top' ] ); // crop from center-top to show face
+} );
+
 function enroute_register_post_types() {
 
     // ── OFFER ───────────────────────────────────────────────────────────────
@@ -238,3 +243,34 @@ function enroute_save_cat_image( int $term_id ): void {
         delete_term_meta( $term_id, 'category_image_id' );
     }
 }
+
+// One-time migration: delete old center-crop guide squares so they regenerate with center-top
+add_action( 'init', function() {
+    if ( get_option( 'enroute_guide_square_regenerated_v3' ) ) return;
+    $guides = get_posts([
+        'post_type'   => 'guide',
+        'post_status' => 'any',
+        'numberposts' => -1,
+        'fields'      => 'ids',
+        'meta_query'  => [[ 'key' => '_guide_photo_id', 'compare' => 'EXISTS' ]],
+    ]);
+    foreach ( $guides as $guide_id ) {
+        $photo_id = (int) get_post_meta( $guide_id, '_guide_photo_id', true );
+        if ( ! $photo_id ) continue;
+        $meta     = wp_get_attachment_metadata( $photo_id );
+        $img_path = get_attached_file( $photo_id );
+        if ( isset( $meta['sizes']['enroute-guide-square'] ) && $img_path ) {
+            // Delete the old crop file from disk
+            $old_file = path_join( dirname( $img_path ), $meta['sizes']['enroute-guide-square']['file'] );
+            if ( file_exists( $old_file ) ) {
+                @unlink( $old_file );
+            }
+            // Remove from metadata so listing regenerates it
+            unset( $meta['sizes']['enroute-guide-square'] );
+            wp_update_attachment_metadata( $photo_id, $meta );
+        }
+    }
+    update_option( 'enroute_guide_square_regenerated_v3', true );
+    // Also clear v2 flag so this supersedes it
+    delete_option( 'enroute_guide_square_regenerated_v2' );
+} );
