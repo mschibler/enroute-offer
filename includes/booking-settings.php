@@ -35,6 +35,9 @@ function enroute_offers_settings_page() {
         if ( isset( $_POST['enroute_userpass_page_url'] ) ) {
             update_option( 'enroute_userpass_page_url', esc_url_raw( $_POST['enroute_userpass_page_url'] ) );
         }
+        if ( isset( $_POST['enroute_guides_page_url'] ) ) {
+            update_option( 'enroute_guides_page_url', esc_url_raw( $_POST['enroute_guides_page_url'] ) );
+        }
 
         // Save featured colours
         for ( $n = 1; $n <= 5; $n++ ) {
@@ -126,6 +129,15 @@ function enroute_offers_settings_page() {
                                value="<?php echo esc_attr( get_option( 'enroute_userpass_page_url', '' ) ); ?>"
                                class="regular-text" placeholder="https://...">
                         <p class="description"><?php esc_html_e( 'URL der Seite mit dem Shortcode [enroute_userpass_booking].', 'enroute_offers' ); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="enroute_guides_page_url"><?php esc_html_e( 'Guides Seiten-URL', 'enroute_offers' ); ?></label></th>
+                    <td>
+                        <input type="url" id="enroute_guides_page_url" name="enroute_guides_page_url"
+                               value="<?php echo esc_attr( get_option( 'enroute_guides_page_url', '' ) ); ?>"
+                               class="regular-text" placeholder="https://...">
+                        <p class="description"><?php esc_html_e( 'URL der Seite mit dem Shortcode [enroute_guides_listing]. Wird für den Guide-Block auf der Startseite verwendet.', 'enroute_offers' ); ?></p>
                     </td>
                 </tr>
             </table>
