@@ -67,6 +67,15 @@ function enroute_offers_settings_page() {
             'enroute_booking_admin_body_fr',
             'enroute_booking_admin_subject_it',
             'enroute_booking_admin_body_it',
+            // Userpass emails
+            'enroute_userpass_customer_subject_de',
+            'enroute_userpass_customer_body_de',
+            'enroute_userpass_customer_subject_fr',
+            'enroute_userpass_customer_body_fr',
+            'enroute_userpass_customer_subject_it',
+            'enroute_userpass_customer_body_it',
+            'enroute_userpass_admin_subject',
+            'enroute_userpass_admin_body',
         ];
         foreach ( $fields as $f ) {
             if ( isset( $_POST[ $f ] ) ) {
@@ -79,6 +88,43 @@ function enroute_offers_settings_page() {
     // Default email bodies
     $defaults = [
         'enroute_booking_admin_email'           => get_option( 'admin_email' ),
+        // Userpass email defaults
+        'enroute_userpass_admin_subject'        => 'Neue User Pass Buchung: {pass}',
+        'enroute_userpass_admin_body'           => 'Neue User Pass Buchung eingegangen.' . "
+
+" . 'Pass: {pass}' . "
+" . 'Name: {vorname} {nachname}' . "
+" . 'E-Mail: {email}' . "
+" . 'Telefon: {telefon}' . "
+" . 'Institution: {institution}' . "
+" . 'Adresse: {strasse}, {plz} {ort}' . "
+" . 'Bemerkungen: {bemerkungen}' . "
+
+" . 'Im Backend ansehen: {admin_url}',
+        'enroute_userpass_customer_subject_de'  => 'Ihre User Pass Anfrage: {pass}',
+        'enroute_userpass_customer_body_de'     => 'Guten Tag {vorname} {nachname},' . "
+
+" . 'Vielen Dank für Ihre Anfrage für den User Pass "{pass}".' . "
+" . 'Wir werden Ihre Anfrage prüfen und uns in Kürze bei Ihnen melden.' . "
+
+" . 'Mit freundlichen Grüssen' . "
+" . 'Ihr Enroute-Team',
+        'enroute_userpass_customer_subject_fr'  => 'Votre demande de User Pass: {pass}',
+        'enroute_userpass_customer_body_fr'     => 'Bonjour {vorname} {nachname},' . "
+
+" . 'Merci pour votre demande de User Pass "{pass}".' . "
+" . 'Nous examinerons votre demande et vous contacterons prochainement.' . "
+
+" . 'Cordialement' . "
+" . "L'équipe Enroute",
+        'enroute_userpass_customer_subject_it'  => 'La sua richiesta di User Pass: {pass}',
+        'enroute_userpass_customer_body_it'     => 'Buongiorno {vorname} {nachname},' . "
+
+" . 'Grazie per la sua richiesta di User Pass "{pass}".' . "
+" . 'Esamineremo la sua richiesta e la contatteremo a breve.' . "
+
+" . 'Cordiali saluti' . "
+" . 'Il team Enroute',
         'enroute_booking_customer_subject_de'   => __( 'Bestätigung Ihrer Buchungsanfrage', 'enroute_offers' ),
         'enroute_booking_customer_body_de'      => "Guten Tag {vorname} {nachname},\n\nVielen Dank für Ihre Buchungsanfrage für das Angebot \"{angebot}\".\nWir werden uns in Kürze bei Ihnen melden.\n\nMit freundlichen Grüssen\nIhr Enroute-Team",
         'enroute_booking_customer_subject_fr'   => __( 'Confirmation de votre demande de réservation', 'enroute_offers' ),
@@ -194,6 +240,42 @@ function enroute_offers_settings_page() {
                 <tr>
                     <th><label><?php esc_html_e( 'Text', 'enroute_offers' ); ?></label></th>
                     <td><textarea name="enroute_booking_admin_body_<?php echo $lang; ?>" rows="7" class="large-text"><?php echo esc_textarea( $vals[ "enroute_booking_admin_body_$lang" ] ); ?></textarea></td>
+                </tr>
+            </table>
+            <?php endforeach; ?>
+
+            <h2><?php esc_html_e( 'User Pass E-Mails', 'enroute_offers' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Platzhalter: {pass}, {vorname}, {nachname}, {email}, {telefon}, {institution}, {strasse}, {plz}, {ort}, {bemerkungen}, {admin_url}', 'enroute_offers' ); ?></p>
+
+            <h3><?php esc_html_e( 'Admin-Benachrichtigung (immer auf Deutsch)', 'enroute_offers' ); ?></h3>
+            <table class="form-table">
+                <tr>
+                    <th><label><?php esc_html_e( 'Betreff (Admin)', 'enroute_offers' ); ?></label></th>
+                    <td><input type="text" name="enroute_userpass_admin_subject"
+                        value="<?php echo esc_attr( get_option( 'enroute_userpass_admin_subject', '' ) ); ?>"
+                        class="large-text"></td>
+                </tr>
+                <tr>
+                    <th><label><?php esc_html_e( 'Text (Admin)', 'enroute_offers' ); ?></label></th>
+                    <td><textarea name="enroute_userpass_admin_body"
+                        rows="6" class="large-text"><?php echo esc_textarea( get_option( 'enroute_userpass_admin_body', '' ) ); ?></textarea></td>
+                </tr>
+            </table>
+
+            <h3><?php esc_html_e( 'Kunden-Bestätigung', 'enroute_offers' ); ?></h3>
+            <?php foreach ( [ 'de' => 'Deutsch', 'fr' => 'Français', 'it' => 'Italiano' ] as $lang => $lang_label ) : ?>
+            <h4><?php echo esc_html( $lang_label ); ?></h4>
+            <table class="form-table">
+                <tr>
+                    <th><label><?php esc_html_e( 'Betreff (Kunde)', 'enroute_offers' ); ?></label></th>
+                    <td><input type="text" name="enroute_userpass_customer_subject_<?php echo $lang; ?>"
+                        value="<?php echo esc_attr( get_option( 'enroute_userpass_customer_subject_' . $lang, '' ) ); ?>"
+                        class="large-text"></td>
+                </tr>
+                <tr>
+                    <th><label><?php esc_html_e( 'Text (Kunde)', 'enroute_offers' ); ?></label></th>
+                    <td><textarea name="enroute_userpass_customer_body_<?php echo $lang; ?>"
+                        rows="6" class="large-text"><?php echo esc_textarea( get_option( 'enroute_userpass_customer_body_' . $lang, '' ) ); ?></textarea></td>
                 </tr>
             </table>
             <?php endforeach; ?>

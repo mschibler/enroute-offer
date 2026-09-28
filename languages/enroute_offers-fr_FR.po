@@ -384,3 +384,30 @@ msgstr "même choix que la dernière fois"
 
 msgid "kein Guthaben mehr"
 msgstr "plus de crédit"
+
+msgid "Ein Fehler ist aufgetreten."
+msgstr "Une erreur est survenue."
+
+msgid "Verbindungsfehler. Bitte versuchen Sie es erneut."
+msgstr "Erreur de connexion. Veuillez réessayer."
+
+msgid "Bitte einen User Pass wählen."
+msgstr "Veuillez sélectionner un User Pass."
+
+msgid "Bitte Vor- und Nachname eingeben."
+msgstr "Veuillez saisir prénom et nom."
+
+msgid "Bitte geben Sie Vor- und Nachnamen ein."
+msgstr "Veuillez saisir votre prénom et votre nom."
+
+msgid "Bitte E-Mail eingeben."
+msgstr "Veuillez saisir votre e-mail."
+
+msgid "Bitte geben Sie eine E-Mail-Adresse ein."
+msgstr "Veuillez saisir une adresse e-mail."
+
+msgid "Bitte wählen Sie ein Wunschdatum."
+msgstr "Veuillez sélectionner une date souhaitée."
+
+msgid "Fehler."
+msgstr "Erreur."

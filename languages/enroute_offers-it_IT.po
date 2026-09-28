@@ -384,3 +384,30 @@ msgstr "stessa scelta dell'ultima volta"
 
 msgid "kein Guthaben mehr"
 msgstr "nessun credito rimanente"
+
+msgid "Ein Fehler ist aufgetreten."
+msgstr "Si è verificato un errore."
+
+msgid "Verbindungsfehler. Bitte versuchen Sie es erneut."
+msgstr "Errore di connessione. Riprovare."
+
+msgid "Bitte einen User Pass wählen."
+msgstr "Selezionare un User Pass."
+
+msgid "Bitte Vor- und Nachname eingeben."
+msgstr "Inserire nome e cognome."
+
+msgid "Bitte geben Sie Vor- und Nachnamen ein."
+msgstr "Inserire il nome e il cognome."
+
+msgid "Bitte E-Mail eingeben."
+msgstr "Inserire l'e-mail."
+
+msgid "Bitte geben Sie eine E-Mail-Adresse ein."
+msgstr "Inserire un indirizzo e-mail."
+
+msgid "Bitte wählen Sie ein Wunschdatum."
+msgstr "Selezionare una data desiderata."
+
+msgid "Fehler."
+msgstr "Errore."

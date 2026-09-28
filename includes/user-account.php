@@ -221,6 +221,18 @@ add_action( 'wp_enqueue_scripts', function() {
         'profileUrl'   => get_option( 'enroute_profile_page_url', '' ),
         'userpassUrl'  => get_option( 'enroute_userpass_page_url', '' ),
         'bookingNonce' => wp_create_nonce( 'enroute_booking_nonce' ),
+        // Translatable JS strings — translated via Polylang on server, passed to JS
+        'i18n'         => [
+            'errorGeneric'        => __( 'Ein Fehler ist aufgetreten.', 'enroute_offers' ),
+            'errorConnection'     => __( 'Verbindungsfehler. Bitte versuchen Sie es erneut.', 'enroute_offers' ),
+            'errorSelectPass'     => __( 'Bitte einen User Pass wählen.', 'enroute_offers' ),
+            'errorName'           => __( 'Bitte Vor- und Nachname eingeben.', 'enroute_offers' ),
+            'errorNameFull'       => __( 'Bitte geben Sie Vor- und Nachnamen ein.', 'enroute_offers' ),
+            'errorEmail'          => __( 'Bitte E-Mail eingeben.', 'enroute_offers' ),
+            'errorEmailFull'      => __( 'Bitte geben Sie eine E-Mail-Adresse ein.', 'enroute_offers' ),
+            'errorDate'           => __( 'Bitte wählen Sie ein Wunschdatum.', 'enroute_offers' ),
+            'errorShort'          => __( 'Fehler.', 'enroute_offers' ),
+        ],
     ] );
     // Also expose userpass URL globally for booking form
     wp_add_inline_script( 'enroute-offers-front',

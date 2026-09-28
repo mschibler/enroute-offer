@@ -246,9 +246,9 @@
 
             submit() {
                 this.errorMsg = '';
-                if ( ! this.form.pass_type_id ) { this.errorMsg = 'Bitte einen User Pass wählen.'; return; }
-                if ( ! this.form.first_name || ! this.form.last_name ) { this.errorMsg = 'Bitte Vor- und Nachname eingeben.'; return; }
-                if ( ! this.form.email ) { this.errorMsg = 'Bitte E-Mail eingeben.'; return; }
+                if ( ! this.form.pass_type_id ) { this.errorMsg = t('errorSelectPass','Bitte einen User Pass wählen.'); return; }
+                if ( ! this.form.first_name || ! this.form.last_name ) { this.errorMsg = t('errorName','Bitte Vor- und Nachname eingeben.'); return; }
+                if ( ! this.form.email ) { this.errorMsg = t('errorEmail','Bitte E-Mail eingeben.'); return; }
 
                 this.loading = true;
                 const data   = new FormData();
@@ -264,10 +264,10 @@
                             this.submitted  = true;
                             this.successMsg = res.data.message;
                         } else {
-                            this.errorMsg = res.data.message || 'Fehler.';
+                            this.errorMsg = res.data.message || t('errorShort','Fehler.');
                         }
                     })
-                    .catch(() => { this.loading = false; this.errorMsg = 'Verbindungsfehler.'; });
+                    .catch(() => { this.loading = false; this.errorMsg = t('errorConnection','Verbindungsfehler. Bitte versuchen Sie es erneut.'); });
             },
         }) );
     }
@@ -303,10 +303,10 @@
                             }
                             setTimeout(() => this.message = '', 4000);
                         } else {
-                            this.errorMsg = res.data.message || 'Fehler.';
+                            this.errorMsg = res.data.message || t('errorShort','Fehler.');
                         }
                     })
-                    .catch(() => { this.saving = false; this.errorMsg = 'Verbindungsfehler.'; });
+                    .catch(() => { this.saving = false; this.errorMsg = t('errorConnection','Verbindungsfehler. Bitte versuchen Sie es erneut.'); });
             },
 
             logout() {
@@ -387,10 +387,10 @@
                                     window.dispatchEvent(new CustomEvent('enroute:loggedin', { detail: res.data.profile }));
                                 });
                         } else {
-                            this.errorMsg = res.data.message || 'Fehler.';
+                            this.errorMsg = res.data.message || t('errorShort','Fehler.');
                         }
                     })
-                    .catch(() => { this.loading = false; this.errorMsg = 'Verbindungsfehler.'; });
+                    .catch(() => { this.loading = false; this.errorMsg = t('errorConnection','Verbindungsfehler. Bitte versuchen Sie es erneut.'); });
             },
         }) );
     }
@@ -495,15 +495,15 @@
 
                 // Client-side validation
                 if ( ! this.form.first_name || ! this.form.last_name ) {
-                    this.errorMsg = 'Bitte geben Sie Vor- und Nachnamen ein.';
+                    this.errorMsg = t('errorNameFull','Bitte geben Sie Vor- und Nachnamen ein.');
                     return;
                 }
                 if ( ! this.form.email ) {
-                    this.errorMsg = 'Bitte geben Sie eine E-Mail-Adresse ein.';
+                    this.errorMsg = t('errorEmailFull','Bitte geben Sie eine E-Mail-Adresse ein.');
                     return;
                 }
                 if ( ! this.form.date_1 ) {
-                    this.errorMsg = 'Bitte wählen Sie ein Wunschdatum.';
+                    this.errorMsg = t('errorDate','Bitte wählen Sie ein Wunschdatum.');
                     return;
                 }
 
@@ -524,12 +524,12 @@
                             this.successMsg = res.data.message || '';
                             if ( typeof callback === 'function' ) callback();
                         } else {
-                            this.errorMsg = res.data.message || 'Ein Fehler ist aufgetreten.';
+                            this.errorMsg = res.data.message || t('errorGeneric','Ein Fehler ist aufgetreten.');
                         }
                     } )
                     .catch( () => {
                         this.loading  = false;
-                        this.errorMsg = 'Verbindungsfehler. Bitte versuchen Sie es erneut.';
+                        this.errorMsg = t('errorConnection','Verbindungsfehler. Bitte versuchen Sie es erneut.');
                     } );
             }
         }) );

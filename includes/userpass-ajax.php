@@ -96,23 +96,85 @@ function enroute_handle_userpass_booking(): void {
         }
     }
 
-    // Send admin notification
-    $admin_email   = get_option( 'enroute_booking_admin_email', get_option( 'admin_email' ) );
-    $admin_url     = admin_url( 'post.php?post=' . $booked_id . '&action=edit' );
-    $subject       = sprintf( __( 'Neue User Pass Buchung: %s', 'enroute_offers' ), $pass_type->post_title );
-    $body          = sprintf(
-        "Neue User Pass Buchung eingegangen.\n\nPass: %s\nName: %s %s\nE-Mail: %s\nTelefon: %s\nInstitution: %s\nAdresse: %s, %s %s\nBemerkungen: %s\n\nIm Backend ansehen: %s",
-        $pass_type->post_title, $first_name, $last_name, $email, $phone,
-        $institution, $street, $zip, $place, $remarks, $admin_url
-    );
-    wp_mail( $admin_email, $subject, $body, [ 'Content-Type: text/plain; charset=UTF-8' ] );
+    // Detect language from pass type meta
+    $pass_lang = get_post_meta( $pass_type_id, '_userpass_language', true ) ?: 'de';
 
-    // Send confirmation to customer
-    $cust_subject = sprintf( __( 'Ihre User Pass Anfrage: %s', 'enroute_offers' ), $pass_type->post_title );
-    $cust_body    = sprintf(
-        "Guten Tag %s %s,\n\nVielen Dank für Ihre Buchungsanfrage für den User Pass \"%s\".\nWir werden uns in Kürze bei Ihnen melden.\n\nMit freundlichen Grüssen\nIhr Enroute-Team",
-        $first_name, $last_name, $pass_type->post_title
-    );
+    // Placeholder replacements
+    $placeholders = [
+        '{pass}'        => $pass_type->post_title,
+        '{vorname}'     => $first_name,
+        '{nachname}'    => $last_name,
+        '{email}'       => $email,
+        '{telefon}'     => $phone,
+        '{institution}' => $institution,
+        '{strasse}'     => $street,
+        '{plz}'         => $zip,
+        '{ort}'         => $place,
+        '{bemerkungen}' => $remarks,
+    ];
+
+    // Send admin notification using settings template
+    $admin_email = get_option( 'enroute_booking_admin_email', get_option( 'admin_email' ) );
+    $admin_url   = admin_url( 'post.php?post=' . $booked_id . '&action=edit' );
+    $placeholders['{admin_url}'] = $admin_url;
+
+    $default_admin_subject = 'Neue User Pass Buchung: {pass}';
+    $default_admin_body    = 'Neue User Pass Buchung eingegangen.' . "
+
+" . 'Pass: {pass}' . "
+" . 'Name: {vorname} {nachname}' . "
+" . 'E-Mail: {email}' . "
+" . 'Telefon: {telefon}' . "
+" . 'Institution: {institution}' . "
+" . 'Adresse: {strasse}, {plz} {ort}' . "
+" . 'Bemerkungen: {bemerkungen}' . "
+
+" . 'Im Backend ansehen: {admin_url}';
+
+    $admin_subject = get_option( 'enroute_userpass_admin_subject', $default_admin_subject );
+    $admin_body    = get_option( 'enroute_userpass_admin_body',    $default_admin_body );
+    $admin_subject = str_replace( array_keys( $placeholders ), array_values( $placeholders ), $admin_subject );
+    $admin_body    = str_replace( array_keys( $placeholders ), array_values( $placeholders ), $admin_body );
+
+    wp_mail( $admin_email, $admin_subject, $admin_body, [ 'Content-Type: text/plain; charset=UTF-8' ] );
+
+    // Send confirmation to customer using language-specific template from settings
+    $default_subjects = [
+        'de' => 'Ihre User Pass Anfrage: {pass}',
+        'fr' => 'Votre demande de User Pass: {pass}',
+        'it' => 'La sua richiesta di User Pass: {pass}',
+    ];
+    $default_bodies = [
+        'de' => 'Guten Tag {vorname} {nachname},' . "
+
+" . 'Vielen Dank für Ihre Anfrage für den User Pass "{pass}".' . "
+" . 'Wir werden Ihre Anfrage prüfen und uns in Kürze bei Ihnen melden.' . "
+
+" . 'Mit freundlichen Grüssen' . "
+" . 'Ihr Enroute-Team',
+        'fr' => 'Bonjour {vorname} {nachname},' . "
+
+" . 'Merci pour votre demande de User Pass "{pass}".' . "
+" . 'Nous examinerons votre demande et vous contacterons prochainement.' . "
+
+" . 'Cordialement' . "
+" . "L'équipe Enroute",
+        'it' => 'Buongiorno {vorname} {nachname},' . "
+
+" . 'Grazie per la sua richiesta di User Pass "{pass}".' . "
+" . 'Esamineremo la sua richiesta e la contatteremo a breve.' . "
+
+" . 'Cordiali saluti' . "
+" . 'Il team Enroute',
+    ];
+
+    $cust_subject = get_option( 'enroute_userpass_customer_subject_' . $pass_lang, $default_subjects[ $pass_lang ] ?? $default_subjects['de'] );
+    $cust_body    = get_option( 'enroute_userpass_customer_body_'    . $pass_lang, $default_bodies[  $pass_lang ] ?? $default_bodies['de'] );
+
+    // Replace placeholders
+    $cust_subject = str_replace( array_keys( $placeholders ), array_values( $placeholders ), $cust_subject );
+    $cust_body    = str_replace( array_keys( $placeholders ), array_values( $placeholders ), $cust_body );
+
     wp_mail( $email, $cust_subject, $cust_body, [ 'Content-Type: text/plain; charset=UTF-8' ] );
 
     wp_send_json_success( [
