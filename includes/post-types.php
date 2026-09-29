@@ -244,6 +244,33 @@ function enroute_save_cat_image( int $term_id ): void {
     }
 }
 
+/**
+ * Returns the fallback image URL for a category.
+ * Checks the category itself first, then its Polylang translations,
+ * so an image set on any language version is used for all languages.
+ */
+function enroute_get_cat_image_url( int $cat_id, string $size = 'large' ): string {
+    static $cache = [];
+    $key = $cat_id . '|' . $size;
+    if ( isset( $cache[ $key ] ) ) return $cache[ $key ];
+
+    $ids = [ $cat_id ];
+    if ( function_exists( 'pll_get_term_translations' ) ) {
+        $ids = array_merge( $ids, array_map( 'intval', array_values( (array) pll_get_term_translations( $cat_id ) ) ) );
+    }
+
+    $url = '';
+    foreach ( array_unique( $ids ) as $id ) {
+        $img_id = (int) get_term_meta( $id, 'category_image_id', true );
+        if ( $img_id ) {
+            $url = wp_get_attachment_image_url( $img_id, $size ) ?: '';
+            if ( $url ) break;
+        }
+    }
+
+    return $cache[ $key ] = $url;
+}
+
 // One-time migration: delete old center-crop guide squares so they regenerate with center-top
 add_action( 'init', function() {
     if ( get_option( 'enroute_guide_square_regenerated_v3' ) ) return;

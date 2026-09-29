@@ -30,6 +30,7 @@ require_once ENROUTE_OFFERS_PATH . 'includes/userpass-cpt.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/poi-post-type.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/userpass-ajax.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/polylang.php';
+require_once ENROUTE_OFFERS_PATH . 'includes/polylang-strings.php';
 
 add_action( 'plugins_loaded', function() {
     load_plugin_textdomain(

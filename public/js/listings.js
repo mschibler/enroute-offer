@@ -566,7 +566,18 @@
         }) );
     }
 
-    const allComponents = [registerComponents, registerGuidesListing, registerUserpassBooking, registerUserProfile, registerUserAuth, registerBookingForm, registerBlogListing];
+    function registerBlogSidebar() {
+        Alpine.data( 'enrouteBlogSidebar', ( posts ) => ({
+            posts:          posts || [],
+            activeCategory: null,
+            get filtered() {
+                if ( this.activeCategory === null ) return this.posts;
+                return this.posts.filter( p => p.cat_ids && p.cat_ids.includes( this.activeCategory ) );
+            },
+        }) );
+    }
+
+    const allComponents = [registerComponents, registerGuidesListing, registerUserpassBooking, registerUserProfile, registerUserAuth, registerBookingForm, registerBlogListing, registerBlogSidebar];
     if ( window.Alpine ) {
         allComponents.forEach(fn => fn());
         allComponents.forEach(fn => document.addEventListener('alpine:init', fn));

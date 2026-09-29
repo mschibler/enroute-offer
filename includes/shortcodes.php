@@ -146,3 +146,13 @@ function enroute_poi_map_sc(): string {
     include ENROUTE_OFFERS_PATH . 'templates/poi-map.php';
     return ob_get_clean();
 }
+
+
+// ── Use custom template for single blog posts ─────────────────────────────────
+add_filter( 'template_include', function( string $template ): string {
+    if ( is_singular( 'post' ) ) {
+        $custom = ENROUTE_OFFERS_PATH . 'templates/single-blog.php';
+        if ( file_exists( $custom ) ) return $custom;
+    }
+    return $template;
+} );

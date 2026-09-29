@@ -87,13 +87,12 @@ foreach ( $all_posts as $p ) {
         }
     }
 
-    // c) Category default image
+    // c) Category default image — looked up per category (incl. Polylang translations),
+    //    so it works in every language, not only the one get_categories() returned
     if ( ! $thumb_url && $cat_ids ) {
         foreach ( $cat_ids as $cid ) {
-            if ( ! empty( $cat_images[ $cid ] ) ) {
-                $thumb_url = $cat_images[ $cid ];
-                break;
-            }
+            $thumb_url = ! empty( $cat_images[ $cid ] ) ? $cat_images[ $cid ] : enroute_get_cat_image_url( (int) $cid );
+            if ( $thumb_url ) break;
         }
     }
 
