@@ -36,6 +36,16 @@ function enroute_save_offer_meta( int $post_id ): void {
     update_post_meta( $post_id, '_offer_recurrence',          sanitize_text_field( $_POST['offer_recurrence']         ?? '' ) );
     update_post_meta( $post_id, '_offer_bookable',            isset( $_POST['offer_bookable'] ) ? '1' : '0' );
     update_post_meta( $post_id, '_offer_active',              isset( $_POST['offer_active'] )   ? '1' : '0' );
+
+    // Durchführungsort
+    if ( isset( $_POST['offer_location_type'] ) ) {
+        $loc_type = sanitize_key( $_POST['offer_location_type'] );
+        if ( ! array_key_exists( $loc_type, enroute_get_location_types() ) ) $loc_type = 'station';
+        update_post_meta( $post_id, '_offer_location_type', $loc_type );
+        foreach ( [ 'name', 'street', 'zip', 'place' ] as $f ) {
+            update_post_meta( $post_id, "_offer_location_$f", sanitize_text_field( $_POST[ "offer_location_$f" ] ?? '' ) );
+        }
+    }
     $featured = isset( $_POST['offer_featured'] ) ? absint( $_POST['offer_featured'] ) : 0;
     update_post_meta( $post_id, '_offer_featured', $featured ?: '' );
 

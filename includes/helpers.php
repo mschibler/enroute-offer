@@ -93,3 +93,41 @@ function enroute_offer_active_meta_query(): array {
         [ 'key' => '_offer_active', 'value' => '0', 'compare' => '!=' ],
     ];
 }
+
+// ── Durchführungsort (offer location) ───────────────────────────────────────
+
+/** Location options for offers. */
+function enroute_get_location_types(): array {
+    return [
+        'station'   => 'Adresse der Station',
+        'other'     => 'Andere Adresse',
+        'classroom' => 'Im Schulzimmer',
+    ];
+}
+
+/**
+ * Lines to display for an offer's location (Durchführungsort).
+ * Station address, other address, or "Im Schulzimmer". Empty array if nothing to show.
+ */
+function enroute_offer_location_lines( int $offer_id ): array {
+    $type = get_post_meta( $offer_id, '_offer_location_type', true ) ?: 'station';
+
+    if ( $type === 'classroom' ) {
+        return [ __( 'Im Schulzimmer', 'enroute_offers' ) ];
+    }
+
+    if ( $type === 'other' ) {
+        $name   = get_post_meta( $offer_id, '_offer_location_name',   true );
+        $street = get_post_meta( $offer_id, '_offer_location_street', true );
+        $city   = trim( get_post_meta( $offer_id, '_offer_location_zip', true ) . ' ' . get_post_meta( $offer_id, '_offer_location_place', true ) );
+    } else {
+        $station_id = (int) get_post_meta( $offer_id, '_offer_station', true );
+        if ( ! $station_id ) return [];
+        $name   = get_the_title( $station_id );
+        $street = get_post_meta( $station_id, '_station_address', true );
+        $city   = trim( get_post_meta( $station_id, '_station_plz', true ) . ' ' . get_post_meta( $station_id, '_station_place', true ) );
+    }
+
+    return array_values( array_filter( [ $name, $street, $city ], fn( $l ) => trim( (string) $l ) !== '' ) );
+}
+

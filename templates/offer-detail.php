@@ -218,10 +218,13 @@ $button_color_green = '#c9d56b'; // green button
                 </div>
                 <?php endif; ?>
 
-                <?php if ( $station_name ) : ?>
+                <?php $location_lines = enroute_offer_location_lines( $post_id ); ?>
+                <?php if ( $location_lines ) : ?>
                 <div class="enroute-detail-row" style="margin-bottom:0;">
-                    <p style="font-weight:700; margin:0;"><?php esc_html_e( 'Station', 'enroute_offers' ); ?></p>
-                    <p style="margin:0; line-height:1.4;"><?php echo esc_html( $station_name ); ?></p>
+                    <p style="font-weight:700; margin:0;"><?php esc_html_e( 'Durchführungsort', 'enroute_offers' ); ?></p>
+                    <?php foreach ( $location_lines as $line ) : ?>
+                        <p style="margin:0; line-height:1.4;"><?php echo esc_html( $line ); ?></p>
+                    <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
 
