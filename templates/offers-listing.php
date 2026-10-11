@@ -13,6 +13,7 @@ $offers = get_posts([
     'post_status'    => 'publish',
     'orderby'        => 'title',
     'order'          => 'ASC',
+    'meta_query'     => [ enroute_offer_active_meta_query() ], // hide inactive offers
 ]);
 
 $offers_data = [];

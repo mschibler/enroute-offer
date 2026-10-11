@@ -44,6 +44,9 @@ function enroute_handle_booking_submission() {
     if ( ! $offer || $offer->post_type !== 'offer' ) {
         wp_send_json_error( [ 'message' => __( 'Angebot nicht gefunden.', 'enroute_offers' ) ] );
     }
+    if ( ! enroute_offer_is_bookable( $offer_id ) ) {
+        wp_send_json_error( [ 'message' => __( 'Dieses Angebot kann nicht gebucht werden.', 'enroute_offers' ) ] );
+    }
 
     $offer_title    = $offer->post_title;
     $offer_subtitle = get_post_meta( $offer_id, '_offer_subtitle', true );
@@ -117,8 +120,8 @@ function enroute_handle_booking_submission() {
 
     $headers = [ 'Content-Type: text/plain; charset=UTF-8' ];
 
-    // ── Detect language (offer language, fall back to DE) ────────────────────────
-    $lang_code = get_post_meta( $offer_id, '_offer_language', true ) ?: 'de';
+    // ── Detect language: visitor's language, then offer language, fall back to DE ─
+    $lang_code = sanitize_key( $_POST['lang'] ?? '' ) ?: ( get_post_meta( $offer_id, '_offer_language', true ) ?: 'de' );
     if ( ! in_array( $lang_code, [ 'de', 'fr', 'it' ] ) ) $lang_code = 'de';
 
     // ── Customer confirmation ────────────────────────────────────────────────────

@@ -27,6 +27,14 @@ if ( function_exists( 'pll_current_language' ) ) {
 
 $all_posts = get_posts( $query_args );
 
+// Only posts of the current language (safety net in case the 'lang' argument is ignored)
+if ( function_exists( 'pll_get_post_language' ) && $current_lang ) {
+    $all_posts = array_values( array_filter( $all_posts, function( $p ) use ( $current_lang ) {
+        $p_lang = pll_get_post_language( $p->ID );
+        return ! $p_lang || $p_lang === $current_lang;
+    } ) );
+}
+
 // Get all categories that have at least one published post
 $categories = get_categories( [ 'hide_empty' => true, 'orderby' => 'name', 'order' => 'ASC' ] );
 

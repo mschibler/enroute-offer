@@ -513,6 +513,7 @@
                 data.append( 'action', 'enroute_submit_booking' );
                 data.append( 'nonce',  enrouteBookingVars.nonce );
                 data.append( 'offer_id', offerId );
+                if ( enrouteBookingVars.lang ) data.append( 'lang', enrouteBookingVars.lang );
                 Object.entries( this.form ).forEach( ([ k, v ]) => data.append( k, v ) );
 
                 fetch( enrouteBookingVars.ajaxUrl, { method: 'POST', body: data } )

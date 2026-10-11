@@ -78,6 +78,7 @@ function enroute_offer_details_cb( WP_Post $post ): void {
     $station      = get_post_meta( $post->ID, '_offer_station',              true );
     $language     = get_post_meta( $post->ID, '_offer_language',             true );
     $bookable     = get_post_meta( $post->ID, '_offer_bookable',             true );
+    $active       = get_post_meta( $post->ID, '_offer_active',               true ) !== '0'; // default: active
     $pricing_desc = get_post_meta( $post->ID, '_offer_pricing_description',  true );
     $recurrence   = get_post_meta( $post->ID, '_offer_recurrence',           true );
     $featured     = get_post_meta( $post->ID, '_offer_featured',             true );
@@ -167,6 +168,14 @@ function enroute_offer_details_cb( WP_Post $post ): void {
                 <?php esc_html_e( 'Bookable', 'enroute_offers' ); ?>
             </label>
             <p class="description"><?php esc_html_e( 'Check if this offer can be booked directly.', 'enroute_offers' ); ?></p>
+        </div>
+
+        <div class="enroute-field">
+            <label class="enroute-checkbox-label">
+                <input type="checkbox" name="offer_active" value="1" <?php checked( $active ); ?>>
+                <?php esc_html_e( 'Active', 'enroute_offers' ); ?>
+            </label>
+            <p class="description"><?php esc_html_e( 'Uncheck to hide this offer from all listings.', 'enroute_offers' ); ?></p>
         </div>
 
     </div>

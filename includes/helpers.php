@@ -72,3 +72,24 @@ function enroute_filetype_icon( string $mime ): string {
     if ( str_contains( $mime, 'powerpoint' ) || str_contains( $mime, 'presentation' ) ) return $icons['powerpoint'];
     return $icons['default'];
 }
+
+// ── Offer status: bookable / active ──────────────────────────────────────────
+
+/** Offer can be booked (checkbox "Bookable"). Unticked or never set = not bookable. */
+function enroute_offer_is_bookable( int $offer_id ): bool {
+    return get_post_meta( $offer_id, '_offer_bookable', true ) === '1';
+}
+
+/** Offer is shown in listings (checkbox "Active"). Never set = active, so existing offers stay visible. */
+function enroute_offer_is_active( int $offer_id ): bool {
+    return get_post_meta( $offer_id, '_offer_active', true ) !== '0';
+}
+
+/** meta_query clause that keeps only active offers. */
+function enroute_offer_active_meta_query(): array {
+    return [
+        'relation' => 'OR',
+        [ 'key' => '_offer_active', 'compare' => 'NOT EXISTS' ],
+        [ 'key' => '_offer_active', 'value' => '0', 'compare' => '!=' ],
+    ];
+}

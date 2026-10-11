@@ -126,9 +126,9 @@ function enroute_pll_gettext( $translation, $text, $domain ) {
     if ( is_admin() && ! wp_doing_ajax() ) return $translation;
 
     $lang = pll_current_language();
-    if ( ! $lang && wp_doing_ajax() ) {
-        // AJAX from the front end: use the language sent with the request or the visitor's language cookie
-        $lang = sanitize_key( $_REQUEST['lang'] ?? ( $_COOKIE['pll_language'] ?? '' ) );
+    if ( wp_doing_ajax() ) {
+        // AJAX from the front end: language sent with the request, else current / cookie language
+        $lang = sanitize_key( $_REQUEST['lang'] ?? '' ) ?: ( $lang ?: sanitize_key( $_COOKIE['pll_language'] ?? '' ) );
     }
     if ( ! $lang ) return $translation;
 

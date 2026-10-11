@@ -15,6 +15,14 @@ $img_url    = get_the_post_thumbnail_url( $post_id, 'full' ) ?: '';
 $cats       = wp_get_post_categories( $post_id, [ 'fields' => 'all' ] );
 $cat_name   = $cats ? $cats[0]->name : '';
 
+// No featured image → use the category image (same lookup as the blog listing, works in all languages)
+if ( ! $img_url && $cats ) {
+    foreach ( $cats as $c ) {
+        $img_url = enroute_get_cat_image_url( (int) $c->term_id, 'full' );
+        if ( $img_url ) break;
+    }
+}
+
 // Color: from first category's image meta color, or default yellow
 $color = '#EBD84A';
 if ( $cats ) {
@@ -43,6 +51,15 @@ $sidebar_args = [
 ];
 if ( function_exists( 'pll_current_language' ) ) $sidebar_args['lang'] = $current_lang;
 $sidebar_posts = get_posts( $sidebar_args );
+
+// Only posts of the current language (get_posts() ignores Polylang's 'lang' argument here).
+// Posts without an assigned language are kept.
+if ( function_exists( 'pll_get_post_language' ) && $current_lang ) {
+    $sidebar_posts = array_values( array_filter( $sidebar_posts, function( $sp ) use ( $current_lang ) {
+        $sp_lang = pll_get_post_language( $sp->ID );
+        return ! $sp_lang || $sp_lang === $current_lang;
+    } ) );
+}
 
 // Build sidebar post data
 $all_cats   = [];
@@ -131,7 +148,8 @@ $uid = 'ebs_' . uniqid();
             <?php endif; ?>
 
             <!-- Content -->
-            <div style="font-size:1rem; line-height:1.7; color:#1f2937; font-family:Montserrat,sans-serif; max-width:72ch;">
+            <!-- Same typography as the offer detail and regular pages (Tailwind "prose") -->
+            <div class="enroute-blog-body prose max-w-none text-gray-800 font-montserrat text-lg">
                 <?php echo wp_kses_post( $content ); ?>
             </div>
 

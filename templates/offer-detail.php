@@ -13,6 +13,7 @@ $subtitle      = get_post_meta( $post_id, '_offer_subtitle',       true );
 $description   = get_post_meta( $post_id, '_offer_description',    true );
 $price         = get_post_meta( $post_id, '_offer_price',          true );
 $email         = get_post_meta( $post_id, '_offer_contact_email',  true );
+$is_bookable   = enroute_offer_is_bookable( $post_id );
 $date_info     = get_post_meta( $post_id, '_offer_date_info',      true );
 $fixed_date    = get_post_meta( $post_id, '_offer_fixed_date',     true );
 $weekdays      = get_post_meta( $post_id, '_offer_weekdays',       true ) ?: [];
@@ -235,6 +236,7 @@ $button_color_green = '#c9d56b'; // green button
                 >
                     <?php esc_html_e( 'Drucken', 'enroute_offers' ); ?>
                 </button>
+                <?php if ( $is_bookable ) : // no booking button / form if the offer is not bookable ?>
                 <button
                     type="button"
                     @click="bookingOpen = true"
@@ -618,6 +620,7 @@ $button_color_green = '#c9d56b'; // green button
                     </div><!-- /form -->
                 </div>
                 </template>
+                <?php endif; // $is_bookable ?>
 
             </div><!-- /x-data bookingOpen -->
 

@@ -31,6 +31,7 @@ require_once ENROUTE_OFFERS_PATH . 'includes/poi-post-type.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/userpass-ajax.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/polylang.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/polylang-strings.php';
+require_once ENROUTE_OFFERS_PATH . 'includes/offer-language.php';
 
 add_action( 'plugins_loaded', function() {
     load_plugin_textdomain(
@@ -54,6 +55,8 @@ add_action( 'wp_enqueue_scripts', function() {
     wp_localize_script( 'enroute-offers-front', 'enrouteBookingVars', [
         'ajaxUrl' => admin_url( 'admin-ajax.php' ),
         'nonce'   => wp_create_nonce( 'enroute_booking_nonce' ),
+        // Visitor's language — booking messages and emails use it (offers themselves are language-independent)
+        'lang'    => function_exists( 'pll_current_language' ) ? (string) pll_current_language() : substr( get_locale(), 0, 2 ),
     ] );
 
     // Inline CSS for offer detail responsive layout (not compiled by Tailwind)

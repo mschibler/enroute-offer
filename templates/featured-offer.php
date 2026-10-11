@@ -15,10 +15,12 @@ $offers = get_posts( [
     'post_status' => 'publish',
     'numberposts' => 1,
     'meta_query'  => [
+        'relation' => 'AND',
         [
             'key'   => '_offer_featured',
             'value' => (string) $featured_number,
         ],
+        enroute_offer_active_meta_query(), // hide inactive offers
     ],
 ] );
 
