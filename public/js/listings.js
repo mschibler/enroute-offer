@@ -9,6 +9,12 @@
 
 (function () {
 
+    // Translated UI text passed from PHP (enrouteUserVars.i18n, see user-account.php); fallback = German
+    function t( key, fallback ) {
+        var i18n = ( window.enrouteUserVars && window.enrouteUserVars.i18n ) || {};
+        return i18n[ key ] || fallback;
+    }
+
     function registerComponents() {
 
         // ── OFFERS LISTING ────────────────────────────────────────────────
@@ -580,7 +586,78 @@
         }) );
     }
 
-    const allComponents = [registerComponents, registerGuidesListing, registerUserpassBooking, registerUserProfile, registerUserAuth, registerBookingForm, registerBlogListing, registerBlogSidebar];
+    // ── EVENT REGISTRATION ────────────────────────────────────────────────────
+    function registerEventRegistration() {
+        Alpine.data( 'enrouteEventRegistration', ( eventId ) => ({
+            eventId:    eventId,
+            form: {
+                salutation: '', institution: '', first_name: '', last_name: '',
+                street: '', zip: '', place: '', email: '', phone: '',
+                persons_under16: '', persons_over16: '', persons_companions: '', remarks: '',
+            },
+            loading:    false,
+            submitted:  false,
+            errorMsg:   '',
+            successMsg: '',
+
+            init() {
+                if ( typeof enrouteUserVars !== 'undefined' && enrouteUserVars.loggedIn && enrouteUserVars.profile ) {
+                    this.prefillFromProfile( enrouteUserVars.profile );
+                }
+            },
+
+            prefillFromProfile( profile ) {
+                if ( ! profile ) return;
+                this.form.salutation  = profile.enroute_salutation  || '';
+                this.form.institution = profile.enroute_institution || '';
+                this.form.first_name  = profile.enroute_first_name  || '';
+                this.form.last_name   = profile.enroute_last_name   || '';
+                this.form.street      = profile.enroute_street      || '';
+                this.form.zip         = profile.enroute_zip         || '';
+                this.form.place       = profile.enroute_place       || '';
+                this.form.email       = profile.email               || '';
+                this.form.phone       = profile.enroute_phone       || '';
+            },
+
+            submit() {
+                this.errorMsg = '';
+                if ( ! this.form.first_name || ! this.form.last_name ) {
+                    this.errorMsg = t('errorNameFull','Bitte geben Sie Vor- und Nachnamen ein.');
+                    return;
+                }
+                if ( ! this.form.email ) {
+                    this.errorMsg = t('errorEmailFull','Bitte geben Sie eine E-Mail-Adresse ein.');
+                    return;
+                }
+                this.loading = true;
+
+                const data = new FormData();
+                data.append( 'action',   'enroute_submit_event_registration' );
+                data.append( 'nonce',    enrouteBookingVars.nonce );
+                data.append( 'event_id', this.eventId );
+                if ( enrouteBookingVars.lang ) data.append( 'lang', enrouteBookingVars.lang );
+                Object.entries( this.form ).forEach( ([ k, v ]) => data.append( k, v ) );
+
+                fetch( enrouteBookingVars.ajaxUrl, { method: 'POST', body: data } )
+                    .then( r => r.json() )
+                    .then( res => {
+                        this.loading = false;
+                        if ( res.success ) {
+                            this.submitted  = true;
+                            this.successMsg = res.data.message || '';
+                        } else {
+                            this.errorMsg = ( res.data && res.data.message ) || t('errorGeneric','Ein Fehler ist aufgetreten.');
+                        }
+                    } )
+                    .catch( () => {
+                        this.loading  = false;
+                        this.errorMsg = t('errorConnection','Verbindungsfehler. Bitte versuchen Sie es erneut.');
+                    } );
+            }
+        }) );
+    }
+
+    const allComponents = [registerComponents, registerGuidesListing, registerUserpassBooking, registerUserProfile, registerUserAuth, registerBookingForm, registerBlogListing, registerBlogSidebar, registerEventRegistration];
     if ( window.Alpine ) {
         allComponents.forEach(fn => fn());
         allComponents.forEach(fn => document.addEventListener('alpine:init', fn));

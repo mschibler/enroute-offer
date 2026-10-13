@@ -10,9 +10,28 @@ add_shortcode( 'enroute_user_profile',      'enroute_user_profile_sc'      );
 add_shortcode( 'enroute_userpass_booking',  'enroute_userpass_booking_sc'  );
 add_shortcode( 'enroute_blog_listing',      'enroute_blog_listing_sc'      );
 add_shortcode( 'enroute_poi_map',           'enroute_poi_map_sc'           );
+add_shortcode( 'enroute_events_listing',    function(): string {
+    ob_start();
+    include ENROUTE_OFFERS_PATH . 'templates/events-listing.php';
+    return ob_get_clean();
+} );
 
 // Auto-inject detail template on single offer posts (replaces/prepends content)
 add_filter( 'the_content', 'enroute_offer_detail_content_filter' );
+
+// Same for single event posts
+add_filter( 'the_content', function( string $content ): string {
+    static $rendering = false;
+    if ( $rendering || ! is_singular( 'event' ) || ! in_the_loop() || ! is_main_query() ) return $content;
+    $rendering = true;
+    $GLOBALS['enroute_rendering_event_detail'] = true; // keeps the title in our template (see event-post-type.php)
+    ob_start();
+    include ENROUTE_OFFERS_PATH . 'templates/event-detail.php';
+    $output = ob_get_clean();
+    $GLOBALS['enroute_rendering_event_detail'] = false;
+    $rendering = false;
+    return $output;
+} );
 
 // ══════════════════════════════════════════════════════════════════════════════
 // OFFER LISTING
@@ -205,3 +224,35 @@ add_shortcode( 'enroute_contact', function( $atts ): string {
         sanitize_key( $atts['lang'] )
     );
 } );
+
+
+// ── Text blocks (Settings → Text blocks) ──────────────────────────────────────
+// [enroute_text block="footer_copyright"]     In theme files: echo enroute_text( 'footer_copyright' );
+// Optional: lang="fr" (force a language)
+
+/** Available text blocks: key => label in the settings. New blocks only need an entry here. */
+function enroute_text_blocks(): array {
+    return [
+        'footer_copyright' => __( 'Footer Copyright text', 'enroute_offers' ),
+    ];
+}
+
+/** Text block for the current language (German if empty); {jahr}/{year} → current year. */
+function enroute_text( string $block, string $lang = '' ): string {
+    if ( ! array_key_exists( $block, enroute_text_blocks() ) ) return '';
+    if ( ! $lang ) {
+        $lang = function_exists( 'pll_current_language' ) ? (string) pll_current_language() : '';
+        $lang = $lang ?: substr( get_locale(), 0, 2 );
+    }
+    $text = (string) get_option( "enroute_text_{$block}_" . sanitize_key( $lang ), '' );
+    if ( $text === '' && $lang !== 'de' ) $text = (string) get_option( "enroute_text_{$block}_de", '' );
+    if ( $text === '' ) return '';
+    $text = str_replace( [ '{jahr}', '{year}' ], date_i18n( 'Y' ), $text );
+    return '<span class="enroute-text enroute-text-' . esc_attr( str_replace( '_', '-', $block ) ) . '">' . wp_kses_post( $text ) . '</span>';
+}
+
+add_shortcode( 'enroute_text', function( $atts ): string {
+    $atts = shortcode_atts( [ 'block' => '', 'lang' => '' ], $atts, 'enroute_text' );
+    return enroute_text( sanitize_key( $atts['block'] ), sanitize_key( $atts['lang'] ) );
+} );
+

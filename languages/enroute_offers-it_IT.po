@@ -792,3 +792,255 @@ msgstr ""
 "{telefon}, {institution}, {strasse}, {plz}, {ort}, {datum1}, {uhrzeit1}, "
 "{datum2}, {uhrzeit2}, {personen}, {personen_unter16}, {personen_ueber16}, "
 "{begleitpersonen}, {bemerkungen}, {admin_url}"
+
+msgid "Zurzeit sind keine Veranstaltungen geplant."
+msgstr "Al momento non sono previsti eventi."
+
+msgid "Veranstaltungsort"
+msgstr "Luogo dell'evento"
+
+msgid "Website"
+msgstr "Sito web"
+
+msgid "Diese Veranstaltung hat bereits stattgefunden."
+msgstr "Questo evento si è già svolto."
+
+msgid "Anmeldung"
+msgstr "Iscrizione"
+
+msgid "Anmeldung übermittelt!"
+msgstr "Iscrizione inviata!"
+
+msgid "Optional — Sie können sich auch ohne Konto anmelden."
+msgstr "Facoltativo — può iscriversi anche senza account."
+
+msgid "Anmeldung senden"
+msgstr "Invia iscrizione"
+
+msgid "Veranstaltung nicht gefunden."
+msgstr "Evento non trovato."
+
+msgid "Für diese Veranstaltung ist keine Anmeldung mehr möglich."
+msgstr "Non è più possibile iscriversi a questo evento."
+
+msgid "Fehler beim Speichern der Anmeldung."
+msgstr "Errore durante il salvataggio dell'iscrizione."
+
+msgid ""
+"Vielen Dank für Ihre Anmeldung. Sie erhalten in Kürze eine Bestätigungs-E-"
+"Mail."
+msgstr "Grazie per la Sua iscrizione. A breve riceverà un'e-mail di conferma."
+
+msgid "Veranstaltungen"
+msgstr "Eventi"
+
+msgid "Veranstaltung"
+msgstr "Evento"
+
+msgid "Neu"
+msgstr "Nuovo"
+
+msgid "Neue Veranstaltung"
+msgstr "Nuovo evento"
+
+msgid "Veranstaltung bearbeiten"
+msgstr "Modifica evento"
+
+msgid "Veranstaltung ansehen"
+msgstr "Visualizza evento"
+
+msgid "Veranstaltungen suchen"
+msgstr "Cerca eventi"
+
+msgid "Keine Veranstaltungen gefunden"
+msgstr "Nessun evento trovato"
+
+msgid "Keine Veranstaltungen im Papierkorb"
+msgstr "Nessun evento nel cestino"
+
+msgid "Alle Veranstaltungen"
+msgstr "Tutti gli eventi"
+
+msgid "Bild"
+msgstr "Immagine"
+
+msgid "Bild festlegen"
+msgstr "Imposta immagine"
+
+msgid "Bild entfernen"
+msgstr "Rimuovi immagine"
+
+msgid "Als Bild verwenden"
+msgstr "Usa come immagine"
+
+msgid "Anmeldungen"
+msgstr "Iscrizioni"
+
+msgid "Anmeldung bearbeiten"
+msgstr "Modifica iscrizione"
+
+msgid "Anmeldung ansehen"
+msgstr "Visualizza iscrizione"
+
+msgid "Anmeldungen suchen"
+msgstr "Cerca iscrizioni"
+
+msgid "Keine Anmeldungen"
+msgstr "Nessuna iscrizione"
+
+msgid "Keine Anmeldungen im Papierkorb"
+msgstr "Nessuna iscrizione nel cestino"
+
+msgid "Allgemein"
+msgstr "Generale"
+
+msgid "Die Beschreibung wird im grossen Textfeld oben erfasst."
+msgstr "La descrizione si inserisce nel grande campo di testo qui sopra."
+
+msgid "Kurzbeschreibung"
+msgstr "Descrizione breve"
+
+msgid "Wird in der Liste und im Block auf der Startseite angezeigt."
+msgstr "Visualizzata nell'elenco e nel blocco della pagina iniziale."
+
+msgid "Freier Text, z. B. «CHF 20.–» oder «kostenlos»."
+msgstr "Testo libero, ad es. «CHF 20.–» o «gratuito»."
+
+msgid "Kontakt-E-Mail"
+msgstr "E-mail di contatto"
+
+msgid "Website der Veranstaltung"
+msgstr "Sito web dell'evento"
+
+msgid "— Sprache wählen —"
+msgstr "— Scegliere la lingua —"
+
+msgid ""
+"Die Veranstaltung erscheint nur auf der Website in dieser Sprache. "
+"Anmeldungen gehen an die Admin-E-Mail dieser Sprache."
+msgstr ""
+"L'evento appare solo sul sito in questa lingua. Le iscrizioni vengono "
+"inviate all'e-mail admin di questa lingua."
+
+msgid ""
+"Deaktivieren, um die Veranstaltung in Listen und auf der Startseite "
+"auszublenden."
+msgstr ""
+"Deselezionare per nascondere l'evento negli elenchi e nella pagina iniziale."
+
+msgid "Beginn (Datum / Zeit)"
+msgstr "Inizio (data / ora)"
+
+msgid "Ende (Datum / Zeit)"
+msgstr "Fine (data / ora)"
+
+msgid ""
+"Nach dem Ende wird die Veranstaltung automatisch ausgeblendet und die "
+"Anmeldung geschlossen."
+msgstr ""
+"Dopo la fine, l'evento viene nascosto automaticamente e le iscrizioni "
+"vengono chiuse."
+
+msgid "— Station wählen —"
+msgstr "— Scegliere una stazione —"
+
+msgid "Name des Ortes"
+msgstr "Nome del luogo"
+
+msgid "Vorbei"
+msgstr "Concluso"
+
+msgid "Eingereicht am"
+msgstr "Inviato il"
+
+msgid "Eingereicht"
+msgstr "Inviato"
+
+msgid "Anmeldungen (%d)"
+msgstr "Iscrizioni (%d)"
+
+msgid "Weitere Veranstaltungen"
+msgstr "Altri eventi"
+
+msgid "Events"
+msgstr "Eventi"
+
+msgid "Veranstaltungen Seiten-URL"
+msgstr "URL della pagina degli eventi"
+
+msgid ""
+"URL der Seite mit dem Shortcode [enroute_events_listing]. Wird für den Link "
+"«Weitere Veranstaltungen» im Block auf der Startseite verwendet. Auf "
+"Französisch und Italienisch wird automatisch die übersetzte Seite verlinkt."
+msgstr ""
+"URL della pagina con lo shortcode [enroute_events_listing]. Usato per il "
+"link «Altri eventi» nel blocco della pagina iniziale. In francese e italiano"
+" viene collegata automaticamente la pagina tradotta."
+
+msgid "Anmeldungen zu Veranstaltungen"
+msgstr "Iscrizioni agli eventi"
+
+msgid ""
+"Die Admin-Benachrichtigung geht an die Admin-E-Mail der Sprache der "
+"Veranstaltung (leer = E-Mail Angebote-Admin aus dem Tab «Emails»). Die "
+"Bestätigung geht an die angemeldete Person, in der Sprache, in der sie sich "
+"angemeldet hat."
+msgstr ""
+"La notifica admin viene inviata all'e-mail admin della lingua dell'evento "
+"(vuoto = e-mail admin delle offerte della scheda «E-mail»). La conferma "
+"viene inviata alla persona iscritta, nella lingua in cui si è iscritta."
+
+msgid ""
+"Platzhalter: {veranstaltung}, {datum}, {veranstaltungsort}, {anrede}, "
+"{vorname}, {nachname}, {institution}, {email}, {telefon}, {strasse}, {plz}, "
+"{ort}, {personen}, {personen_unter16}, {personen_ueber16}, "
+"{begleitpersonen}, {bemerkungen}, {admin_url}"
+msgstr ""
+"Segnaposto: {veranstaltung}, {datum}, {veranstaltungsort}, {anrede}, "
+"{vorname}, {nachname}, {institution}, {email}, {telefon}, {strasse}, {plz}, "
+"{ort}, {personen}, {personen_unter16}, {personen_ueber16}, "
+"{begleitpersonen}, {bemerkungen}, {admin_url}"
+
+msgid "Admin-E-Mail"
+msgstr "E-mail admin"
+
+msgid "Betreff (Admin)"
+msgstr "Oggetto (admin)"
+
+msgid "Text (Admin)"
+msgstr "Testo (admin)"
+
+msgid "Betreff (Bestätigung)"
+msgstr "Oggetto (conferma)"
+
+msgid "Text (Bestätigung)"
+msgstr "Testo (conferma)"
+
+msgid "Zeit"
+msgstr "Ora"
+
+msgid ""
+"Zeiten sind optional. Ist beim Ende nur eine Zeit angegeben, gilt das Datum "
+"des Beginns."
+msgstr ""
+"Gli orari sono facoltativi. Se per la fine è indicata solo un'ora, vale la "
+"data dell'inizio."
+
+msgid "Footer Copyright text"
+msgstr "Testo copyright del piè di pagina"
+
+msgid ""
+"Texte pro Sprache für das Theme. Auf der Website wird automatisch der Text "
+"der aktuellen Sprache angezeigt (ist ein Feld leer, der deutsche). Einfaches"
+" HTML (z. B. Links) ist erlaubt; {jahr} wird durch das aktuelle Jahr "
+"ersetzt."
+msgstr ""
+"Testi per lingua per il tema. Il sito mostra automaticamente il testo della "
+"lingua attuale (se un campo è vuoto, quello tedesco). È consentito HTML "
+"semplice (ad es. link); {jahr} viene sostituito dall'anno corrente."
+
+msgid "Shortcode:"
+msgstr "Shortcode:"
+
+msgid "Im Theme (PHP):"
+msgstr "Nel tema (PHP):"

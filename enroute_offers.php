@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Enroute Offers
  * Plugin URI:  https://example.com/enroute-offers
- * Description: Manages Offers, Stations and Resources with multilingual support (DE, FR, IT).
- * Version:     1.0.3
+ * Description: Manages Offers, Events, Stations and Resources with multilingual support (DE, FR, IT).
+ * Version:     1.1.0
  * Author:      Enroute
  * Text Domain: enroute_offers
  * Domain Path: /languages
@@ -11,7 +11,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'ENROUTE_OFFERS_VERSION', '1.0.5' );
+define( 'ENROUTE_OFFERS_VERSION', '1.1.0' );
 define( 'ENROUTE_OFFERS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ENROUTE_OFFERS_URL',  plugin_dir_url( __FILE__ ) );
 
@@ -32,6 +32,8 @@ require_once ENROUTE_OFFERS_PATH . 'includes/userpass-ajax.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/polylang.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/polylang-strings.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/offer-language.php';
+require_once ENROUTE_OFFERS_PATH . 'includes/event-post-type.php';
+require_once ENROUTE_OFFERS_PATH . 'includes/event-registration.php';
 
 add_action( 'plugins_loaded', function() {
     load_plugin_textdomain(
@@ -172,6 +174,7 @@ add_filter( 'no_texturize_shortcodes', function( $shortcodes ) {
     $shortcodes[] = 'enroute_offers_listing';
     $shortcodes[] = 'enroute_resources_listing';
     $shortcodes[] = 'enroute_guides_listing';
+    $shortcodes[] = 'enroute_events_listing';
     return $shortcodes;
 });
 

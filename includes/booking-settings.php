@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *  - General:     page URLs, default colours
  *  - Contacts:    contact e-mail and phone per language ([enroute_contact] shortcode)
  *  - Emails:      admin address, booking and user pass e-mails (DE / FR / IT)
- *  - Text blocks: (content follows)
+ *  - Text blocks: texts per language for the theme ([enroute_text] shortcode)
  */
 
 /** Tabs of the settings page. */
@@ -15,6 +15,7 @@ function enroute_settings_tabs(): array {
         'general'  => __( 'General', 'enroute_offers' ),
         'contacts' => __( 'Contacts', 'enroute_offers' ),
         'emails'   => __( 'Emails', 'enroute_offers' ),
+        'events'   => __( 'Events', 'enroute_offers' ),
         'texts'    => __( 'Text blocks', 'enroute_offers' ),
     ];
 }
@@ -44,14 +45,38 @@ function enroute_offers_settings_page() {
     ) {
         // Profile page URL
         if ( isset( $_POST['enroute_profile_page_url'] ) ) {
-            update_option( 'enroute_profile_page_url', esc_url_raw( $_POST['enroute_profile_page_url'] ) );
+            update_option( 'enroute_profile_page_url', enroute_normalize_url( wp_unslash( $_POST['enroute_profile_page_url'] ) ) );
         }
         // Userpass page URL
         if ( isset( $_POST['enroute_userpass_page_url'] ) ) {
-            update_option( 'enroute_userpass_page_url', esc_url_raw( $_POST['enroute_userpass_page_url'] ) );
+            update_option( 'enroute_userpass_page_url', enroute_normalize_url( wp_unslash( $_POST['enroute_userpass_page_url'] ) ) );
         }
         if ( isset( $_POST['enroute_guides_page_url'] ) ) {
-            update_option( 'enroute_guides_page_url', esc_url_raw( $_POST['enroute_guides_page_url'] ) );
+            update_option( 'enroute_guides_page_url', enroute_normalize_url( wp_unslash( $_POST['enroute_guides_page_url'] ) ) );
+        }
+        if ( isset( $_POST['enroute_events_page_url'] ) ) {
+            update_option( 'enroute_events_page_url', enroute_normalize_url( wp_unslash( $_POST['enroute_events_page_url'] ) ) );
+        }
+
+        // Text blocks (per language); simple HTML (links, bold) allowed
+        foreach ( array_keys( enroute_text_blocks() ) as $block ) {
+            foreach ( array_keys( enroute_settings_languages() ) as $lang ) {
+                $key = "enroute_text_{$block}_{$lang}";
+                if ( isset( $_POST[ $key ] ) ) update_option( $key, wp_kses_post( wp_unslash( $_POST[ $key ] ) ) );
+            }
+        }
+
+        // Events: per-language admin e-mail and templates
+        foreach ( array_keys( enroute_settings_languages() ) as $lang ) {
+            if ( isset( $_POST[ "enroute_event_admin_email_$lang" ] ) ) {
+                update_option( "enroute_event_admin_email_$lang", sanitize_email( wp_unslash( $_POST[ "enroute_event_admin_email_$lang" ] ) ) );
+            }
+            foreach ( [ 'admin_subject', 'customer_subject' ] as $k ) {
+                if ( isset( $_POST[ "enroute_event_{$k}_$lang" ] ) ) update_option( "enroute_event_{$k}_$lang", sanitize_text_field( wp_unslash( $_POST[ "enroute_event_{$k}_$lang" ] ) ) );
+            }
+            foreach ( [ 'admin_body', 'customer_body' ] as $k ) {
+                if ( isset( $_POST[ "enroute_event_{$k}_$lang" ] ) ) update_option( "enroute_event_{$k}_$lang", sanitize_textarea_field( wp_unslash( $_POST[ "enroute_event_{$k}_$lang" ] ) ) );
+            }
         }
 
         // Reset colours → delete saved values, so the defaults apply
@@ -209,7 +234,7 @@ function enroute_offers_settings_page() {
                 <tr>
                     <th><label for="enroute_profile_page_url"><?php esc_html_e( 'Profil-Seiten-URL', 'enroute_offers' ); ?></label></th>
                     <td>
-                        <input type="url" id="enroute_profile_page_url" name="enroute_profile_page_url"
+                        <input type="text" id="enroute_profile_page_url" name="enroute_profile_page_url"
                                value="<?php echo esc_attr( get_option( 'enroute_profile_page_url', '' ) ); ?>"
                                class="regular-text" placeholder="https://...">
                         <p class="description"><?php esc_html_e( 'URL der Seite mit dem Shortcode [enroute_user_profile]. Benutzer werden nach dem Login hierher weitergeleitet.', 'enroute_offers' ); ?></p>
@@ -218,7 +243,7 @@ function enroute_offers_settings_page() {
                 <tr>
                     <th><label for="enroute_userpass_page_url"><?php esc_html_e( 'User Pass Seiten-URL', 'enroute_offers' ); ?></label></th>
                     <td>
-                        <input type="url" id="enroute_userpass_page_url" name="enroute_userpass_page_url"
+                        <input type="text" id="enroute_userpass_page_url" name="enroute_userpass_page_url"
                                value="<?php echo esc_attr( get_option( 'enroute_userpass_page_url', '' ) ); ?>"
                                class="regular-text" placeholder="https://...">
                         <p class="description"><?php esc_html_e( 'URL der Seite mit dem Shortcode [enroute_userpass_booking].', 'enroute_offers' ); ?></p>
@@ -227,10 +252,19 @@ function enroute_offers_settings_page() {
                 <tr>
                     <th><label for="enroute_guides_page_url"><?php esc_html_e( 'Guides Seiten-URL', 'enroute_offers' ); ?></label></th>
                     <td>
-                        <input type="url" id="enroute_guides_page_url" name="enroute_guides_page_url"
+                        <input type="text" id="enroute_guides_page_url" name="enroute_guides_page_url"
                                value="<?php echo esc_attr( get_option( 'enroute_guides_page_url', '' ) ); ?>"
                                class="regular-text" placeholder="https://...">
                         <p class="description"><?php esc_html_e( 'URL der Seite mit dem Shortcode [enroute_guides_listing]. Wird für den Guide-Block auf der Startseite verwendet.', 'enroute_offers' ); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="enroute_events_page_url"><?php esc_html_e( 'Veranstaltungen Seiten-URL', 'enroute_offers' ); ?></label></th>
+                    <td>
+                        <input type="text" id="enroute_events_page_url" name="enroute_events_page_url"
+                               value="<?php echo esc_attr( get_option( 'enroute_events_page_url', '' ) ); ?>"
+                               class="regular-text" placeholder="https://...">
+                        <p class="description"><?php esc_html_e( 'URL der Seite mit dem Shortcode [enroute_events_listing]. Wird für den Link «Weitere Veranstaltungen» im Block auf der Startseite verwendet. Auf Französisch und Italienisch wird automatisch die übersetzte Seite verlinkt.', 'enroute_offers' ); ?></p>
                     </td>
                 </tr>
             </table>
@@ -396,14 +430,66 @@ function enroute_offers_settings_page() {
             </table>
             <?php endforeach; ?>
 
+            <?php elseif ( $active_tab === 'events' ) : // ═══ EVENTS ═══ ?>
+
+            <h2><?php esc_html_e( 'Anmeldungen zu Veranstaltungen', 'enroute_offers' ); ?></h2>
+            <p class="description">
+                <?php esc_html_e( 'Die Admin-Benachrichtigung geht an die Admin-E-Mail der Sprache der Veranstaltung (leer = E-Mail Angebote-Admin aus dem Tab «Emails»). Die Bestätigung geht an die angemeldete Person, in der Sprache, in der sie sich angemeldet hat.', 'enroute_offers' ); ?><br>
+                <?php esc_html_e( 'Platzhalter: {veranstaltung}, {datum}, {veranstaltungsort}, {anrede}, {vorname}, {nachname}, {institution}, {email}, {telefon}, {strasse}, {plz}, {ort}, {personen}, {personen_unter16}, {personen_ueber16}, {begleitpersonen}, {bemerkungen}, {admin_url}', 'enroute_offers' ); ?>
+            </p>
+            <?php foreach ( enroute_settings_languages() as $lang => $lang_label ) : ?>
+            <h3><?php echo esc_html( $lang_label ); ?></h3>
+            <table class="form-table">
+                <tr>
+                    <th><label for="enroute_event_admin_email_<?php echo esc_attr( $lang ); ?>"><?php esc_html_e( 'Admin-E-Mail', 'enroute_offers' ); ?></label></th>
+                    <td><input type="email" id="enroute_event_admin_email_<?php echo esc_attr( $lang ); ?>" name="enroute_event_admin_email_<?php echo esc_attr( $lang ); ?>"
+                               value="<?php echo esc_attr( get_option( "enroute_event_admin_email_$lang", '' ) ); ?>" class="regular-text"
+                               placeholder="<?php echo esc_attr( get_option( 'enroute_booking_admin_email', get_option( 'admin_email' ) ) ); ?>"></td>
+                </tr>
+                <tr>
+                    <th><label><?php esc_html_e( 'Betreff (Admin)', 'enroute_offers' ); ?></label></th>
+                    <td><input type="text" name="enroute_event_admin_subject_<?php echo esc_attr( $lang ); ?>" value="<?php echo esc_attr( enroute_event_email_setting( 'admin_subject', $lang ) ); ?>" class="large-text"></td>
+                </tr>
+                <tr>
+                    <th><label><?php esc_html_e( 'Text (Admin)', 'enroute_offers' ); ?></label></th>
+                    <td><textarea name="enroute_event_admin_body_<?php echo esc_attr( $lang ); ?>" rows="8" class="large-text"><?php echo esc_textarea( enroute_event_email_setting( 'admin_body', $lang ) ); ?></textarea></td>
+                </tr>
+                <tr>
+                    <th><label><?php esc_html_e( 'Betreff (Bestätigung)', 'enroute_offers' ); ?></label></th>
+                    <td><input type="text" name="enroute_event_customer_subject_<?php echo esc_attr( $lang ); ?>" value="<?php echo esc_attr( enroute_event_email_setting( 'customer_subject', $lang ) ); ?>" class="large-text"></td>
+                </tr>
+                <tr>
+                    <th><label><?php esc_html_e( 'Text (Bestätigung)', 'enroute_offers' ); ?></label></th>
+                    <td><textarea name="enroute_event_customer_body_<?php echo esc_attr( $lang ); ?>" rows="8" class="large-text"><?php echo esc_textarea( enroute_event_email_setting( 'customer_body', $lang ) ); ?></textarea></td>
+                </tr>
+            </table>
+            <?php endforeach; ?>
+
             <?php elseif ( $active_tab === 'texts' ) : // ═══ TEXT BLOCKS ═══ ?>
 
-            <h2><?php esc_html_e( 'Text blocks', 'enroute_offers' ); ?></h2>
-            <p class="description"><?php esc_html_e( 'Inhalte folgen.', 'enroute_offers' ); ?></p>
+            <p class="description">
+                <?php esc_html_e( 'Texte pro Sprache für das Theme. Auf der Website wird automatisch der Text der aktuellen Sprache angezeigt (ist ein Feld leer, der deutsche). Einfaches HTML (z. B. Links) ist erlaubt; {jahr} wird durch das aktuelle Jahr ersetzt.', 'enroute_offers' ); ?>
+            </p>
+            <?php foreach ( enroute_text_blocks() as $block => $block_label ) : ?>
+            <h2><?php echo esc_html( $block_label ); ?></h2>
+            <p class="description">
+                <?php esc_html_e( 'Shortcode:', 'enroute_offers' ); ?> <code>[enroute_text block="<?php echo esc_html( $block ); ?>"]</code>
+                &nbsp;·&nbsp; <?php esc_html_e( 'Im Theme (PHP):', 'enroute_offers' ); ?> <code>&lt;?php echo enroute_text( '<?php echo esc_html( $block ); ?>' ); ?&gt;</code>
+            </p>
+            <table class="form-table">
+                <?php foreach ( enroute_settings_languages() as $lang => $lang_label ) : $key = "enroute_text_{$block}_{$lang}"; ?>
+                <tr>
+                    <th><label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $lang_label ); ?></label></th>
+                    <td><input type="text" id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( get_option( $key, '' ) ); ?>" class="large-text"
+                               placeholder="<?php echo esc_attr( $block === 'footer_copyright' ? '© {jahr} Enroute' : '' ); ?>"></td>
+                </tr>
+                <?php endforeach; ?>
+            </table>
+            <?php endforeach; ?>
 
             <?php endif; ?>
 
-            <?php if ( $active_tab !== 'texts' ) submit_button( __( 'Einstellungen speichern', 'enroute_offers' ) ); ?>
+            <?php submit_button( __( 'Einstellungen speichern', 'enroute_offers' ) ); ?>
         </form>
     </div>
     <?php

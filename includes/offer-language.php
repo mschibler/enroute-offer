@@ -38,26 +38,29 @@ function enroute_offer_lang_setup(): ?array {
     return $setup;
 }
 
-function enroute_offer_rewrite_slug(): string {
-    $pto = get_post_type_object( 'offer' );
-    return ( $pto && ! empty( $pto->rewrite['slug'] ) ) ? trim( $pto->rewrite['slug'], '/' ) : 'offers';
+function enroute_offer_rewrite_slug( string $post_type = 'offer' ): string {
+    $pto = get_post_type_object( $post_type );
+    return ( $pto && ! empty( $pto->rewrite['slug'] ) ) ? trim( $pto->rewrite['slug'], '/' ) : ( $post_type === 'event' ? 'events' : 'offers' );
 }
 
-// ── Rewrite rule for /fr/offers/slug/ (flushed automatically when languages change) ──
+// ── Rewrite rules for /fr/offers/slug/ and /fr/events/slug/ (flushed automatically when they change) ──
 add_action( 'init', function() {
     $setup = enroute_offer_lang_setup();
     if ( ! $setup ) return;
 
-    $slug  = enroute_offer_rewrite_slug();
     $langs = implode( '|', array_map( 'preg_quote', $setup['langs'] ) );
+    $slugs = [];
+    foreach ( [ 'offer', 'event' ] as $post_type ) {
+        $slug    = enroute_offer_rewrite_slug( $post_type );
+        $slugs[] = $slug;
+        add_rewrite_rule(
+            '^' . $setup['base'] . '(' . $langs . ')/' . preg_quote( $slug, '/' ) . '/([^/]+)/?$',
+            'index.php?post_type=' . $post_type . '&name=$matches[2]',
+            'top'
+        );
+    }
 
-    add_rewrite_rule(
-        '^' . $setup['base'] . '(' . $langs . ')/' . preg_quote( $slug, '/' ) . '/([^/]+)/?$',
-        'index.php?post_type=offer&name=$matches[2]',
-        'top'
-    );
-
-    $signature = md5( $setup['base'] . $langs . '|' . $slug );
+    $signature = md5( $setup['base'] . $langs . '|' . implode( ',', $slugs ) );
     if ( get_option( 'enroute_offer_lang_rules' ) !== $signature ) {
         flush_rewrite_rules( false );
         update_option( 'enroute_offer_lang_rules', $signature, false );
@@ -89,6 +92,14 @@ add_filter( 'post_type_link', function( $link, $post ) {
     if ( ! function_exists( 'pll_current_language' ) ) return $link;
 
     $lang = pll_current_language();
+    return $lang ? enroute_offer_link_for_lang( $link, $lang ) : $link;
+}, 20, 2 );
+
+// ── Event links carry the event's own language (events only exist in one language) ──
+add_filter( 'post_type_link', function( $link, $post ) {
+    if ( ! $post instanceof WP_Post || $post->post_type !== 'event' ) return $link;
+    $lang = function_exists( 'enroute_event_language' ) ? enroute_event_language( $post->ID ) : '';
+    if ( ! $lang && function_exists( 'pll_current_language' ) ) $lang = (string) pll_current_language();
     return $lang ? enroute_offer_link_for_lang( $link, $lang ) : $link;
 }, 20, 2 );
 

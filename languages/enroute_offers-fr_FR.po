@@ -793,3 +793,259 @@ msgstr ""
 "{telefon}, {institution}, {strasse}, {plz}, {ort}, {datum1}, {uhrzeit1}, "
 "{datum2}, {uhrzeit2}, {personen}, {personen_unter16}, {personen_ueber16}, "
 "{begleitpersonen}, {bemerkungen}, {admin_url}"
+
+msgid "Zurzeit sind keine Veranstaltungen geplant."
+msgstr "Aucun événement n'est prévu pour le moment."
+
+msgid "Veranstaltungsort"
+msgstr "Lieu de l'événement"
+
+msgid "Website"
+msgstr "Site web"
+
+msgid "Diese Veranstaltung hat bereits stattgefunden."
+msgstr "Cet événement a déjà eu lieu."
+
+msgid "Anmeldung"
+msgstr "Inscription"
+
+msgid "Anmeldung übermittelt!"
+msgstr "Inscription envoyée !"
+
+msgid "Optional — Sie können sich auch ohne Konto anmelden."
+msgstr "Facultatif — vous pouvez aussi vous inscrire sans compte."
+
+msgid "Anmeldung senden"
+msgstr "Envoyer l'inscription"
+
+msgid "Veranstaltung nicht gefunden."
+msgstr "Événement introuvable."
+
+msgid "Für diese Veranstaltung ist keine Anmeldung mehr möglich."
+msgstr "Il n'est plus possible de s'inscrire à cet événement."
+
+msgid "Fehler beim Speichern der Anmeldung."
+msgstr "Erreur lors de l'enregistrement de l'inscription."
+
+msgid ""
+"Vielen Dank für Ihre Anmeldung. Sie erhalten in Kürze eine Bestätigungs-E-"
+"Mail."
+msgstr ""
+"Merci pour votre inscription. Vous recevrez sous peu un e-mail de "
+"confirmation."
+
+msgid "Veranstaltungen"
+msgstr "Événements"
+
+msgid "Veranstaltung"
+msgstr "Événement"
+
+msgid "Neu"
+msgstr "Nouveau"
+
+msgid "Neue Veranstaltung"
+msgstr "Nouvel événement"
+
+msgid "Veranstaltung bearbeiten"
+msgstr "Modifier l'événement"
+
+msgid "Veranstaltung ansehen"
+msgstr "Voir l'événement"
+
+msgid "Veranstaltungen suchen"
+msgstr "Rechercher des événements"
+
+msgid "Keine Veranstaltungen gefunden"
+msgstr "Aucun événement trouvé"
+
+msgid "Keine Veranstaltungen im Papierkorb"
+msgstr "Aucun événement dans la corbeille"
+
+msgid "Alle Veranstaltungen"
+msgstr "Tous les événements"
+
+msgid "Bild"
+msgstr "Image"
+
+msgid "Bild festlegen"
+msgstr "Définir l'image"
+
+msgid "Bild entfernen"
+msgstr "Supprimer l'image"
+
+msgid "Als Bild verwenden"
+msgstr "Utiliser comme image"
+
+msgid "Anmeldungen"
+msgstr "Inscriptions"
+
+msgid "Anmeldung bearbeiten"
+msgstr "Modifier l'inscription"
+
+msgid "Anmeldung ansehen"
+msgstr "Voir l'inscription"
+
+msgid "Anmeldungen suchen"
+msgstr "Rechercher des inscriptions"
+
+msgid "Keine Anmeldungen"
+msgstr "Aucune inscription"
+
+msgid "Keine Anmeldungen im Papierkorb"
+msgstr "Aucune inscription dans la corbeille"
+
+msgid "Allgemein"
+msgstr "Général"
+
+msgid "Die Beschreibung wird im grossen Textfeld oben erfasst."
+msgstr "La description se saisit dans le grand champ de texte ci-dessus."
+
+msgid "Kurzbeschreibung"
+msgstr "Description courte"
+
+msgid "Wird in der Liste und im Block auf der Startseite angezeigt."
+msgstr "Affichée dans la liste et dans le bloc de la page d'accueil."
+
+msgid "Freier Text, z. B. «CHF 20.–» oder «kostenlos»."
+msgstr "Texte libre, p. ex. « CHF 20.– » ou « gratuit »."
+
+msgid "Kontakt-E-Mail"
+msgstr "E-mail de contact"
+
+msgid "Website der Veranstaltung"
+msgstr "Site web de l'événement"
+
+msgid "— Sprache wählen —"
+msgstr "— Choisir la langue —"
+
+msgid ""
+"Die Veranstaltung erscheint nur auf der Website in dieser Sprache. "
+"Anmeldungen gehen an die Admin-E-Mail dieser Sprache."
+msgstr ""
+"L'événement n'apparaît que sur le site dans cette langue. Les inscriptions "
+"sont envoyées à l'e-mail admin de cette langue."
+
+msgid ""
+"Deaktivieren, um die Veranstaltung in Listen und auf der Startseite "
+"auszublenden."
+msgstr ""
+"Décocher pour masquer l'événement dans les listes et sur la page d'accueil."
+
+msgid "Beginn (Datum / Zeit)"
+msgstr "Début (date / heure)"
+
+msgid "Ende (Datum / Zeit)"
+msgstr "Fin (date / heure)"
+
+msgid ""
+"Nach dem Ende wird die Veranstaltung automatisch ausgeblendet und die "
+"Anmeldung geschlossen."
+msgstr ""
+"Après la fin, l'événement est masqué automatiquement et les inscriptions "
+"sont fermées."
+
+msgid "— Station wählen —"
+msgstr "— Choisir une station —"
+
+msgid "Name des Ortes"
+msgstr "Nom du lieu"
+
+msgid "Vorbei"
+msgstr "Terminé"
+
+msgid "Eingereicht am"
+msgstr "Envoyé le"
+
+msgid "Eingereicht"
+msgstr "Envoyé"
+
+msgid "Anmeldungen (%d)"
+msgstr "Inscriptions (%d)"
+
+msgid "Weitere Veranstaltungen"
+msgstr "Autres événements"
+
+msgid "Events"
+msgstr "Événements"
+
+msgid "Veranstaltungen Seiten-URL"
+msgstr "URL de la page des événements"
+
+msgid ""
+"URL der Seite mit dem Shortcode [enroute_events_listing]. Wird für den Link "
+"«Weitere Veranstaltungen» im Block auf der Startseite verwendet. Auf "
+"Französisch und Italienisch wird automatisch die übersetzte Seite verlinkt."
+msgstr ""
+"URL de la page avec le shortcode [enroute_events_listing]. Utilisée pour le "
+"lien « Autres événements » dans le bloc de la page d'accueil. En français et"
+" en italien, la page traduite est liée automatiquement."
+
+msgid "Anmeldungen zu Veranstaltungen"
+msgstr "Inscriptions aux événements"
+
+msgid ""
+"Die Admin-Benachrichtigung geht an die Admin-E-Mail der Sprache der "
+"Veranstaltung (leer = E-Mail Angebote-Admin aus dem Tab «Emails»). Die "
+"Bestätigung geht an die angemeldete Person, in der Sprache, in der sie sich "
+"angemeldet hat."
+msgstr ""
+"La notification admin est envoyée à l'e-mail admin de la langue de "
+"l'événement (vide = e-mail admin des offres de l'onglet « E-mails »). La "
+"confirmation est envoyée à la personne inscrite, dans la langue dans "
+"laquelle elle s'est inscrite."
+
+msgid ""
+"Platzhalter: {veranstaltung}, {datum}, {veranstaltungsort}, {anrede}, "
+"{vorname}, {nachname}, {institution}, {email}, {telefon}, {strasse}, {plz}, "
+"{ort}, {personen}, {personen_unter16}, {personen_ueber16}, "
+"{begleitpersonen}, {bemerkungen}, {admin_url}"
+msgstr ""
+"Variables : {veranstaltung}, {datum}, {veranstaltungsort}, {anrede}, "
+"{vorname}, {nachname}, {institution}, {email}, {telefon}, {strasse}, {plz}, "
+"{ort}, {personen}, {personen_unter16}, {personen_ueber16}, "
+"{begleitpersonen}, {bemerkungen}, {admin_url}"
+
+msgid "Admin-E-Mail"
+msgstr "E-mail admin"
+
+msgid "Betreff (Admin)"
+msgstr "Objet (admin)"
+
+msgid "Text (Admin)"
+msgstr "Texte (admin)"
+
+msgid "Betreff (Bestätigung)"
+msgstr "Objet (confirmation)"
+
+msgid "Text (Bestätigung)"
+msgstr "Texte (confirmation)"
+
+msgid "Zeit"
+msgstr "Heure"
+
+msgid ""
+"Zeiten sind optional. Ist beim Ende nur eine Zeit angegeben, gilt das Datum "
+"des Beginns."
+msgstr ""
+"Les heures sont facultatives. Si seule une heure est indiquée pour la fin, "
+"la date du début s'applique."
+
+msgid "Footer Copyright text"
+msgstr "Texte de copyright du pied de page"
+
+msgid ""
+"Texte pro Sprache für das Theme. Auf der Website wird automatisch der Text "
+"der aktuellen Sprache angezeigt (ist ein Feld leer, der deutsche). Einfaches"
+" HTML (z. B. Links) ist erlaubt; {jahr} wird durch das aktuelle Jahr "
+"ersetzt."
+msgstr ""
+"Textes par langue pour le thème. Le site affiche automatiquement le texte de"
+" la langue actuelle (si un champ est vide, le texte allemand). Le HTML "
+"simple (p. ex. liens) est autorisé ; {jahr} est remplacé par l'année en "
+"cours."
+
+msgid "Shortcode:"
+msgstr "Shortcode :"
+
+msgid "Im Theme (PHP):"
+msgstr "Dans le thème (PHP) :"

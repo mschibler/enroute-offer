@@ -30,6 +30,13 @@ function enroute_pll_string_groups(): array {
         'templates/userpass-booking.php'  => 'Enroute – User Pass Buchung',
         'includes/userpass-ajax.php'      => 'Enroute – User Pass Buchung',
         'includes/helpers.php'            => 'Enroute – Allgemein',
+        'templates/partials/form-auth.php'    => 'Enroute – Formulare (Buchung & Anmeldung)',
+        'templates/partials/form-contact.php' => 'Enroute – Formulare (Buchung & Anmeldung)',
+        'templates/partials/form-group.php'   => 'Enroute – Formulare (Buchung & Anmeldung)',
+        'templates/events-listing.php'    => 'Enroute – Veranstaltungen',
+        'templates/event-detail.php'      => 'Enroute – Veranstaltungen',
+        'includes/event-registration.php' => 'Enroute – Veranstaltungen',
+        'includes/event-post-type.php'    => 'Enroute – Veranstaltungen',
     ];
 }
 
@@ -44,7 +51,8 @@ function enroute_pll_all_files(): array {
     $found  = array_merge(
         [ 'enroute_offers.php' ],
         array_map( fn( $f ) => 'includes/' . basename( $f ), glob( ENROUTE_OFFERS_PATH . 'includes/*.php' ) ?: [] ),
-        array_map( fn( $f ) => 'templates/' . basename( $f ), glob( ENROUTE_OFFERS_PATH . 'templates/*.php' ) ?: [] )
+        array_map( fn( $f ) => 'templates/' . basename( $f ), glob( ENROUTE_OFFERS_PATH . 'templates/*.php' ) ?: [] ),
+        array_map( fn( $f ) => 'templates/partials/' . basename( $f ), glob( ENROUTE_OFFERS_PATH . 'templates/partials/*.php' ) ?: [] )
     );
     foreach ( $found as $rel ) {
         if ( ! isset( $files[ $rel ] ) ) $files[ $rel ] = 'Enroute – Backend';
@@ -186,6 +194,29 @@ function enroute_pll_saved_translation( string $text, string $lang ): ?string {
         }
     }
     return $tables[ $lang ][ $text ] ?? null;
+}
+
+/**
+ * Translates a plugin text into a specific language, independent of the
+ * current request (e.g. an admin e-mail in the event's language).
+ * Order: translation saved in Polylang → plugin .mo file → original text.
+ */
+function enroute_t( string $text, string $lang ): string {
+    if ( function_exists( 'enroute_pll_saved_translation' ) && function_exists( 'PLL' ) ) {
+        $saved = enroute_pll_saved_translation( $text, $lang );
+        if ( $saved !== null ) return $saved;
+    }
+    static $mos = [];
+    if ( ! array_key_exists( $lang, $mos ) ) {
+        $mos[ $lang ] = null;
+        $locales = [ 'de' => 'de_DE', 'fr' => 'fr_FR', 'it' => 'it_IT' ];
+        $file    = ENROUTE_OFFERS_PATH . 'languages/enroute_offers-' . ( $locales[ $lang ] ?? '' ) . '.mo';
+        if ( isset( $locales[ $lang ] ) && class_exists( 'MO' ) && file_exists( $file ) ) {
+            $mo = new MO();
+            if ( $mo->import_from_file( $file ) ) $mos[ $lang ] = $mo;
+        }
+    }
+    return $mos[ $lang ] ? $mos[ $lang ]->translate( $text ) : $text;
 }
 
 /** Polylang language slug matching the current admin user's language (de_CH → de). */

@@ -223,7 +223,7 @@ if ( is_user_logged_in() ) {
             @click="submit()"
             :disabled="loading"
             style="width:100%; padding:0.875rem 1rem; background:#111; color:#fff; border:none; font-weight:700; font-size:1rem; cursor:pointer;"
-            :style="loading ? 'opacity:0.6; cursor:not-allowed;' : ''"
+            :style="loading ? { opacity: '0.6', cursor: 'not-allowed' } : {}"
         >
             <span x-show="!loading"><?php esc_html_e( 'User Pass anfragen', 'enroute_offers' ); ?></span>
             <span x-show="loading"><?php esc_html_e( 'Wird gesendet…', 'enroute_offers' ); ?></span>

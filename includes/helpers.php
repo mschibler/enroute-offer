@@ -171,11 +171,13 @@ function enroute_js_data( $data, array $html_keys = [] ) {
  * "17 (unter 16 Jahren: 12, über 16 Jahren: 3, Begleitpersonen: 2)".
  * Old bookings with only a total show just the total.
  */
-function enroute_booking_persons_summary( $total, $under16 = '', $over16 = '', $companions = '' ): string {
+function enroute_booking_persons_summary( $total, $under16 = '', $over16 = '', $companions = '', string $lang = '' ): string {
+    // $lang: language of the e-mail this text goes into ('' = current language)
+    $tr = fn( string $text ) => ( $lang && function_exists( 'enroute_t' ) ) ? enroute_t( $text, $lang ) : $text;
     $parts = [];
-    if ( $under16 !== '' && $under16 !== null )       $parts[] = sprintf( __( 'unter 16 Jahren: %d', 'enroute_offers' ), (int) $under16 );
-    if ( $over16 !== '' && $over16 !== null )         $parts[] = sprintf( __( 'über 16 Jahren: %d', 'enroute_offers' ), (int) $over16 );
-    if ( $companions !== '' && $companions !== null ) $parts[] = sprintf( __( 'Begleitpersonen: %d', 'enroute_offers' ), (int) $companions );
+    if ( $under16 !== '' && $under16 !== null )       $parts[] = sprintf( $lang ? $tr( 'unter 16 Jahren: %d' ) : __( 'unter 16 Jahren: %d', 'enroute_offers' ), (int) $under16 );
+    if ( $over16 !== '' && $over16 !== null )         $parts[] = sprintf( $lang ? $tr( 'über 16 Jahren: %d' ) : __( 'über 16 Jahren: %d', 'enroute_offers' ), (int) $over16 );
+    if ( $companions !== '' && $companions !== null ) $parts[] = sprintf( $lang ? $tr( 'Begleitpersonen: %d' ) : __( 'Begleitpersonen: %d', 'enroute_offers' ), (int) $companions );
 
     if ( $total === '' || $total === null ) return '';
     return $parts ? $total . ' (' . implode( ', ', $parts ) . ')' : (string) $total;
