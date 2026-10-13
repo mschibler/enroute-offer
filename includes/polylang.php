@@ -9,9 +9,7 @@ add_action('init', 'enroute_polylang_register');
 
 // Die eigentliche Funktion zur Registrierung
 function enroute_polylang_register() {
-    if (function_exists('pll_register_string')) {
-        pll_register_string('enrouteOffersStrings', 'Benutzerpässe für Lehrpersonen', 'Enroute Offer', false);
-    }
+    // Strings are registered automatically from all plugin files — see polylang-strings.php
 }
 
 // Exclude offer, resource, station from Polylang language filtering.

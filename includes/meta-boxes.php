@@ -24,7 +24,7 @@ function enroute_register_meta_boxes() {
     );
     add_meta_box(
         'offer_location',
-        'Durchführungsort',
+        __( 'Durchführungsort', 'enroute_offers' ),
         'enroute_offer_location_cb',
         'offer',
         'normal',
@@ -253,30 +253,30 @@ function enroute_offer_location_cb( WP_Post $post ): void {
     <div class="enroute-meta-wrap">
 
         <div class="enroute-field">
-            <label for="offer_location_type">Durchführungsort</label>
+            <label for="offer_location_type"><?php esc_html_e( 'Durchführungsort', 'enroute_offers' ); ?></label>
             <select id="offer_location_type" name="offer_location_type">
                 <?php foreach ( enroute_get_location_types() as $val => $label ) : ?>
                     <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $type, $val ); ?>><?php echo esc_html( $label ); ?></option>
                 <?php endforeach; ?>
             </select>
-            <p class="description" id="offer_location_hint_station">Es wird die Adresse der unter «Station» gewählten Station angezeigt.</p>
+            <p class="description" id="offer_location_hint_station"><?php esc_html_e( 'Es wird die Adresse der unter «Station» gewählten Station angezeigt.', 'enroute_offers' ); ?></p>
         </div>
 
         <div id="offer_location_address">
             <div class="enroute-field">
-                <label for="offer_location_name">Name des Ortes (optional)</label>
+                <label for="offer_location_name"><?php esc_html_e( 'Name des Ortes (optional)', 'enroute_offers' ); ?></label>
                 <input type="text" id="offer_location_name" name="offer_location_name" value="<?php echo esc_attr( $name ); ?>">
             </div>
             <div class="enroute-field">
-                <label for="offer_location_street">Strasse / Nr.</label>
+                <label for="offer_location_street"><?php esc_html_e( 'Strasse / Nr.', 'enroute_offers' ); ?></label>
                 <input type="text" id="offer_location_street" name="offer_location_street" value="<?php echo esc_attr( $street ); ?>">
             </div>
             <div class="enroute-field">
-                <label for="offer_location_zip">PLZ</label>
+                <label for="offer_location_zip"><?php esc_html_e( 'PLZ', 'enroute_offers' ); ?></label>
                 <input type="text" id="offer_location_zip" name="offer_location_zip" value="<?php echo esc_attr( $zip ); ?>" style="max-width:8rem;">
             </div>
             <div class="enroute-field">
-                <label for="offer_location_place">Ort</label>
+                <label for="offer_location_place"><?php esc_html_e( 'Ort', 'enroute_offers' ); ?></label>
                 <input type="text" id="offer_location_place" name="offer_location_place" value="<?php echo esc_attr( $place ); ?>">
             </div>
         </div>

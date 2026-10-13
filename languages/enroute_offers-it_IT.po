@@ -2,10 +2,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Enroute Offers 1.0.0\n"
+"Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: it_IT\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Offers"
@@ -216,7 +216,6 @@ msgid "Show results"
 msgstr "Mostra risultati"
 
 # Booking form strings
-
 msgid "Buchungsanfrage"
 msgstr "Richiesta di prenotazione"
 
@@ -373,10 +372,12 @@ msgstr "Potete richiedere il User Pass anche separatamente"
 msgid "hier anfragen"
 msgstr "qui"
 
-msgid "Ihr User Pass hat kein Guthaben mehr. Möchten Sie einen neuen Pass buchen?"
+msgid ""
+"Ihr User Pass hat kein Guthaben mehr. Möchten Sie einen neuen Pass buchen?"
 msgstr "Il suo User Pass non ha più credito. Desidera prenotarne uno nuovo ?"
 
-msgid "Ihr User Pass ist nicht mehr gültig. Möchten Sie einen neuen Pass buchen?"
+msgid ""
+"Ihr User Pass ist nicht mehr gültig. Möchten Sie einen neuen Pass buchen?"
 msgstr "Il suo User Pass non è più valido. Desidera prenotarne uno nuovo ?"
 
 msgid "gleiche Auswahl wie letztes Mal"
@@ -411,3 +412,306 @@ msgstr "Selezionare una data desiderata."
 
 msgid "Fehler."
 msgstr "Errore."
+
+msgid "Durchführungsort"
+msgstr "Luogo di svolgimento"
+
+msgid "User Pass verwenden (%s%s)"
+msgstr "Utilizzare lo User Pass (%s%s)"
+
+msgid "gültig bis"
+msgstr "valido fino al"
+
+msgid "Benutzerpässe für Lehrpersonen"
+msgstr "User Pass per docenti"
+
+msgid ""
+"EduPass Mini: 250 CHF zahlen - für 350 CHF nutzen\n"
+"EduPass Midi: 500 CHF zahlen - für 750 CHF nutzen\n"
+"EduPass Maxi: 1000 CHF zahlen - für 1550 CHF nutzen\n"
+"Das Guthaben ist ein Jahr ab Bestelldatum gültig."
+msgstr ""
+"EduPass Mini: pagare 250 CHF – utilizzare 350 CHF\n"
+"EduPass Midi: pagare 500 CHF – utilizzare 750 CHF\n"
+"EduPass Maxi: pagare 1000 CHF – utilizzare 1550 CHF\n"
+"Il credito è valido un anno dalla data dell'ordine."
+
+msgid ""
+"Ein Upgrade auf einen höheren Pass ist jederzeit möglich, das Ablaufdatum "
+"bleibt dabei unverändert. Nicht genutztes Guthaben verfällt nach Ablauf und "
+"wird nicht rückerstattet. Bei Überschreitung wird der Differenzbetrag in "
+"Rechnung gestellt."
+msgstr ""
+"Il passaggio a un pass superiore è possibile in qualsiasi momento; la data "
+"di scadenza rimane invariata. Il credito non utilizzato scade alla fine del "
+"periodo e non viene rimborsato. In caso di superamento, la differenza viene "
+"fatturata."
+
+msgid "Ungültige Anfrage."
+msgstr "Richiesta non valida."
+
+msgid "Bitte füllen Sie alle Pflichtfelder aus."
+msgstr "Si prega di compilare tutti i campi obbligatori."
+
+msgid "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+msgstr "Si prega di inserire un indirizzo e-mail valido."
+
+msgid "Angebot nicht gefunden."
+msgstr "Offerta non trovata."
+
+msgid "Dieses Angebot kann nicht gebucht werden."
+msgstr "Questa offerta non può essere prenotata."
+
+msgid "Fehler beim Speichern der Buchungsanfrage."
+msgstr "Errore durante il salvataggio della richiesta di prenotazione."
+
+msgid ""
+"Ihre Buchungsanfrage wurde erfolgreich übermittelt. Sie erhalten in Kürze "
+"eine Bestätigungs-E-Mail."
+msgstr ""
+"La Sua richiesta di prenotazione è stata inviata con successo. A breve "
+"riceverà un'e-mail di conferma."
+
+msgid "Suchen…"
+msgstr "Cerca…"
+
+msgid "Suche löschen"
+msgstr "Cancella ricerca"
+
+msgid "Keine Angebote gefunden."
+msgstr "Nessuna offerta trovata."
+
+msgid "Filter zurücksetzen"
+msgstr "Reimposta filtri"
+
+msgid "Filter schließen"
+msgstr "Chiudi filtri"
+
+msgid "Wochentag"
+msgstr "Giorno della settimana"
+
+msgid "Thema"
+msgstr "Tema"
+
+msgid "Angebot"
+msgstr "Offerta"
+
+msgid "Sprache"
+msgstr "Lingua"
+
+msgid "Anwenden"
+msgstr "Applica"
+
+msgid "Zurücksetzen"
+msgstr "Reimposta"
+
+msgid "[No offer assigned to Featured %d]"
+msgstr "[Nessuna offerta assegnata a Featured %d]"
+
+msgid "Keine Ressourcen gefunden."
+msgstr "Nessuna risorsa trovata."
+
+msgid "Medientyp"
+msgstr "Tipo di media"
+
+msgid "No guides found."
+msgstr "Nessuna guida trovata."
+
+msgid "Close"
+msgstr "Chiudi"
+
+msgid "Alle"
+msgstr "Tutti"
+
+msgid "Keine Beiträge gefunden."
+msgstr "Nessun articolo trovato."
+
+msgid "Kontaktdaten"
+msgstr "Dati di contatto"
+
+msgid "Abbrechen"
+msgstr "Annulla"
+
+msgid "Bearbeiten"
+msgstr "Modifica"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Adresse"
+msgstr "Indirizzo"
+
+msgid "PLZ / Ort"
+msgstr "NPA / Località"
+
+msgid "— Bitte wählen —"
+msgstr "— Si prega di scegliere —"
+
+msgid "E-Mail kann nicht geändert werden."
+msgstr "L'indirizzo e-mail non può essere modificato."
+
+msgid "Speichern"
+msgstr "Salva"
+
+msgid "Wird gespeichert…"
+msgstr "Salvataggio in corso…"
+
+msgid "Mein User Pass"
+msgstr "Il mio User Pass"
+
+msgid "User Pass anfragen"
+msgstr "Richiedere uno User Pass"
+
+msgid "Noch kein User Pass."
+msgstr "Ancora nessuno User Pass."
+
+msgid "Pass"
+msgstr "Pass"
+
+msgid "Status"
+msgstr "Stato"
+
+msgid "Neu — wird bearbeitet"
+msgstr "Nuovo — in elaborazione"
+
+msgid "Aktiv"
+msgstr "Attivo"
+
+msgid "Gültig bis"
+msgstr "Valido fino al"
+
+msgid "Abgelaufen"
+msgstr "Scaduto"
+
+msgid "Guthaben"
+msgstr "Credito"
+
+msgid "Kein Guthaben mehr"
+msgstr "Credito esaurito"
+
+msgid "Frühere Pässe (%d)"
+msgstr "Pass precedenti (%d)"
+
+msgid "Inaktiv"
+msgstr "Inattivo"
+
+msgid "Meine Buchungsanfragen"
+msgstr "Le mie richieste di prenotazione"
+
+msgid "Noch keine Buchungsanfragen."
+msgstr "Ancora nessuna richiesta di prenotazione."
+
+msgid "Wunschdatum:"
+msgstr "Data desiderata:"
+
+msgid "Ersatz:"
+msgstr "Data alternativa:"
+
+msgid "Personen"
+msgstr "Persone"
+
+msgid "Bitte E-Mail und Passwort eingeben."
+msgstr "Si prega di inserire e-mail e password."
+
+msgid "Kein Konto mit dieser E-Mail-Adresse gefunden."
+msgstr "Nessun account trovato con questo indirizzo e-mail."
+
+msgid "Falsches Passwort."
+msgstr "Password errata."
+
+msgid "Angemeldet!"
+msgstr "Accesso effettuato!"
+
+msgid "Bitte alle Pflichtfelder ausfüllen."
+msgstr "Si prega di compilare tutti i campi obbligatori."
+
+msgid "Ungültige E-Mail-Adresse."
+msgstr "Indirizzo e-mail non valido."
+
+msgid "Passwort muss mindestens 8 Zeichen lang sein."
+msgstr "La password deve contenere almeno 8 caratteri."
+
+msgid "Passwörter stimmen nicht überein."
+msgstr "Le password non corrispondono."
+
+msgid "Diese E-Mail-Adresse ist bereits registriert."
+msgstr "Questo indirizzo e-mail è già registrato."
+
+msgid "Registrierung ist deaktiviert."
+msgstr "La registrazione è disattivata."
+
+msgid "Konto erstellt und angemeldet!"
+msgstr "Account creato e accesso effettuato!"
+
+msgid "Nicht angemeldet."
+msgstr "Accesso non effettuato."
+
+msgid "Profil gespeichert."
+msgstr "Profilo salvato."
+
+msgid "Abgemeldet."
+msgstr "Disconnesso."
+
+msgid "Keine User Passes verfügbar."
+msgstr "Nessuno User Pass disponibile."
+
+msgid "← Zurück zum Angebot"
+msgstr "← Torna all'offerta"
+
+msgid "User Pass wählen"
+msgstr "Scegliere uno User Pass"
+
+msgid "Validity:"
+msgstr "Validità:"
+
+msgid "Guthaben:"
+msgstr "Credito:"
+
+msgid "Anmelden oder Konto erstellen (optional)"
+msgstr "Accedere o creare un account (facoltativo)"
+
+msgid "Bemerkungen"
+msgstr "Osservazioni"
+
+msgid "User Pass nicht gefunden."
+msgstr "User Pass non trovato."
+
+msgid "Fehler beim Speichern."
+msgstr "Errore durante il salvataggio."
+
+msgid ""
+"Ihre User Pass Anfrage wurde erfolgreich übermittelt. Sie erhalten in Kürze "
+"eine Bestätigungs-E-Mail."
+msgstr ""
+"La Sua richiesta di User Pass è stata inviata con successo. A breve riceverà"
+" un'e-mail di conferma."
+
+msgid "Adresse der Station"
+msgstr "Indirizzo della stazione"
+
+msgid "Andere Adresse"
+msgstr "Altro indirizzo"
+
+msgid "Im Schulzimmer"
+msgstr "In classe"
+
+msgid "Es wird die Adresse der unter «Station» gewählten Station angezeigt."
+msgstr "Viene visualizzato l'indirizzo della stazione scelta in «Stazione»."
+
+msgid "Name des Ortes (optional)"
+msgstr "Nome del luogo (facoltativo)"
+
+msgid "Strasse / Nr."
+msgstr "Via / n."
+
+msgid "Active"
+msgstr "Attivo"
+
+msgid "Uncheck to hide this offer from all listings."
+msgstr "Deselezionare per nascondere questa offerta da tutti gli elenchi."
+
+msgid "Bookable"
+msgstr "Prenotabile"
+
+msgid "Check if this offer can be booked directly."
+msgstr "Selezionare se questa offerta può essere prenotata direttamente."

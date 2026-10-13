@@ -99,9 +99,9 @@ function enroute_offer_active_meta_query(): array {
 /** Location options for offers. */
 function enroute_get_location_types(): array {
     return [
-        'station'   => 'Adresse der Station',
-        'other'     => 'Andere Adresse',
-        'classroom' => 'Im Schulzimmer',
+        'station'   => __( 'Adresse der Station', 'enroute_offers' ),
+        'other'     => __( 'Andere Adresse', 'enroute_offers' ),
+        'classroom' => __( 'Im Schulzimmer', 'enroute_offers' ),
     ];
 }
 

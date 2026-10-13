@@ -633,15 +633,13 @@ $button_color_green = '#c9d56b'; // green button
 
    <div class="grid grid-cols-3 gap-8 font-[montserrat] bg-[#B5DFFC] pt-8 pb-8 border-t border-b border-black mt-6">
        <div class="font-semibold text-2xl pl-6 pr-6">
-           Benutzerpässe für Lehrpersonen
+           <?php esc_html_e( 'Benutzerpässe für Lehrpersonen', 'enroute_offers' ); ?>
        </div>
        <div class="text-sm pl-6 pr-6">
-           EduPass Mini: 250 CHF zahlen - für 350 CHF nutzen<br>
-           EduPass Midi: 500 CHF zahlen - für 750 CHF nutzen<br>
-           EduPass Maxi: 1000 CHF zahlen - für 1550 CHF nutzen<br>
-           Das Guthaben ist ein Jahr ab Bestelldatum gültig.
+           <?php echo nl2br( esc_html__( "EduPass Mini: 250 CHF zahlen - für 350 CHF nutzen\nEduPass Midi: 500 CHF zahlen - für 750 CHF nutzen\nEduPass Maxi: 1000 CHF zahlen - für 1550 CHF nutzen\nDas Guthaben ist ein Jahr ab Bestelldatum gültig.", 'enroute_offers' ) ); ?>
        </div>
-       <div class="text-sm pl-6 pr-6">Ein Upgrade auf einen höheren Pass ist jederzeit möglich, das Ablaufdatum bleibt dabei unverändert. Nicht genutztes Guthaben verfällt nach Ablauf und wird nicht rückerstattet. Bei Überschreitung wird der Differenzbetrag in Rechnung gestellt.
+       <div class="text-sm pl-6 pr-6">
+           <?php esc_html_e( 'Ein Upgrade auf einen höheren Pass ist jederzeit möglich, das Ablaufdatum bleibt dabei unverändert. Nicht genutztes Guthaben verfällt nach Ablauf und wird nicht rückerstattet. Bei Überschreitung wird der Differenzbetrag in Rechnung gestellt.', 'enroute_offers' ); ?>
        </div>
    </div>
 

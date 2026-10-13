@@ -34,12 +34,31 @@ function enroute_pll_string_groups(): array {
 }
 
 /**
+ * All PHP files of the plugin with their Polylang group.
+ * Files not listed above (admin screens, settings, editor boxes) go to
+ * "Enroute – Backend", so every text of the plugin is translatable —
+ * including files added in the future.
+ */
+function enroute_pll_all_files(): array {
+    $files  = enroute_pll_string_groups();
+    $found  = array_merge(
+        [ 'enroute_offers.php' ],
+        array_map( fn( $f ) => 'includes/' . basename( $f ), glob( ENROUTE_OFFERS_PATH . 'includes/*.php' ) ?: [] ),
+        array_map( fn( $f ) => 'templates/' . basename( $f ), glob( ENROUTE_OFFERS_PATH . 'templates/*.php' ) ?: [] )
+    );
+    foreach ( $found as $rel ) {
+        if ( ! isset( $files[ $rel ] ) ) $files[ $rel ] = 'Enroute – Backend';
+    }
+    return $files;
+}
+
+/**
  * Extracts the texts of __(), _e(), esc_html__() … calls with the
- * 'enroute_offers' text domain from the front-end files.
+ * 'enroute_offers' text domain from all plugin files.
  * Returns [ text => group ]; cached until a file changes.
  */
 function enroute_pll_collect_strings(): array {
-    $groups = enroute_pll_string_groups();
+    $groups = enroute_pll_all_files();
 
     $stamp = '';
     foreach ( array_keys( $groups ) as $rel ) {
@@ -123,20 +142,67 @@ function enroute_pll_gettext( $translation, $text, $domain ) {
     static $busy = false;
     if ( $domain !== 'enroute_offers' || $busy ) return $translation;
     if ( ! function_exists( 'pll_translate_string' ) || ! function_exists( 'pll_current_language' ) ) return $translation;
-    if ( is_admin() && ! wp_doing_ajax() ) return $translation;
 
-    $lang = pll_current_language();
+    if ( is_admin() && ! wp_doing_ajax() ) {
+        // Backend: the language of the logged-in admin's own WordPress language setting
+        $lang = enroute_pll_admin_language();
+    } else {
+        $lang = pll_current_language();
+    }
     if ( wp_doing_ajax() ) {
         // AJAX from the front end: language sent with the request, else current / cookie language
         $lang = sanitize_key( $_REQUEST['lang'] ?? '' ) ?: ( $lang ?: sanitize_key( $_COOKIE['pll_language'] ?? '' ) );
     }
     if ( ! $lang ) return $translation;
 
-    $busy = true;
-    $pll  = pll_translate_string( $text, $lang );
-    $busy = false;
+    $busy  = true;
+    $saved = enroute_pll_saved_translation( $text, $lang );
+    $busy  = false;
 
-    return ( is_string( $pll ) && $pll !== '' && $pll !== $text ) ? $pll : $translation;
+    // Saved in Polylang → use it (even if identical to the original); otherwise the .mo translation
+    return $saved ?? $translation;
+}
+
+/**
+ * Translation saved in Polylang for $text in $lang, or null if none was saved.
+ * Unlike pll_translate_string(), a translation that is identical to the
+ * original also counts as saved, so an admin's choice always wins.
+ */
+function enroute_pll_saved_translation( string $text, string $lang ): ?string {
+    static $tables = [];
+    if ( ! isset( $tables[ $lang ] ) ) {
+        $tables[ $lang ] = [];
+        if ( function_exists( 'PLL' ) && class_exists( 'PLL_MO' ) ) {
+            $language = PLL()->model->get_language( $lang );
+            if ( $language ) {
+                $mo = new PLL_MO();
+                $mo->import_from_db( $language );
+                foreach ( $mo->entries as $entry ) {
+                    if ( $entry->singular !== '' && ! empty( $entry->translations[0] ) ) {
+                        $tables[ $lang ][ $entry->singular ] = $entry->translations[0];
+                    }
+                }
+            }
+        }
+    }
+    return $tables[ $lang ][ $text ] ?? null;
+}
+
+/** Polylang language slug matching the current admin user's language (de_CH → de). */
+function enroute_pll_admin_language(): string {
+    static $slug = null;
+    if ( $slug !== null ) return $slug;
+    $slug = '';
+    if ( ! function_exists( 'PLL' ) || ! function_exists( 'get_user_locale' ) || ! did_action( 'init' ) ) return $slug;
+
+    $locale = get_user_locale();
+    foreach ( PLL()->model->get_languages_list() as $language ) {
+        if ( $language->locale === $locale ) return $slug = $language->slug;
+    }
+    foreach ( PLL()->model->get_languages_list() as $language ) {
+        if ( substr( $language->locale, 0, 2 ) === substr( $locale, 0, 2 ) ) return $slug = $language->slug;
+    }
+    return $slug;
 }
 
 // ── Copy existing .mo translations into Polylang (once, and for new strings) ──
@@ -161,8 +227,7 @@ add_action( 'admin_init', function() {
             $changed = false;
 
             foreach ( array_keys( $strings ) as $text ) {
-                $existing = $pll_mo->translate( $text );
-                if ( $existing !== '' && $existing !== $text ) continue; // already translated in Polylang
+                if ( isset( $pll_mo->entries[ $text ] ) ) continue; // saved in Polylang (by an admin or earlier import) — never overwrite
 
                 $from_mo = $source->translate( $text );
                 if ( $from_mo !== '' && $from_mo !== $text ) {

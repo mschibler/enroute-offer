@@ -2,10 +2,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Enroute Offers 1.0.0\n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: fr_FR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 msgid "Offers"
@@ -216,7 +216,6 @@ msgid "Show results"
 msgstr "Afficher les résultats"
 
 # Booking form strings
-
 msgid "Buchungsanfrage"
 msgstr "Demande de réservation"
 
@@ -373,11 +372,15 @@ msgstr "Vous pouvez également demander le User Pass séparément"
 msgid "hier anfragen"
 msgstr "ici"
 
-msgid "Ihr User Pass hat kein Guthaben mehr. Möchten Sie einen neuen Pass buchen?"
-msgstr "Votre User Pass n'a plus de crédit. Souhaitez-vous en réserver un nouveau ?"
+msgid ""
+"Ihr User Pass hat kein Guthaben mehr. Möchten Sie einen neuen Pass buchen?"
+msgstr ""
+"Votre User Pass n'a plus de crédit. Souhaitez-vous en réserver un nouveau ?"
 
-msgid "Ihr User Pass ist nicht mehr gültig. Möchten Sie einen neuen Pass buchen?"
-msgstr "Votre User Pass n'est plus valable. Souhaitez-vous en réserver un nouveau ?"
+msgid ""
+"Ihr User Pass ist nicht mehr gültig. Möchten Sie einen neuen Pass buchen?"
+msgstr ""
+"Votre User Pass n'est plus valable. Souhaitez-vous en réserver un nouveau ?"
 
 msgid "gleiche Auswahl wie letztes Mal"
 msgstr "même choix que la dernière fois"
@@ -411,3 +414,305 @@ msgstr "Veuillez sélectionner une date souhaitée."
 
 msgid "Fehler."
 msgstr "Erreur."
+
+msgid "Durchführungsort"
+msgstr "Lieu de réalisation"
+
+msgid "User Pass verwenden (%s%s)"
+msgstr "Utiliser le User Pass (%s%s)"
+
+msgid "gültig bis"
+msgstr "valable jusqu'au"
+
+msgid "Benutzerpässe für Lehrpersonen"
+msgstr "User Pass pour enseignant·e·s"
+
+msgid ""
+"EduPass Mini: 250 CHF zahlen - für 350 CHF nutzen\n"
+"EduPass Midi: 500 CHF zahlen - für 750 CHF nutzen\n"
+"EduPass Maxi: 1000 CHF zahlen - für 1550 CHF nutzen\n"
+"Das Guthaben ist ein Jahr ab Bestelldatum gültig."
+msgstr ""
+"EduPass Mini : payer 250 CHF – utiliser 350 CHF\n"
+"EduPass Midi : payer 500 CHF – utiliser 750 CHF\n"
+"EduPass Maxi : payer 1000 CHF – utiliser 1550 CHF\n"
+"Le crédit est valable un an à compter de la date de commande."
+
+msgid ""
+"Ein Upgrade auf einen höheren Pass ist jederzeit möglich, das Ablaufdatum "
+"bleibt dabei unverändert. Nicht genutztes Guthaben verfällt nach Ablauf und "
+"wird nicht rückerstattet. Bei Überschreitung wird der Differenzbetrag in "
+"Rechnung gestellt."
+msgstr ""
+"Un passage à un pass supérieur est possible à tout moment ; la date "
+"d'échéance reste inchangée. Le crédit non utilisé expire à l'échéance et "
+"n'est pas remboursé. En cas de dépassement, la différence est facturée."
+
+msgid "Ungültige Anfrage."
+msgstr "Demande non valable."
+
+msgid "Bitte füllen Sie alle Pflichtfelder aus."
+msgstr "Veuillez remplir tous les champs obligatoires."
+
+msgid "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+msgstr "Veuillez saisir une adresse e-mail valable."
+
+msgid "Angebot nicht gefunden."
+msgstr "Offre introuvable."
+
+msgid "Dieses Angebot kann nicht gebucht werden."
+msgstr "Cette offre ne peut pas être réservée."
+
+msgid "Fehler beim Speichern der Buchungsanfrage."
+msgstr "Erreur lors de l'enregistrement de la demande de réservation."
+
+msgid ""
+"Ihre Buchungsanfrage wurde erfolgreich übermittelt. Sie erhalten in Kürze "
+"eine Bestätigungs-E-Mail."
+msgstr ""
+"Votre demande de réservation a bien été transmise. Vous recevrez sous peu un"
+" e-mail de confirmation."
+
+msgid "Suchen…"
+msgstr "Rechercher…"
+
+msgid "Suche löschen"
+msgstr "Effacer la recherche"
+
+msgid "Keine Angebote gefunden."
+msgstr "Aucune offre trouvée."
+
+msgid "Filter zurücksetzen"
+msgstr "Réinitialiser les filtres"
+
+msgid "Filter schließen"
+msgstr "Fermer les filtres"
+
+msgid "Wochentag"
+msgstr "Jour de la semaine"
+
+msgid "Thema"
+msgstr "Thème"
+
+msgid "Angebot"
+msgstr "Offre"
+
+msgid "Sprache"
+msgstr "Langue"
+
+msgid "Anwenden"
+msgstr "Appliquer"
+
+msgid "Zurücksetzen"
+msgstr "Réinitialiser"
+
+msgid "[No offer assigned to Featured %d]"
+msgstr "[Aucune offre attribuée à Featured %d]"
+
+msgid "Keine Ressourcen gefunden."
+msgstr "Aucune ressource trouvée."
+
+msgid "Medientyp"
+msgstr "Type de média"
+
+msgid "No guides found."
+msgstr "Aucun guide trouvé."
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Alle"
+msgstr "Tous"
+
+msgid "Keine Beiträge gefunden."
+msgstr "Aucun article trouvé."
+
+msgid "Kontaktdaten"
+msgstr "Coordonnées"
+
+msgid "Abbrechen"
+msgstr "Annuler"
+
+msgid "Bearbeiten"
+msgstr "Modifier"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Adresse"
+msgstr "Adresse"
+
+msgid "PLZ / Ort"
+msgstr "NPA / Localité"
+
+msgid "— Bitte wählen —"
+msgstr "— Veuillez choisir —"
+
+msgid "E-Mail kann nicht geändert werden."
+msgstr "L'adresse e-mail ne peut pas être modifiée."
+
+msgid "Speichern"
+msgstr "Enregistrer"
+
+msgid "Wird gespeichert…"
+msgstr "Enregistrement…"
+
+msgid "Mein User Pass"
+msgstr "Mon User Pass"
+
+msgid "User Pass anfragen"
+msgstr "Demander un User Pass"
+
+msgid "Noch kein User Pass."
+msgstr "Pas encore de User Pass."
+
+msgid "Pass"
+msgstr "Pass"
+
+msgid "Status"
+msgstr "Statut"
+
+msgid "Neu — wird bearbeitet"
+msgstr "Nouveau — en cours de traitement"
+
+msgid "Aktiv"
+msgstr "Actif"
+
+msgid "Gültig bis"
+msgstr "Valable jusqu'au"
+
+msgid "Abgelaufen"
+msgstr "Expiré"
+
+msgid "Guthaben"
+msgstr "Crédit"
+
+msgid "Kein Guthaben mehr"
+msgstr "Plus de crédit"
+
+msgid "Frühere Pässe (%d)"
+msgstr "Anciens pass (%d)"
+
+msgid "Inaktiv"
+msgstr "Inactif"
+
+msgid "Meine Buchungsanfragen"
+msgstr "Mes demandes de réservation"
+
+msgid "Noch keine Buchungsanfragen."
+msgstr "Pas encore de demandes de réservation."
+
+msgid "Wunschdatum:"
+msgstr "Date souhaitée :"
+
+msgid "Ersatz:"
+msgstr "Date de remplacement :"
+
+msgid "Personen"
+msgstr "Personnes"
+
+msgid "Bitte E-Mail und Passwort eingeben."
+msgstr "Veuillez saisir l'e-mail et le mot de passe."
+
+msgid "Kein Konto mit dieser E-Mail-Adresse gefunden."
+msgstr "Aucun compte trouvé avec cette adresse e-mail."
+
+msgid "Falsches Passwort."
+msgstr "Mot de passe incorrect."
+
+msgid "Angemeldet!"
+msgstr "Connecté·e !"
+
+msgid "Bitte alle Pflichtfelder ausfüllen."
+msgstr "Veuillez remplir tous les champs obligatoires."
+
+msgid "Ungültige E-Mail-Adresse."
+msgstr "Adresse e-mail non valable."
+
+msgid "Passwort muss mindestens 8 Zeichen lang sein."
+msgstr "Le mot de passe doit comporter au moins 8 caractères."
+
+msgid "Passwörter stimmen nicht überein."
+msgstr "Les mots de passe ne correspondent pas."
+
+msgid "Diese E-Mail-Adresse ist bereits registriert."
+msgstr "Cette adresse e-mail est déjà enregistrée."
+
+msgid "Registrierung ist deaktiviert."
+msgstr "L'inscription est désactivée."
+
+msgid "Konto erstellt und angemeldet!"
+msgstr "Compte créé et connecté·e !"
+
+msgid "Nicht angemeldet."
+msgstr "Non connecté·e."
+
+msgid "Profil gespeichert."
+msgstr "Profil enregistré."
+
+msgid "Abgemeldet."
+msgstr "Déconnecté·e."
+
+msgid "Keine User Passes verfügbar."
+msgstr "Aucun User Pass disponible."
+
+msgid "← Zurück zum Angebot"
+msgstr "← Retour à l'offre"
+
+msgid "User Pass wählen"
+msgstr "Choisir un User Pass"
+
+msgid "Validity:"
+msgstr "Validité :"
+
+msgid "Guthaben:"
+msgstr "Crédit :"
+
+msgid "Anmelden oder Konto erstellen (optional)"
+msgstr "Se connecter ou créer un compte (facultatif)"
+
+msgid "Bemerkungen"
+msgstr "Remarques"
+
+msgid "User Pass nicht gefunden."
+msgstr "User Pass introuvable."
+
+msgid "Fehler beim Speichern."
+msgstr "Erreur lors de l'enregistrement."
+
+msgid ""
+"Ihre User Pass Anfrage wurde erfolgreich übermittelt. Sie erhalten in Kürze "
+"eine Bestätigungs-E-Mail."
+msgstr ""
+"Votre demande de User Pass a bien été transmise. Vous recevrez sous peu un "
+"e-mail de confirmation."
+
+msgid "Adresse der Station"
+msgstr "Adresse de la station"
+
+msgid "Andere Adresse"
+msgstr "Autre adresse"
+
+msgid "Im Schulzimmer"
+msgstr "En classe"
+
+msgid "Es wird die Adresse der unter «Station» gewählten Station angezeigt."
+msgstr "L'adresse de la station choisie sous « Station » est affichée."
+
+msgid "Name des Ortes (optional)"
+msgstr "Nom du lieu (facultatif)"
+
+msgid "Strasse / Nr."
+msgstr "Rue / n°"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "Uncheck to hide this offer from all listings."
+msgstr "Décocher pour masquer cette offre dans toutes les listes."
+
+msgid "Bookable"
+msgstr "Réservable"
+
+msgid "Check if this offer can be booked directly."
+msgstr "Cocher si cette offre peut être réservée directement."

@@ -220,7 +220,7 @@ $show_filter = ! isset( $args['filter'] ) || ! in_array( strtolower( (string) $a
         >
             <!-- Header row with close button -->
             <div style="display:flex; align-items:center; justify-content:space-between; padding:1rem 1.25rem; border-bottom:1px solid #9ca3af; background:#d6e8f5; position:sticky; top:0; z-index:1;">
-                <span style="font-weight:600; font-size:0.95rem;">Filter</span>
+                <span style="font-weight:600; font-size:0.95rem;"><?php esc_html_e( 'Filter', 'enroute_offers' ); ?></span>
                 <button
                     @click="filterOpen = false"
                     style="background:none; border:none; cursor:pointer; padding:4px; color:#374151;"
