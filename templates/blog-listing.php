@@ -120,7 +120,7 @@ foreach ( $all_posts as $p ) {
 }
 ?>
 
-<script>window['<?php echo esc_js( $uid ); ?>'] = <?php echo wp_json_encode( $posts_data ); ?>;</script>
+<script>window['<?php echo esc_js( $uid ); ?>'] = <?php echo wp_json_encode( enroute_js_data( $posts_data ) ); ?>;</script>
 
 <div
     id="<?php echo esc_attr( $uid ); ?>-wrap"

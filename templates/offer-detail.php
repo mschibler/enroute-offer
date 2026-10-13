@@ -486,8 +486,16 @@ $button_color_green = '#c9d56b'; // green button
                             <?php esc_html_e( 'Gruppe', 'enroute_offers' ); ?>
                         </h3>
                         <div style="margin-bottom:0.6rem;">
-                            <label <?php echo $lbl; ?>><?php esc_html_e( 'Anzahl Personen', 'enroute_offers' ); ?></label>
-                            <input type="number" min="1" x-model="form.persons" <?php echo $inp; ?>>
+                            <label <?php echo $lbl; ?>><?php esc_html_e( 'Anzahl Personen unter 16 Jahren', 'enroute_offers' ); ?></label>
+                            <input type="number" min="0" step="1" inputmode="numeric" x-model="form.persons_under16" <?php echo $inp; ?>>
+                        </div>
+                        <div style="margin-bottom:0.6rem;">
+                            <label <?php echo $lbl; ?>><?php esc_html_e( 'Anzahl Personen über 16 Jahren', 'enroute_offers' ); ?></label>
+                            <input type="number" min="0" step="1" inputmode="numeric" x-model="form.persons_over16" <?php echo $inp; ?>>
+                        </div>
+                        <div style="margin-bottom:0.6rem;">
+                            <label <?php echo $lbl; ?>><?php esc_html_e( 'Anzahl Begleitpersonen', 'enroute_offers' ); ?></label>
+                            <input type="number" min="0" step="1" inputmode="numeric" x-model="form.persons_companions" <?php echo $inp; ?>>
                         </div>
                         <div style="margin-bottom:1rem;">
                             <label <?php echo $lbl; ?>><?php esc_html_e( 'Weitere Angaben', 'enroute_offers' ); ?></label>

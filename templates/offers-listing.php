@@ -75,7 +75,7 @@ foreach ( $offers as $i => $offer ) {
 }
 
 $uid          = 'eol_' . uniqid();
-$json         = wp_json_encode( $offers_data );
+$json         = wp_json_encode( enroute_js_data( $offers_data ) ); // decode &#8211; etc.
 $current_lang = function_exists( 'pll_current_language' ) ? pll_current_language() : substr( get_locale(), 0, 2 );
 $current_lang = substr( $current_lang, 0, 2 ); // normalise de_CH → de
 

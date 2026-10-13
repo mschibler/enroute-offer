@@ -29,7 +29,12 @@ function enroute_handle_booking_submission() {
     $time_1      = sanitize_text_field( $_POST['time_1']      ?? '' );
     $date_2      = sanitize_text_field( $_POST['date_2']      ?? '' );
     $time_2      = sanitize_text_field( $_POST['time_2']      ?? '' );
-    $persons     = sanitize_text_field( $_POST['persons']     ?? '' );
+    // Group: three numbers; the total is kept in _booking_persons (old bookings, lists)
+    $persons_under16    = isset( $_POST['persons_under16'] )    && $_POST['persons_under16']    !== '' ? absint( $_POST['persons_under16'] )    : '';
+    $persons_over16     = isset( $_POST['persons_over16'] )     && $_POST['persons_over16']     !== '' ? absint( $_POST['persons_over16'] )     : '';
+    $persons_companions = isset( $_POST['persons_companions'] ) && $_POST['persons_companions'] !== '' ? absint( $_POST['persons_companions'] ) : '';
+    $persons_given      = [ $persons_under16, $persons_over16, $persons_companions ] !== [ '', '', '' ];
+    $persons            = $persons_given ? (int) $persons_under16 + (int) $persons_over16 + (int) $persons_companions : '';
     $remarks     = sanitize_textarea_field( $_POST['remarks'] ?? '' );
 
     // ── Required fields ─────────────────────────────────────────────────────────
@@ -88,7 +93,10 @@ function enroute_handle_booking_submission() {
         '_booking_time_1'      => $time_1,
         '_booking_date_2'      => $date_2,
         '_booking_time_2'      => $time_2,
-        '_booking_persons'     => $persons,
+        '_booking_persons'            => $persons,
+        '_booking_persons_under16'    => $persons_under16,
+        '_booking_persons_over16'     => $persons_over16,
+        '_booking_persons_companions' => $persons_companions,
         '_booking_remarks'     => $remarks,
         '_booking_submitted'   => date_i18n( 'd.m.Y H:i:s' ),
         '_booking_user_id'     => get_current_user_id(), // 0 if not logged in
@@ -113,7 +121,10 @@ function enroute_handle_booking_submission() {
         '{uhrzeit1}'    => $time_1,
         '{datum2}'      => $date_2,
         '{uhrzeit2}'    => $time_2,
-        '{personen}'    => $persons,
+        '{personen}'          => enroute_booking_persons_summary( $persons, $persons_under16, $persons_over16, $persons_companions ),
+        '{personen_unter16}'  => (string) $persons_under16,
+        '{personen_ueber16}'  => (string) $persons_over16,
+        '{begleitpersonen}'   => (string) $persons_companions,
         '{bemerkungen}' => $remarks,
         '{admin_url}'   => $admin_url,
     ];

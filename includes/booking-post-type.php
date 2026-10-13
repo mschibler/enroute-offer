@@ -62,7 +62,10 @@ function enroute_booking_details_meta_box( $post ) {
         '_booking_time_1'         => __( 'Wunschzeit',        'enroute_offers' ),
         '_booking_date_2'         => __( 'Ersatzdatum',       'enroute_offers' ),
         '_booking_time_2'         => __( 'Ersatzzeit',        'enroute_offers' ),
-        '_booking_persons'        => __( 'Anzahl Personen',   'enroute_offers' ),
+        '_booking_persons_under16'    => __( 'Anzahl Personen unter 16 Jahren', 'enroute_offers' ),
+        '_booking_persons_over16'     => __( 'Anzahl Personen über 16 Jahren',  'enroute_offers' ),
+        '_booking_persons_companions' => __( 'Anzahl Begleitpersonen',          'enroute_offers' ),
+        '_booking_persons'        => __( 'Anzahl Personen (total)', 'enroute_offers' ),
         '_booking_remarks'        => __( 'Weitere Angaben',   'enroute_offers' ),
         '_booking_submitted'      => __( 'Eingereicht am',    'enroute_offers' ),
     ];
@@ -124,6 +127,17 @@ add_action( 'manage_enroute_booking_posts_custom_column', function( $col, $post_
             break;
         case 'booking_persons':
             echo esc_html( get_post_meta( $post_id, '_booking_persons', true ) );
+            $u = get_post_meta( $post_id, '_booking_persons_under16', true );
+            $o = get_post_meta( $post_id, '_booking_persons_over16', true );
+            $b = get_post_meta( $post_id, '_booking_persons_companions', true );
+            if ( $u !== '' || $o !== '' || $b !== '' ) {
+                echo '<br><small style="color:#666;">'
+                    . esc_html( sprintf( '%s: %s · %s: %s · %s: %s',
+                        __( '<16', 'enroute_offers' ), $u === '' ? '–' : $u,
+                        __( '>16', 'enroute_offers' ), $o === '' ? '–' : $o,
+                        __( 'Begl.', 'enroute_offers' ), $b === '' ? '–' : $b ) )
+                    . '</small>';
+            }
             break;
     }
 }, 10, 2 );

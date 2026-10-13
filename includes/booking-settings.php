@@ -182,7 +182,7 @@ function enroute_offers_settings_page() {
         $vals[ $key ] = get_option( $key, $def );
     }
 
-    $hint = '<small style="color:#666;">' . esc_html__( 'Verfügbare Platzhalter: {angebot}, {vorname}, {nachname}, {email}, {telefon}, {institution}, {strasse}, {plz}, {ort}, {datum1}, {uhrzeit1}, {datum2}, {uhrzeit2}, {personen}, {bemerkungen}, {admin_url}', 'enroute_offers' ) . '</small>';
+    $hint = '<small style="color:#666;">' . esc_html__( 'Verfügbare Platzhalter: {angebot}, {vorname}, {nachname}, {email}, {telefon}, {institution}, {strasse}, {plz}, {ort}, {datum1}, {uhrzeit1}, {datum2}, {uhrzeit2}, {personen}, {personen_unter16}, {personen_ueber16}, {begleitpersonen}, {bemerkungen}, {admin_url}', 'enroute_offers' ) . '</small>';
     ?>
     <div class="wrap">
         <h1><?php esc_html_e( 'Angebote – Einstellungen', 'enroute_offers' ); ?></h1>

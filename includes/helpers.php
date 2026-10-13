@@ -143,3 +143,41 @@ function enroute_get_default_colors(): array {
         5 => '#D0687B',
     ];
 }
+
+// ── Texts for JavaScript (Alpine listings) ───────────────────────────────────
+
+/**
+ * Decodes HTML entities (e.g. &#8211; → –, &amp; → &) in all texts of a data
+ * array before it is handed to JavaScript. WordPress stores typographic
+ * characters in titles as entities; Alpine's x-text shows them literally.
+ * Safe because x-text and :href/:src never interpret HTML.
+ * Keys in $html_keys hold real HTML for x-html and are left unchanged.
+ */
+function enroute_js_data( $data, array $html_keys = [] ) {
+    if ( is_array( $data ) ) {
+        foreach ( $data as $key => $value ) {
+            if ( is_string( $key ) && in_array( $key, $html_keys, true ) ) continue;
+            $data[ $key ] = enroute_js_data( $value, $html_keys );
+        }
+        return $data;
+    }
+    return is_string( $data ) ? html_entity_decode( $data, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) : $data;
+}
+
+// ── Booking: group size ──────────────────────────────────────────────────────
+
+/**
+ * Text for the {personen} e-mail placeholder and the backend, e.g.
+ * "17 (unter 16 Jahren: 12, über 16 Jahren: 3, Begleitpersonen: 2)".
+ * Old bookings with only a total show just the total.
+ */
+function enroute_booking_persons_summary( $total, $under16 = '', $over16 = '', $companions = '' ): string {
+    $parts = [];
+    if ( $under16 !== '' && $under16 !== null )       $parts[] = sprintf( __( 'unter 16 Jahren: %d', 'enroute_offers' ), (int) $under16 );
+    if ( $over16 !== '' && $over16 !== null )         $parts[] = sprintf( __( 'über 16 Jahren: %d', 'enroute_offers' ), (int) $over16 );
+    if ( $companions !== '' && $companions !== null ) $parts[] = sprintf( __( 'Begleitpersonen: %d', 'enroute_offers' ), (int) $companions );
+
+    if ( $total === '' || $total === null ) return '';
+    return $parts ? $total . ' (' . implode( ', ', $parts ) . ')' : (string) $total;
+}
+

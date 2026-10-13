@@ -758,3 +758,38 @@ msgstr "Réinitialiser toutes les couleurs aux couleurs par défaut ?"
 
 msgid "Auf Standardfarben zurücksetzen"
 msgstr "Rétablir les couleurs par défaut"
+
+msgid "Anzahl Personen unter 16 Jahren"
+msgstr "Nombre de personnes de moins de 16 ans"
+
+msgid "Anzahl Personen über 16 Jahren"
+msgstr "Nombre de personnes de plus de 16 ans"
+
+msgid "Anzahl Begleitpersonen"
+msgstr "Nombre d'accompagnant·e·s"
+
+msgid "unter 16 Jahren: %d"
+msgstr "moins de 16 ans : %d"
+
+msgid "über 16 Jahren: %d"
+msgstr "plus de 16 ans : %d"
+
+msgid "Begleitpersonen: %d"
+msgstr "accompagnant·e·s : %d"
+
+msgid "Anzahl Personen (total)"
+msgstr "Nombre de personnes (total)"
+
+msgid "Begl."
+msgstr "Accomp."
+
+msgid ""
+"Verfügbare Platzhalter: {angebot}, {vorname}, {nachname}, {email}, "
+"{telefon}, {institution}, {strasse}, {plz}, {ort}, {datum1}, {uhrzeit1}, "
+"{datum2}, {uhrzeit2}, {personen}, {personen_unter16}, {personen_ueber16}, "
+"{begleitpersonen}, {bemerkungen}, {admin_url}"
+msgstr ""
+"Variables disponibles : {angebot}, {vorname}, {nachname}, {email}, "
+"{telefon}, {institution}, {strasse}, {plz}, {ort}, {datum1}, {uhrzeit1}, "
+"{datum2}, {uhrzeit2}, {personen}, {personen_unter16}, {personen_ueber16}, "
+"{begleitpersonen}, {bemerkungen}, {admin_url}"

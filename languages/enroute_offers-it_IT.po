@@ -757,3 +757,38 @@ msgstr "Ripristinare tutti i colori predefiniti?"
 
 msgid "Auf Standardfarben zurücksetzen"
 msgstr "Ripristina colori predefiniti"
+
+msgid "Anzahl Personen unter 16 Jahren"
+msgstr "Numero di persone sotto i 16 anni"
+
+msgid "Anzahl Personen über 16 Jahren"
+msgstr "Numero di persone sopra i 16 anni"
+
+msgid "Anzahl Begleitpersonen"
+msgstr "Numero di accompagnatori"
+
+msgid "unter 16 Jahren: %d"
+msgstr "sotto i 16 anni: %d"
+
+msgid "über 16 Jahren: %d"
+msgstr "sopra i 16 anni: %d"
+
+msgid "Begleitpersonen: %d"
+msgstr "accompagnatori: %d"
+
+msgid "Anzahl Personen (total)"
+msgstr "Numero di persone (totale)"
+
+msgid "Begl."
+msgstr "Accomp."
+
+msgid ""
+"Verfügbare Platzhalter: {angebot}, {vorname}, {nachname}, {email}, "
+"{telefon}, {institution}, {strasse}, {plz}, {ort}, {datum1}, {uhrzeit1}, "
+"{datum2}, {uhrzeit2}, {personen}, {personen_unter16}, {personen_ueber16}, "
+"{begleitpersonen}, {bemerkungen}, {admin_url}"
+msgstr ""
+"Segnaposto disponibili: {angebot}, {vorname}, {nachname}, {email}, "
+"{telefon}, {institution}, {strasse}, {plz}, {ort}, {datum1}, {uhrzeit1}, "
+"{datum2}, {uhrzeit2}, {personen}, {personen_unter16}, {personen_ueber16}, "
+"{begleitpersonen}, {bemerkungen}, {admin_url}"

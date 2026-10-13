@@ -35,7 +35,7 @@ foreach ( $pois as $poi ) {
 }
 
 $map_id       = 'epm_' . uniqid();
-$markers_json = wp_json_encode( $markers, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+$markers_json = wp_json_encode( enroute_js_data( $markers, [ 'desc' ] ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 ?>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -164,16 +164,19 @@ $markers_json = wp_json_encode( $markers, JSON_UNESCAPED_UNICODE | JSON_UNESCAPE
         iconAnchor: [10, 28],
     });
 
+    // Escape plain text before it goes into innerHTML (titles are plain text; desc is sanitised HTML)
+    function epmEsc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
     markers.forEach(function(m){
         L.marker([m.lat, m.lng], {icon:icon}).addTo(map).on('click', function(e){
             L.DomEvent.stopPropagation(e);
             var hasImg = !!m.photo;
             var html = '';
             if (hasImg) {
-                html += '<div class="epm-popup-img"><img src="'+m.photo+'" alt="'+m.title+'"></div>';
+                html += '<div class="epm-popup-img"><img src="'+epmEsc(m.photo)+'" alt="'+epmEsc(m.title)+'"></div>';
             }
             html += '<div class="epm-popup-body">';
-            html += '<h2>'+m.title+'</h2>';
+            html += '<h2>'+epmEsc(m.title)+'</h2>';
             if (m.desc) html += '<div class="epm-desc">'+m.desc+'</div>';
             html += '</div>';
             inner.innerHTML = html;

@@ -107,7 +107,7 @@ foreach ( $all_cats as $cid => $cname ) {
 $uid = 'ebs_' . uniqid();
 ?>
 
-<script>window['<?php echo esc_js( $uid ); ?>'] = <?php echo wp_json_encode( $sidebar_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ); ?>;</script>
+<script>window['<?php echo esc_js( $uid ); ?>'] = <?php echo wp_json_encode( enroute_js_data( $sidebar_data ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ); ?>;</script>
 
 <div id="blog-single-wrap" style="max-width:1350px; margin:0 auto; padding:0 1rem;">
     <div style="display:grid; grid-template-columns:1fr 380px; gap:2.5rem; align-items:start;">
