@@ -715,3 +715,45 @@ msgstr "Prenotabile"
 
 msgid "Check if this offer can be booked directly."
 msgstr "Selezionare se questa offerta può essere prenotata direttamente."
+
+msgid "General"
+msgstr "Generale"
+
+msgid "Contacts"
+msgstr "Contatti"
+
+msgid "Emails"
+msgstr "E-mail"
+
+msgid "Text blocks"
+msgstr "Blocchi di testo"
+
+msgid "Default colors"
+msgstr "Colori predefiniti"
+
+msgid "Kontakt"
+msgstr "Contatto"
+
+msgid ""
+"Kontaktangaben pro Sprache, z. B. für den Footer. Auf der Website wird "
+"automatisch die Angabe der aktuellen Sprache angezeigt (ist ein Feld leer, "
+"die deutsche)."
+msgstr ""
+"Dati di contatto per lingua, ad es. per il piè di pagina. Il sito mostra "
+"automaticamente i dati della lingua attuale (se un campo è vuoto, quelli in "
+"tedesco)."
+
+msgid "Shortcodes:"
+msgstr "Shortcode:"
+
+msgid "(E-Mail und Telefon)"
+msgstr "(e-mail e telefono)"
+
+msgid "Inhalte folgen."
+msgstr "Contenuti in arrivo."
+
+msgid "Alle Farben auf die Standardfarben zurücksetzen?"
+msgstr "Ripristinare tutti i colori predefiniti?"
+
+msgid "Auf Standardfarben zurücksetzen"
+msgstr "Ripristina colori predefiniti"

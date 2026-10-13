@@ -2,12 +2,27 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Offers Settings — admin menu page under Offers.
- * Manages:
- *  - Admin notification email address
- *  - Customer confirmation email (DE / FR / IT)
- *  - Offer-contact confirmation email
+ * Offers Settings — admin menu page under Offers, organised in tabs:
+ *  - General:     page URLs, default colours
+ *  - Contacts:    contact e-mail and phone per language ([enroute_contact] shortcode)
+ *  - Emails:      admin address, booking and user pass e-mails (DE / FR / IT)
+ *  - Text blocks: (content follows)
  */
+
+/** Tabs of the settings page. */
+function enroute_settings_tabs(): array {
+    return [
+        'general'  => __( 'General', 'enroute_offers' ),
+        'contacts' => __( 'Contacts', 'enroute_offers' ),
+        'emails'   => __( 'Emails', 'enroute_offers' ),
+        'texts'    => __( 'Text blocks', 'enroute_offers' ),
+    ];
+}
+
+/** Languages for per-language settings. */
+function enroute_settings_languages(): array {
+    return [ 'de' => 'Deutsch', 'fr' => 'Français', 'it' => 'Italiano' ];
+}
 
 add_action( 'admin_menu', function() {
     add_submenu_page(
@@ -39,11 +54,28 @@ function enroute_offers_settings_page() {
             update_option( 'enroute_guides_page_url', esc_url_raw( $_POST['enroute_guides_page_url'] ) );
         }
 
+        // Reset colours → delete saved values, so the defaults apply
+        if ( isset( $_POST['enroute_reset_colors'] ) ) {
+            for ( $n = 1; $n <= 5; $n++ ) delete_option( "enroute_featured_color_$n" );
+            unset( $_POST['enroute_reset_colors'] );
+            for ( $n = 1; $n <= 5; $n++ ) unset( $_POST[ "enroute_featured_color_$n" ] );
+        }
+
         // Save featured colours
         for ( $n = 1; $n <= 5; $n++ ) {
             $key = "enroute_featured_color_$n";
             if ( isset( $_POST[ $key ] ) && preg_match( '/^#[0-9A-Fa-f]{6}$/', $_POST[ $key ] ) ) {
                 update_option( $key, sanitize_hex_color( $_POST[ $key ] ) );
+            }
+        }
+
+        // Contacts (per language)
+        foreach ( array_keys( enroute_settings_languages() ) as $lang ) {
+            if ( isset( $_POST[ "enroute_contact_email_$lang" ] ) ) {
+                update_option( "enroute_contact_email_$lang", sanitize_email( wp_unslash( $_POST[ "enroute_contact_email_$lang" ] ) ) );
+            }
+            if ( isset( $_POST[ "enroute_contact_phone_$lang" ] ) ) {
+                update_option( "enroute_contact_phone_$lang", sanitize_text_field( wp_unslash( $_POST[ "enroute_contact_phone_$lang" ] ) ) );
             }
         }
 
@@ -154,8 +186,23 @@ function enroute_offers_settings_page() {
     ?>
     <div class="wrap">
         <h1><?php esc_html_e( 'Angebote – Einstellungen', 'enroute_offers' ); ?></h1>
+
+        <?php
+        $tabs       = enroute_settings_tabs();
+        $active_tab = sanitize_key( $_GET['tab'] ?? 'general' );
+        if ( ! isset( $tabs[ $active_tab ] ) ) $active_tab = 'general';
+        ?>
+        <nav class="nav-tab-wrapper" style="margin-bottom:1rem;">
+            <?php foreach ( $tabs as $slug => $label ) : ?>
+                <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=offer&page=enroute-offers-settings&tab=' . $slug ) ); ?>"
+                   class="nav-tab <?php echo $slug === $active_tab ? 'nav-tab-active' : ''; ?>"><?php echo esc_html( $label ); ?></a>
+            <?php endforeach; ?>
+        </nav>
+
         <form method="post">
             <?php wp_nonce_field( 'enroute_offers_settings_save', 'enroute_offers_settings_nonce' ); ?>
+
+            <?php if ( $active_tab === 'general' ) : // ═══ GENERAL ═══ ?>
 
             <h2><?php esc_html_e( 'Benutzerprofile', 'enroute_offers' ); ?></h2>
             <table class="form-table">
@@ -187,6 +234,75 @@ function enroute_offers_settings_page() {
                     </td>
                 </tr>
             </table>
+
+            <h2><?php esc_html_e( 'Default colors', 'enroute_offers' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Colours used for the text band in featured offer blocks. Use with shortcode: [enroute_featured_offer number="1" color="1"]', 'enroute_offers' ); ?></p>
+            <table class="form-table">
+                <?php
+                $default_colors = enroute_get_default_colors();
+                for ( $n = 1; $n <= 5; $n++ ) :
+                    $val = get_option( "enroute_featured_color_$n", $default_colors[ $n ] );
+                ?>
+                <tr>
+                    <th><label for="enroute_featured_color_<?php echo $n; ?>"><?php printf( esc_html__( 'Color %d', 'enroute_offers' ), $n ); ?></label></th>
+                    <td style="display:flex; align-items:center; gap:0.75rem; padding-top:8px;">
+                        <?php // Picker and text field stay in sync; only the text field is submitted ?>
+                        <input
+                            type="color"
+                            id="enroute_featured_color_picker_<?php echo $n; ?>"
+                            value="<?php echo esc_attr( $val ); ?>"
+                            oninput="document.getElementById('enroute_featured_color_<?php echo $n; ?>').value=this.value; document.getElementById('enroute_featured_color_preview_<?php echo $n; ?>').style.background=this.value;"
+                            style="width:48px; height:32px; padding:2px; border:1px solid #ccc; cursor:pointer;"
+                        >
+                        <input
+                            type="text"
+                            id="enroute_featured_color_<?php echo $n; ?>"
+                            name="enroute_featured_color_<?php echo $n; ?>"
+                            value="<?php echo esc_attr( $val ); ?>"
+                            class="small-text"
+                            maxlength="7"
+                            pattern="#[0-9A-Fa-f]{6}"
+                            placeholder="#000000"
+                            oninput="if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) { document.getElementById('enroute_featured_color_picker_<?php echo $n; ?>').value=this.value; document.getElementById('enroute_featured_color_preview_<?php echo $n; ?>').style.background=this.value; }"
+                            style="font-family:monospace;"
+                        >
+                        <span style="display:inline-block; width:32px; height:32px; background:<?php echo esc_attr( $val ); ?>; border:1px solid #ccc; vertical-align:middle;" id="enroute_featured_color_preview_<?php echo $n; ?>"></span>
+                    </td>
+                </tr>
+                <?php endfor; ?>
+            </table>
+            <p>
+                <button type="submit" name="enroute_reset_colors" value="1" class="button"
+                        onclick="return confirm('<?php echo esc_js( __( 'Alle Farben auf die Standardfarben zurücksetzen?', 'enroute_offers' ) ); ?>');">
+                    <?php esc_html_e( 'Auf Standardfarben zurücksetzen', 'enroute_offers' ); ?>
+                </button>
+            </p>
+
+            <?php elseif ( $active_tab === 'contacts' ) : // ═══ CONTACTS ═══ ?>
+
+            <h2><?php esc_html_e( 'Kontakt', 'enroute_offers' ); ?></h2>
+            <p class="description">
+                <?php esc_html_e( 'Kontaktangaben pro Sprache, z. B. für den Footer. Auf der Website wird automatisch die Angabe der aktuellen Sprache angezeigt (ist ein Feld leer, die deutsche).', 'enroute_offers' ); ?><br>
+                <?php esc_html_e( 'Shortcodes:', 'enroute_offers' ); ?>
+                <code>[enroute_contact]</code> <?php esc_html_e( '(E-Mail und Telefon)', 'enroute_offers' ); ?>,
+                <code>[enroute_contact field="email"]</code>,
+                <code>[enroute_contact field="phone"]</code>
+            </p>
+            <?php foreach ( enroute_settings_languages() as $lang => $lang_label ) : ?>
+            <h3><?php echo esc_html( $lang_label ); ?></h3>
+            <table class="form-table">
+                <tr>
+                    <th><label for="enroute_contact_email_<?php echo esc_attr( $lang ); ?>"><?php esc_html_e( 'E-Mail', 'enroute_offers' ); ?></label></th>
+                    <td><input type="email" id="enroute_contact_email_<?php echo esc_attr( $lang ); ?>" name="enroute_contact_email_<?php echo esc_attr( $lang ); ?>" value="<?php echo esc_attr( get_option( "enroute_contact_email_$lang", '' ) ); ?>" class="regular-text"></td>
+                </tr>
+                <tr>
+                    <th><label for="enroute_contact_phone_<?php echo esc_attr( $lang ); ?>"><?php esc_html_e( 'Telefon', 'enroute_offers' ); ?></label></th>
+                    <td><input type="text" id="enroute_contact_phone_<?php echo esc_attr( $lang ); ?>" name="enroute_contact_phone_<?php echo esc_attr( $lang ); ?>" value="<?php echo esc_attr( get_option( "enroute_contact_phone_$lang", '' ) ); ?>" class="regular-text" placeholder="+41 ..."></td>
+                </tr>
+            </table>
+            <?php endforeach; ?>
+
+            <?php elseif ( $active_tab === 'emails' ) : // ═══ EMAILS ═══ ?>
 
             <h2><?php esc_html_e( 'Admin-E-Mail-Adresse', 'enroute_offers' ); ?></h2>
             <table class="form-table">
@@ -280,48 +396,14 @@ function enroute_offers_settings_page() {
             </table>
             <?php endforeach; ?>
 
-            <h2><?php esc_html_e( 'Featured Offer Colours', 'enroute_offers' ); ?></h2>
-            <p class="description"><?php esc_html_e( 'Colours used for the text band in featured offer blocks. Use with shortcode: [enroute_featured_offer number="1" color="1"]', 'enroute_offers' ); ?></p>
-            <table class="form-table">
-                <?php
-                $default_colors = [
-                    1 => '#F8ED84',
-                    2 => '#E8AB58',
-                    3 => '#C9D56B',
-                    4 => '#D0687B',
-                    5 => '#D4735D',
-                ];
-                for ( $n = 1; $n <= 5; $n++ ) :
-                    $val = get_option( "enroute_featured_color_$n", $default_colors[ $n ] );
-                ?>
-                <tr>
-                    <th><label for="enroute_featured_color_<?php echo $n; ?>"><?php printf( esc_html__( 'Color %d', 'enroute_offers' ), $n ); ?></label></th>
-                    <td style="display:flex; align-items:center; gap:0.75rem; padding-top:8px;">
-                        <input
-                            type="color"
-                            id="enroute_featured_color_<?php echo $n; ?>"
-                            name="enroute_featured_color_<?php echo $n; ?>"
-                            value="<?php echo esc_attr( $val ); ?>"
-                            style="width:48px; height:32px; padding:2px; border:1px solid #ccc; cursor:pointer;"
-                        >
-                        <input
-                            type="text"
-                            name="enroute_featured_color_<?php echo $n; ?>"
-                            value="<?php echo esc_attr( $val ); ?>"
-                            class="small-text"
-                            maxlength="7"
-                            pattern="#[0-9A-Fa-f]{6}"
-                            placeholder="#000000"
-                            oninput="document.getElementById('enroute_featured_color_<?php echo $n; ?>').value=this.value"
-                            style="font-family:monospace;"
-                        >
-                        <span style="display:inline-block; width:32px; height:32px; background:<?php echo esc_attr( $val ); ?>; border:1px solid #ccc; vertical-align:middle;" id="enroute_featured_color_preview_<?php echo $n; ?>"></span>
-                    </td>
-                </tr>
-                <?php endfor; ?>
-            </table>
+            <?php elseif ( $active_tab === 'texts' ) : // ═══ TEXT BLOCKS ═══ ?>
 
-            <?php submit_button( __( 'Einstellungen speichern', 'enroute_offers' ) ); ?>
+            <h2><?php esc_html_e( 'Text blocks', 'enroute_offers' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Inhalte folgen.', 'enroute_offers' ); ?></p>
+
+            <?php endif; ?>
+
+            <?php if ( $active_tab !== 'texts' ) submit_button( __( 'Einstellungen speichern', 'enroute_offers' ) ); ?>
         </form>
     </div>
     <?php

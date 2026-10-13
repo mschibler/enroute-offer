@@ -85,13 +85,7 @@ function enroute_offer_detail_content_filter( string $content ): string {
  * Falls back to defaults if not set in options.
  */
 function enroute_get_featured_color( int $n ): string {
-    $defaults = [
-        1 => '#F8ED84',
-        2 => '#E8AB58',
-        3 => '#C9D56B',
-        4 => '#D0687B',
-        5 => '#D4735D',
-    ];
+    $defaults = enroute_get_default_colors();
     $n = max( 1, min( 5, $n ) ); // clamp to 1-5
     return get_option( "enroute_featured_color_$n", $defaults[ $n ] );
 }
@@ -155,4 +149,59 @@ add_filter( 'template_include', function( string $template ): string {
         if ( file_exists( $custom ) ) return $custom;
     }
     return $template;
+} );
+
+
+// ── Contact details (Settings → Contacts) ─────────────────────────────────────
+// [enroute_contact]                  → e-mail and phone
+// [enroute_contact field="email"]    → e-mail only (mailto link)
+// [enroute_contact field="phone"]    → phone only (tel link)
+// Optional: link="no" (plain text), lang="fr" (force a language)
+// In theme files: echo enroute_contact( 'email' );
+
+/** Contact value for the current language; falls back to German if empty. */
+function enroute_get_contact( string $field, string $lang = '' ): string {
+    if ( ! in_array( $field, [ 'email', 'phone' ], true ) ) return '';
+    if ( ! $lang ) {
+        $lang = function_exists( 'pll_current_language' ) ? (string) pll_current_language() : '';
+        $lang = $lang ?: substr( get_locale(), 0, 2 );
+    }
+    $value = (string) get_option( "enroute_contact_{$field}_" . sanitize_key( $lang ), '' );
+    if ( $value === '' && $lang !== 'de' ) {
+        $value = (string) get_option( "enroute_contact_{$field}_de", '' );
+    }
+    return $value;
+}
+
+/** HTML for one or both contact fields. */
+function enroute_contact( string $field = '', bool $link = true, string $lang = '' ): string {
+    $fields = $field ? [ $field ] : [ 'email', 'phone' ];
+    $out    = [];
+
+    foreach ( $fields as $f ) {
+        $value = enroute_get_contact( $f, $lang );
+        if ( $value === '' ) continue;
+
+        if ( $link && $f === 'email' ) {
+            $html = '<a href="mailto:' . esc_attr( antispambot( $value ) ) . '">' . esc_html( antispambot( $value ) ) . '</a>';
+        } elseif ( $link && $f === 'phone' ) {
+            $tel  = preg_replace( '/[^0-9+]/', '', $value );
+            $html = '<a href="tel:' . esc_attr( $tel ) . '">' . esc_html( $value ) . '</a>';
+        } else {
+            $html = esc_html( $value );
+        }
+        $out[] = '<span class="enroute-contact-' . esc_attr( $f ) . '">' . $html . '</span>';
+    }
+
+    if ( ! $out ) return '';
+    return count( $out ) === 1 ? $out[0] : '<span class="enroute-contact">' . implode( '<br>', $out ) . '</span>';
+}
+
+add_shortcode( 'enroute_contact', function( $atts ): string {
+    $atts = shortcode_atts( [ 'field' => '', 'link' => 'yes', 'lang' => '' ], $atts, 'enroute_contact' );
+    return enroute_contact(
+        sanitize_key( $atts['field'] ),
+        ! in_array( strtolower( (string) $atts['link'] ), [ 'no', '0', 'false' ], true ),
+        sanitize_key( $atts['lang'] )
+    );
 } );

@@ -131,3 +131,15 @@ function enroute_offer_location_lines( int $offer_id ): array {
     return array_values( array_filter( [ $name, $street, $city ], fn( $l ) => trim( (string) $l ) !== '' ) );
 }
 
+// ── Default colours (Settings → General → Default colors) ────────────────────
+
+/** Default colours 1–5, used when no colour has been saved in the settings. */
+function enroute_get_default_colors(): array {
+    return [
+        1 => '#C9D56B',
+        2 => '#F8ED84',
+        3 => '#E8AB58',
+        4 => '#D4735D',
+        5 => '#D0687B',
+    ];
+}

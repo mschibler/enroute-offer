@@ -716,3 +716,45 @@ msgstr "Réservable"
 
 msgid "Check if this offer can be booked directly."
 msgstr "Cocher si cette offre peut être réservée directement."
+
+msgid "General"
+msgstr "Général"
+
+msgid "Contacts"
+msgstr "Contacts"
+
+msgid "Emails"
+msgstr "E-mails"
+
+msgid "Text blocks"
+msgstr "Blocs de texte"
+
+msgid "Default colors"
+msgstr "Couleurs par défaut"
+
+msgid "Kontakt"
+msgstr "Contact"
+
+msgid ""
+"Kontaktangaben pro Sprache, z. B. für den Footer. Auf der Website wird "
+"automatisch die Angabe der aktuellen Sprache angezeigt (ist ein Feld leer, "
+"die deutsche)."
+msgstr ""
+"Coordonnées par langue, p. ex. pour le pied de page. Le site affiche "
+"automatiquement les coordonnées de la langue actuelle (si un champ est vide,"
+" celles en allemand)."
+
+msgid "Shortcodes:"
+msgstr "Shortcodes :"
+
+msgid "(E-Mail und Telefon)"
+msgstr "(e-mail et téléphone)"
+
+msgid "Inhalte folgen."
+msgstr "Contenu à venir."
+
+msgid "Alle Farben auf die Standardfarben zurücksetzen?"
+msgstr "Réinitialiser toutes les couleurs aux couleurs par défaut ?"
+
+msgid "Auf Standardfarben zurücksetzen"
+msgstr "Rétablir les couleurs par défaut"
