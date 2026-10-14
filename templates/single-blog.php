@@ -177,14 +177,15 @@ $uid = 'ebs_' . uniqid();
                     } ) );
                 }
             ?>
-            <section class="enroute-blog-guide font-montserrat" style="margin-top:3rem; padding-top:1.5rem; border-top:1px solid #1f2937; max-width:72ch;">
-                <div style="display:flex; gap:1.25rem; align-items:flex-start;">
+            <section class="enroute-blog-guide font-montserrat" style="margin-top:4.5rem; width:100%;">
+                <!-- Guide box: grey, full width; photo left, name + short text right -->
+                <div style="display:flex; gap:2rem; align-items:flex-start; width:100%; box-sizing:border-box; background:#efefef; padding:20px;">
                     <?php if ( $gb_photo ) : ?>
                     <img src="<?php echo esc_url( $gb_photo ); ?>" alt="<?php echo esc_attr( $guide_name ); ?>"
-                         style="width:7rem; height:7rem; object-fit:cover; object-position:center top; flex-shrink:0; margin:0;">
+                         style="width:9rem; height:9rem; object-fit:cover; object-position:center top; flex-shrink:0; margin:0; border-radius:7px;">
                     <?php endif; ?>
                     <div style="min-width:0;">
-                        <h2 style="margin:0 0 0.5rem; font-size:1.25rem; font-weight:700; line-height:1.3; color:#111;"><?php echo esc_html( $guide_name ); ?></h2>
+                        <h2 style="margin:0 0 0.75rem; font-size:1.5rem; font-weight:500; line-height:1.3; color:#111;"><?php echo esc_html( $guide_name ); ?></h2>
                         <?php if ( $gb_text ) : ?>
                         <p style="margin:0; font-size:1rem; line-height:1.6; color:#1f2937;"><?php echo nl2br( esc_html( $gb_text ) ); ?></p>
                         <?php endif; ?>
@@ -192,13 +193,13 @@ $uid = 'ebs_' . uniqid();
                 </div>
 
                 <?php if ( $gb_posts ) : ?>
-                <div style="margin-top:1.5rem;">
-                    <h3 style="margin:0 0 0.5rem; font-size:1rem; font-weight:700; color:#111;">
+                <div style="margin-top:2rem;">
+                    <h3 style="margin:0 0 0.75rem; font-size:1rem; font-weight:700; color:#111;">
                         <?php echo esc_html( sprintf( __( 'Weitere Beiträge von %s', 'enroute_offers' ), $guide_name ) ); ?>
                     </h3>
                     <ul style="margin:0; padding:0; list-style:none;">
                         <?php foreach ( $gb_posts as $gp ) : ?>
-                        <li style="margin:0; padding:0.4rem 0; border-bottom:1px solid #e5e7eb;">
+                        <li style="margin:0; padding:0.6rem 0; border-bottom:1px solid #e5e7eb;">
                             <a href="<?php echo esc_url( get_permalink( $gp->ID ) ); ?>" style="color:#111; text-decoration:underline;"><?php echo esc_html( get_the_title( $gp->ID ) ); ?></a>
                         </li>
                         <?php endforeach; ?>
