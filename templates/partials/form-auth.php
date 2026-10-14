@@ -28,11 +28,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                             <div x-show="!loggedIn">
                                 <!-- Tab switcher -->
                                 <div style="display:flex; gap:0.5rem; margin-bottom:0.75rem;">
-                                    <button @click="mode='login'; errorMsg=''" :style="mode==='login' ? 'background:#111; color:#fff;' : 'background:#fff; color:#111;'"
+                                    <button @click="mode='login'; errorMsg=''" :style="mode==='login' ? { 'background': '#111', 'color': '#fff' } : { 'background': '#fff', 'color': '#111' }"
                                         style="flex:1; padding:0.4rem; border:1px solid #111; font-size:0.82rem; cursor:pointer;">
                                         <?php esc_html_e( 'Anmelden', 'enroute_offers' ); ?>
                                     </button>
-                                    <button @click="mode='register'; errorMsg=''" :style="mode==='register' ? 'background:#111; color:#fff;' : 'background:#fff; color:#111;'"
+                                    <button @click="mode='register'; errorMsg=''" :style="mode==='register' ? { 'background': '#111', 'color': '#fff' } : { 'background': '#fff', 'color': '#111' }"
                                         style="flex:1; padding:0.4rem; border:1px solid #111; font-size:0.82rem; cursor:pointer;">
                                         <?php esc_html_e( 'Registrieren', 'enroute_offers' ); ?>
                                     </button>

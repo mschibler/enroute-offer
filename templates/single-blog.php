@@ -220,13 +220,13 @@ $uid = 'ebs_' . uniqid();
             <?php if ( $sidebar_cats ) : ?>
             <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:1rem;">
                 <button @click="activeCategory = null"
-                        :style="activeCategory === null ? 'background:#111; color:#fff;' : 'background:#fff; color:#111;'"
+                        :style="activeCategory === null ? { 'background': '#111', 'color': '#fff' } : { 'background': '#fff', 'color': '#111' }"
                         style="padding:0.3rem 0.75rem; border:1px solid #111; font-size:0.8rem; cursor:pointer;">
                     <?php esc_html_e( 'Alle', 'enroute_offers' ); ?>
                 </button>
                 <?php foreach ( $sidebar_cats as $cat ) : ?>
                 <button @click="activeCategory = <?php echo (int) $cat['id']; ?>"
-                        :style="activeCategory === <?php echo (int) $cat['id']; ?> ? 'background:#111; color:#fff;' : 'background:#fff; color:#111;'"
+                        :style="activeCategory === <?php echo (int) $cat['id']; ?> ? { 'background': '#111', 'color': '#fff' } : { 'background': '#fff', 'color': '#111' }"
                         style="padding:0.3rem 0.75rem; border:1px solid #111; font-size:0.8rem; cursor:pointer;">
                     <?php echo esc_html( $cat['name'] ); ?>
                 </button>

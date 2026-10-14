@@ -143,8 +143,15 @@ function enroute_userpass_booking_sc( array $atts ): string {
 // BLOG LISTING
 // ══════════════════════════════════════════════════════════════════════════════
 
-function enroute_blog_listing_sc( array $atts ): string {
+function enroute_blog_listing_sc( $atts ): string {
+    // Optional page background colour: [enroute_blog_listing background="#E8AB58"]
+    $atts = shortcode_atts( [ 'background' => '' ], (array) $atts, 'enroute_blog_listing' );
+    $bg   = sanitize_hex_color( $atts['background'] );
     ob_start();
+    if ( $bg ) {
+        // Page background coloured, the theme's main content area (main#main) stays white
+        echo '<style>body{background-color:' . esc_html( $bg ) . ' !important;} #main{background-color:#fff;}</style>';
+    }
     include ENROUTE_OFFERS_PATH . 'templates/blog-listing.php';
     return ob_get_clean();
 }

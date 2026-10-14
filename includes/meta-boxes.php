@@ -599,9 +599,9 @@ function enroute_resource_details_cb( WP_Post $post ): void {
 
         <div class="enroute-field">
             <label for="resource_external_link"><?php esc_html_e( 'External Link (URL)', 'enroute_offers' ); ?></label>
-            <input type="url" id="resource_external_link" name="resource_external_link"
+            <input type="text" id="resource_external_link" name="resource_external_link"
                    value="<?php echo esc_attr( $external_link ); ?>"
-                   placeholder="https://"
+                   placeholder="www.example.ch"
                    class="widefat">
             <p class="description"><?php esc_html_e( 'For external resources (websites etc.). Leave empty if using a file upload.', 'enroute_offers' ); ?></p>
         </div>

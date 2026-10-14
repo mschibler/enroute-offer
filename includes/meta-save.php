@@ -157,7 +157,7 @@ function enroute_save_resource_meta( int $post_id ): void {
     update_post_meta( $post_id, '_resource_file_id', $file_id );
 
     // External link
-    update_post_meta( $post_id, '_resource_external_link', esc_url_raw( $_POST['resource_external_link'] ?? '' ) );
+    update_post_meta( $post_id, '_resource_external_link', enroute_normalize_url( wp_unslash( $_POST['resource_external_link'] ?? '' ) ) );
 
     $allowed_langs = array_keys( enroute_get_languages() );
     $language = isset( $_POST['resource_language'] ) && in_array( $_POST['resource_language'], $allowed_langs, true )

@@ -74,7 +74,7 @@ if ( is_user_logged_in() ) {
                 $credit      = $credit_type === 'credits' ? get_post_meta( $pass->ID, '_userpass_credit', true ) : '';
             ?>
             <label style="display:block; border:2px solid #e5e7eb; padding:1rem; margin-bottom:0.5rem; cursor:pointer;"
-                   :style="form.pass_type_id == '<?php echo $pass->ID; ?>' ? 'border-color:#111; background:#f9f9f9;' : ''">
+                   :style="form.pass_type_id == '<?php echo $pass->ID; ?>' ? { 'border-color': '#111', 'background': '#f9f9f9' } : {}">
                 <div style="display:flex; align-items:flex-start; gap:0.75rem;">
                     <input type="radio" name="pass_type_id" value="<?php echo $pass->ID; ?>"
                            x-model="form.pass_type_id" style="margin-top:0.2rem; flex-shrink:0;">
@@ -109,11 +109,11 @@ if ( is_user_logged_in() ) {
 
             <div x-show="!loggedIn">
                 <div style="display:flex; gap:0.5rem; margin-bottom:0.75rem;">
-                    <button @click="mode='login'; errorMsg=''" :style="mode==='login' ? 'background:#111; color:#fff;' : 'background:#fff;'"
+                    <button @click="mode='login'; errorMsg=''" :style="mode==='login' ? { 'background': '#111', 'color': '#fff' } : { 'background': '#fff' }"
                         style="flex:1; padding:0.4rem; border:1px solid #111; font-size:0.82rem; cursor:pointer;">
                         <?php esc_html_e( 'Anmelden', 'enroute_offers' ); ?>
                     </button>
-                    <button @click="mode='register'; errorMsg=''" :style="mode==='register' ? 'background:#111; color:#fff;' : 'background:#fff;'"
+                    <button @click="mode='register'; errorMsg=''" :style="mode==='register' ? { 'background': '#111', 'color': '#fff' } : { 'background': '#fff' }"
                         style="flex:1; padding:0.4rem; border:1px solid #111; font-size:0.82rem; cursor:pointer;">
                         <?php esc_html_e( 'Registrieren', 'enroute_offers' ); ?>
                     </button>

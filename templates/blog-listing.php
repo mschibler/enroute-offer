@@ -135,17 +135,17 @@ foreach ( $all_posts as $p ) {
 
     <!-- ── Category filter ── -->
     <?php if ( $categories ) : ?>
-    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+    <div style="display:flex; gap:calc(0.5rem + 5px); flex-wrap:wrap; margin-bottom:1.5rem;">
         <button
             @click="activeCategory = null; visibleCount = perPage"
-            :style="activeCategory === null ? 'background:#111; color:#fff;' : 'background:#fff; color:#111;'"
-            style="padding:0.4rem 1rem; border:1px solid #111; font-size:0.85rem; cursor:pointer; transition:all 0.15s;"
+            :style="activeCategory === null ? { 'background': '#111', 'color': '#fff' } : { 'background': 'transparent', 'color': '#111' }"
+            style="padding:3px 0.75rem; border:none; font-size:0.85rem; cursor:pointer; transition:all 0.15s;"
         ><?php esc_html_e( 'Alle', 'enroute_offers' ); ?></button>
         <?php foreach ( $categories as $cat ) : ?>
         <button
             @click="activeCategory = <?php echo (int) $cat->term_id; ?>; visibleCount = perPage"
-            :style="activeCategory === <?php echo (int) $cat->term_id; ?> ? 'background:#111; color:#fff;' : 'background:#fff; color:#111;'"
-            style="padding:0.4rem 1rem; border:1px solid #111; font-size:0.85rem; cursor:pointer; transition:all 0.15s;"
+            :style="activeCategory === <?php echo (int) $cat->term_id; ?> ? { 'background': '#111', 'color': '#fff' } : { 'background': 'transparent', 'color': '#111' }"
+            style="padding:3px 0.75rem; border:none; font-size:0.85rem; cursor:pointer; transition:all 0.15s;"
         ><?php echo esc_html( $cat->name ); ?></button>
         <?php endforeach; ?>
     </div>

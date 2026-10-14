@@ -29,6 +29,8 @@ foreach ( $resources as $res ) {
     $file_id  = get_post_meta( $res->ID, '_resource_file_id', true );
     $mime     = $file_id ? (string) get_post_mime_type( $file_id ) : '';
     $file_url = $file_id ? wp_get_attachment_url( $file_id ) : '';
+    // No file but an external link → the entry opens the link (with a link icon)
+    $ext_link = $file_url ? '' : (string) get_post_meta( $res->ID, '_resource_external_link', true );
 
     $rt_terms = get_the_terms( $res->ID, 'resource_type' );
     $rt_names = $rt_ids = [];
@@ -53,8 +55,8 @@ foreach ( $resources as $res ) {
         'id'                 => $res->ID,
         'title'              => get_the_title( $res->ID ),
         'permalink'          => get_permalink( $res->ID ),
-        'file_url'           => $file_url ?: '',
-        'icon_key'           => enroute_mime_to_icon_key( $mime ),
+        'file_url'           => $file_url ?: $ext_link,
+        'icon_key'           => $ext_link ? 'link' : enroute_mime_to_icon_key( $mime ),
         'resource_type_name' => implode( ', ', $rt_names ),
         'color'              => enroute_get_resource_color( $res->ID ),
         'resource_type_ids'  => $rt_ids,
@@ -76,6 +78,7 @@ $json = wp_json_encode( enroute_js_data( $resources_data ) ); // decode &#8211; 
     <svg id="enroute-icon-word"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM9 17l-2-7h1.5l1.25 5 1.25-5H12l1.25 5 1.25-5H16l-2 7H9z"/></svg>
     <svg id="enroute-icon-excel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8 11h2l1.5 2.5L13 11h2l-2.5 4 2.5 4h-2l-1.5-2.5L10 19H8l2.5-4L8 11z"/></svg>
     <svg id="enroute-icon-ppt"   xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM9 11h3.5a2.5 2.5 0 010 5H10.5V19H9V11zm1.5 4H12a1 1 0 100-2h-1.5v2z"/></svg>
+    <svg id="enroute-icon-link"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
     <svg id="enroute-icon-file"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 1.5L18.5 9H13V3.5z"/></svg>
     <!-- extra icon types matching screenshot -->
     <svg id="enroute-icon-audio" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z"/></svg>
