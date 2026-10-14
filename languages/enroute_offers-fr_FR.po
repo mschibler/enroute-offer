@@ -1071,3 +1071,6 @@ msgstr "Texte court sur le guide (pour le blog)"
 
 msgid "Weitere Beiträge von %s"
 msgstr "Autres articles de %s"
+
+msgid "Zu den Guides"
+msgstr "Vers les guides"

@@ -547,16 +547,56 @@ function enroute_events_more_link_text(): string {
  * if the page has a Polylang translation, its URL is returned.
  */
 function enroute_events_page_url(): string {
-    $url = (string) get_option( 'enroute_events_page_url', '' );
-    if ( ! $url ) return '';
-    if ( function_exists( 'pll_get_post' ) && function_exists( 'pll_current_language' ) && pll_current_language() ) {
-        $page_id = url_to_postid( $url );
+    return enroute_translated_page_url( (string) get_option( 'enroute_events_page_url', '' ), 'enroute_events_listing' );
+}
+
+/**
+ * URL of a page in the current language (Polylang).
+ * 1. Find the page behind $url — by path, independent of the current language
+ *    (url_to_postid() would only search pages of the current language).
+ * 2. Return its translation in the current language.
+ * 3. Fallback: the page of the current language that contains $shortcode.
+ * Otherwise $url is returned unchanged.
+ */
+function enroute_translated_page_url( string $url, string $shortcode = '' ): string {
+    if ( ! function_exists( 'pll_get_post' ) || ! function_exists( 'pll_current_language' ) || ! pll_current_language() ) return $url;
+    $lang = (string) pll_current_language();
+
+    if ( $url ) {
+        $page_id = 0;
+        $path    = trim( (string) wp_parse_url( $url, PHP_URL_PATH ), '/' );
+        $home    = trim( (string) wp_parse_url( get_option( 'home' ), PHP_URL_PATH ), '/' );
+        if ( $home && strpos( $path, $home ) === 0 ) $path = trim( substr( $path, strlen( $home ) ), '/' );
+        // Remove a language prefix (/fr/…, /language/fr/…)
+        $langs = function_exists( 'pll_languages_list' ) ? (array) pll_languages_list( [ 'fields' => 'slug' ] ) : [];
+        if ( $langs ) $path = preg_replace( '#^(language/)?(' . implode( '|', array_map( 'preg_quote', $langs ) ) . ')(/|$)#', '', $path );
+        if ( $path !== '' ) {
+            $page = get_page_by_path( $path, OBJECT, 'page' );
+            if ( $page ) $page_id = (int) $page->ID;
+        }
+        if ( ! $page_id ) $page_id = (int) url_to_postid( $url );
+
         if ( $page_id ) {
-            $translated = pll_get_post( $page_id, pll_current_language() );
+            $translated = pll_get_post( $page_id, $lang );
             if ( $translated ) return (string) get_permalink( $translated );
         }
     }
+
+    if ( $shortcode ) {
+        $pages = get_posts( [ 'post_type' => 'page', 'post_status' => 'publish', 'numberposts' => 1, 's' => $shortcode, 'lang' => $lang ] );
+        if ( $pages ) return (string) get_permalink( $pages[0]->ID );
+    }
     return $url;
+}
+
+/** Guides listing page (Settings → General) in the current language. */
+function enroute_guides_page_url(): string {
+    return enroute_translated_page_url( (string) get_option( 'enroute_guides_page_url', '' ), 'enroute_guides_listing' );
+}
+
+/** Text of the link to the guides page (front page guide block). */
+function enroute_guides_link_text(): string {
+    return __( 'Zu den Guides', 'enroute_offers' );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════

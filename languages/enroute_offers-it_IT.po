@@ -1066,3 +1066,6 @@ msgstr "Testo breve sulla guida (per il blog)"
 
 msgid "Weitere Beiträge von %s"
 msgstr "Altri articoli di %s"
+
+msgid "Zu den Guides"
+msgstr "Alle guide"
