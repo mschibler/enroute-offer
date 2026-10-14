@@ -1049,3 +1049,25 @@ msgstr "Shortcode :"
 
 msgid "Im Theme (PHP):"
 msgstr "Dans le thème (PHP) :"
+
+msgid "Keine (Standard)"
+msgstr "Aucune (par défaut)"
+
+msgid "Farbe %d"
+msgstr "Couleur %d"
+
+msgid "Farbe"
+msgstr "Couleur"
+
+msgid ""
+"Hintergrundfarbe der Ressourcen dieses Typs in der Liste (Standardfarben aus"
+" Einstellungen → General)."
+msgstr ""
+"Couleur de fond des ressources de ce type dans la liste (couleurs par défaut"
+" des réglages → Général)."
+
+msgid "Kurztext zum Guide (für Blog)"
+msgstr "Texte court sur le guide (pour le blog)"
+
+msgid "Weitere Beiträge von %s"
+msgstr "Autres articles de %s"

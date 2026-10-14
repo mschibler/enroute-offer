@@ -56,6 +56,7 @@ foreach ( $resources as $res ) {
         'file_url'           => $file_url ?: '',
         'icon_key'           => enroute_mime_to_icon_key( $mime ),
         'resource_type_name' => implode( ', ', $rt_names ),
+        'color'              => enroute_get_resource_color( $res->ID ),
         'resource_type_ids'  => $rt_ids,
         'subject_ids'        => $subj_ids,
         'target_group_ids'   => $tg_ids,
@@ -140,6 +141,9 @@ $json = wp_json_encode( enroute_js_data( $resources_data ) ); // decode &#8211; 
                 :target="res.file_url ? '_blank' : '_self'"
                 :rel="res.file_url ? 'noopener noreferrer' : ''"
                 class="flex items-center gap-3 p-4 bg-[#d6e8f5] hover:bg-[#c2dcef] transition-colors"
+                :style="res.color ? { background: res.color } : {}"
+                @mouseenter="if (res.color) $el.style.filter = 'brightness(0.94)'"
+                @mouseleave="$el.style.filter = ''"
             >
                 <!-- Icon -->
                 <div

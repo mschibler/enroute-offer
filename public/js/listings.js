@@ -147,12 +147,14 @@
             },
 
             get sorted() {
-                if ( ! this.currentLang ) return this.filtered;
-                const lang = this.currentLang;
-                return [
-                    ...this.filtered.filter( o => o.language === lang ),
-                    ...this.filtered.filter( o => o.language !== lang ),
-                ];
+                // Current language first, then the other languages (de, fr, it, en), each alphabetically
+                const cur   = this.currentLang;
+                const order = [ 'de', 'fr', 'it', 'en' ];
+                const rank  = l => l === cur ? 0 : ( order.indexOf( l ) >= 0 ? 1 + order.indexOf( l ) : 99 );
+                const coll  = new Intl.Collator( cur || 'de', { sensitivity: 'base', numeric: true } );
+                return [ ...this.filtered ].sort( ( a, b ) =>
+                    ( rank( a.language ) - rank( b.language ) ) || coll.compare( a.title || '', b.title || '' )
+                );
             },
 
             get visible() {

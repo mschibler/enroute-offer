@@ -59,6 +59,7 @@ function enroute_guide_details_cb( WP_Post $post ): void {
     $language   = get_post_meta( $post->ID, '_guide_language',    true );
     $old_cms_id = get_post_meta( $post->ID, '_old_cms_id',        true );
     $active     = get_post_meta( $post->ID, '_guide_active',      true );
+    $blog_text  = get_post_meta( $post->ID, '_guide_blog_text',   true );
 
     $photo_url = $photo_id ? wp_get_attachment_image_url( $photo_id, 'medium' ) : '';
     ?>
@@ -86,6 +87,12 @@ function enroute_guide_details_cb( WP_Post $post ): void {
                 'teeny'         => true,
                 'quicktags'     => true,
             ] ); ?>
+        </div>
+
+        <!-- Short text for blog posts -->
+        <div class="enroute-field">
+            <label for="guide_blog_text"><?php esc_html_e( 'Kurztext zum Guide (für Blog)', 'enroute_offers' ); ?></label>
+            <textarea id="guide_blog_text" name="guide_blog_text" rows="3" class="widefat"><?php echo esc_textarea( $blog_text ); ?></textarea>
         </div>
 
         <!-- Language -->
@@ -193,6 +200,11 @@ add_action( 'save_post_guide', function( int $post_id ): void {
     // Description (allow basic HTML from WYSIWYG editor)
     $desc = isset( $_POST['guide_description'] ) ? wp_kses_post( wp_unslash( $_POST['guide_description'] ) ) : '';
     update_post_meta( $post_id, '_guide_description', $desc );
+
+    // Short text for blog posts
+    if ( isset( $_POST['guide_blog_text'] ) ) {
+        update_post_meta( $post_id, '_guide_blog_text', sanitize_textarea_field( wp_unslash( $_POST['guide_blog_text'] ) ) );
+    }
 
     // Language
     $allowed_langs = array_keys( enroute_get_languages() );
