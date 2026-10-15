@@ -90,7 +90,7 @@ function enroute_offer_details_cb( WP_Post $post ): void {
     $active       = get_post_meta( $post->ID, '_offer_active',               true ) !== '0'; // default: active
     $pricing_desc = get_post_meta( $post->ID, '_offer_pricing_description',  true );
     $recurrence   = get_post_meta( $post->ID, '_offer_recurrence',           true );
-    $featured     = get_post_meta( $post->ID, '_offer_featured',             true );
+    $featured     = function_exists( 'enroute_offer_is_featured' ) && enroute_offer_is_featured( $post->ID );
 
     $stations = get_posts([
         'post_type'   => 'station',
@@ -161,14 +161,13 @@ function enroute_offer_details_cb( WP_Post $post ): void {
         <div class="enroute-field">
             <label for="offer_featured"><?php esc_html_e( 'Featured', 'enroute_offers' ); ?></label>
             <select id="offer_featured" name="offer_featured">
-                <option value=""><?php esc_html_e( '— Not featured —', 'enroute_offers' ); ?></option>
-                <?php for ( $n = 1; $n <= 12; $n++ ) : ?>
-                <option value="<?php echo $n; ?>" <?php selected( $featured, (string) $n ); ?>>
-                    <?php printf( esc_html__( 'Featured %d', 'enroute_offers' ), $n ); ?>
-                </option>
-                <?php endfor; ?>
+                <option value="0" <?php selected( ! $featured ); ?>><?php esc_html_e( 'Nein', 'enroute_offers' ); ?></option>
+                <option value="1" <?php selected( $featured ); ?>><?php esc_html_e( 'Ja', 'enroute_offers' ); ?></option>
             </select>
-            <p class="description"><?php esc_html_e( 'Assign a featured position. Use [enroute_featured_offer number="1"] shortcode to display it.', 'enroute_offers' ); ?></p>
+            <p class="description">
+                <?php esc_html_e( 'Neu featured Angebote kommen auf Position 1. Reihenfolge:', 'enroute_offers' ); ?>
+                <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=offer&page=enroute-featured-offers' ) ); ?>"><?php esc_html_e( 'Featured Angebote', 'enroute_offers' ); ?></a>
+            </p>
         </div>
 
         <div class="enroute-field">

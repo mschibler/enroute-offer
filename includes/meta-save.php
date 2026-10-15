@@ -46,8 +46,13 @@ function enroute_save_offer_meta( int $post_id ): void {
             update_post_meta( $post_id, "_offer_location_$f", sanitize_text_field( $_POST[ "offer_location_$f" ] ?? '' ) );
         }
     }
-    $featured = isset( $_POST['offer_featured'] ) ? absint( $_POST['offer_featured'] ) : 0;
-    update_post_meta( $post_id, '_offer_featured', $featured ?: '' );
+    // Featured yes / no (order: Offers → Featured Angebote; new ones go to position 1)
+    if ( isset( $_POST['offer_featured'] ) && function_exists( 'enroute_featured_add' ) && ! wp_is_post_revision( $post_id ) ) {
+        $want = $_POST['offer_featured'] === '1';
+        $is   = enroute_offer_is_featured( $post_id );
+        if ( $want && ! $is ) enroute_featured_add( $post_id );
+        if ( ! $want && $is ) enroute_featured_remove( $post_id );
+    }
 
     // Station
     $station = isset( $_POST['offer_station'] ) ? absint( $_POST['offer_station'] ) : 0;

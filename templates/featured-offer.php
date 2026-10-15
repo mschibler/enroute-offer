@@ -10,19 +10,9 @@ $featured_number = isset( $args['number'] ) ? absint( $args['number'] ) : 1;
 $color_number    = isset( $args['color'] )  ? absint( $args['color'] )  : 1;
 $band_color      = enroute_get_featured_color( $color_number );
 
-$offers = get_posts( [
-    'post_type'   => 'offer',
-    'post_status' => 'publish',
-    'numberposts' => 1,
-    'meta_query'  => [
-        'relation' => 'AND',
-        [
-            'key'   => '_offer_featured',
-            'value' => (string) $featured_number,
-        ],
-        enroute_offer_active_meta_query(), // hide inactive offers
-    ],
-] );
+// Offer at this position of the list Offers → Featured Angebote (published + active only)
+$fo_id  = enroute_featured_offer_id( $featured_number );
+$offers = ( $fo_id && get_post_status( $fo_id ) === 'publish' && enroute_offer_is_active( $fo_id ) ) ? [ get_post( $fo_id ) ] : [];
 
 if ( empty( $offers ) ) {
     if ( current_user_can( 'edit_posts' ) ) {

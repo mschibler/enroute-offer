@@ -3,7 +3,7 @@
  * Plugin Name: Enroute Offers
  * Plugin URI:  https://example.com/enroute-offers
  * Description: Manages Offers, Events, Stations and Resources with multilingual support (DE, FR, IT).
- * Version:     1.2.0
+ * Version:     1.3.0
  * Author:      Enroute
  * Text Domain: enroute_offers
  * Domain Path: /languages
@@ -11,7 +11,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'ENROUTE_OFFERS_VERSION', '1.2.0' );
+define( 'ENROUTE_OFFERS_VERSION', '1.3.0' );
 define( 'ENROUTE_OFFERS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ENROUTE_OFFERS_URL',  plugin_dir_url( __FILE__ ) );
 
@@ -21,6 +21,7 @@ require_once ENROUTE_OFFERS_PATH . 'includes/meta-boxes.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/meta-save.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/shortcodes.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/helpers.php';
+require_once ENROUTE_OFFERS_PATH . 'includes/featured-offers.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/booking-post-type.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/booking-settings.php';
 require_once ENROUTE_OFFERS_PATH . 'includes/booking-ajax.php';
