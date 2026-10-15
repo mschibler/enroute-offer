@@ -104,6 +104,11 @@ function enroute_event_is_active( int $event_id ): bool {
     return get_post_meta( $event_id, '_event_active', true ) !== '0';
 }
 
+/** Registration via the form is enabled (checkbox, default off). */
+function enroute_event_registration_enabled( int $event_id ): bool {
+    return get_post_meta( $event_id, '_event_registration', true ) === '1';
+}
+
 /** Event language code (de/fr/it/en), '' if none. */
 function enroute_event_language( int $event_id ): string {
     return (string) get_post_meta( $event_id, '_event_language', true );
@@ -290,6 +295,14 @@ function enroute_event_general_cb( WP_Post $post ): void {
             </label>
             <p class="description"><?php esc_html_e( 'Deaktivieren, um die Veranstaltung in Listen und auf der Startseite auszublenden.', 'enroute_offers' ); ?></p>
         </div>
+
+        <div class="enroute-field">
+            <label class="enroute-checkbox-label">
+                <input type="checkbox" name="event_registration" value="1" <?php checked( enroute_event_registration_enabled( $post->ID ) ); ?>>
+                <?php esc_html_e( 'Anmeldung per Formular aktivieren', 'enroute_offers' ); ?>
+            </label>
+            <p class="description"><?php esc_html_e( 'Zeigt auf der Veranstaltungsseite den Button «Anmelden» mit dem Anmeldeformular.', 'enroute_offers' ); ?></p>
+        </div>
     </div>
     <?php
 }
@@ -398,6 +411,7 @@ add_action( 'save_post_event', function( int $post_id ): void {
     $lang = sanitize_key( $_POST['event_language'] ?? '' );
     update_post_meta( $post_id, '_event_language', array_key_exists( $lang, enroute_get_languages() ) ? $lang : '' );
     update_post_meta( $post_id, '_event_active', isset( $_POST['event_active'] ) ? '1' : '0' );
+    update_post_meta( $post_id, '_event_registration', isset( $_POST['event_registration'] ) ? '1' : '0' );
 
     // Dates: separate date + time fields → 'Y-m-d H:i' (no time = 00:00)
     $date = fn( string $k ) => preg_match( '/^\d{4}-\d{2}-\d{2}$/', $v = sanitize_text_field( wp_unslash( $_POST[ $k ] ?? '' ) ) ) ? $v : '';

@@ -1083,3 +1083,16 @@ msgstr "Le crédit est valable un an à partir de la date de commande."
 
 msgid "Benutzerpässe – Text rechts (Angebotsseite unten)"
 msgstr "User Pass – texte à droite (bas de la page offre)"
+
+msgid "Anmeldung per Formular aktivieren"
+msgstr "Activer l'inscription par formulaire"
+
+msgid ""
+"Zeigt auf der Veranstaltungsseite den Button «Anmelden» mit dem "
+"Anmeldeformular."
+msgstr ""
+"Affiche sur la page de l'événement le bouton « S'inscrire » avec le "
+"formulaire d'inscription."
+
+msgid "Für diese Veranstaltung ist keine Anmeldung per Formular möglich."
+msgstr "L'inscription par formulaire n'est pas possible pour cet événement."

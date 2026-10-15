@@ -56,6 +56,9 @@ function enroute_handle_event_registration() {
     if ( ! $event || $event->post_type !== 'event' || $event->post_status !== 'publish' ) {
         wp_send_json_error( [ 'message' => __( 'Veranstaltung nicht gefunden.', 'enroute_offers' ) ] );
     }
+    if ( ! enroute_event_registration_enabled( $event_id ) ) {
+        wp_send_json_error( [ 'message' => __( 'Für diese Veranstaltung ist keine Anmeldung per Formular möglich.', 'enroute_offers' ) ] );
+    }
     if ( enroute_event_is_past( $event_id ) ) {
         wp_send_json_error( [ 'message' => __( 'Für diese Veranstaltung ist keine Anmeldung mehr möglich.', 'enroute_offers' ) ] );
     }

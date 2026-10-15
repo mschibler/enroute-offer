@@ -1078,3 +1078,16 @@ msgstr "Il credito è valido un anno dalla data dell'ordine."
 
 msgid "Benutzerpässe – Text rechts (Angebotsseite unten)"
 msgstr "User Pass – testo a destra (fondo pagina offerta)"
+
+msgid "Anmeldung per Formular aktivieren"
+msgstr "Attivare l'iscrizione tramite modulo"
+
+msgid ""
+"Zeigt auf der Veranstaltungsseite den Button «Anmelden» mit dem "
+"Anmeldeformular."
+msgstr ""
+"Mostra sulla pagina dell'evento il pulsante «Iscriversi» con il modulo "
+"d'iscrizione."
+
+msgid "Für diese Veranstaltung ist keine Anmeldung per Formular möglich."
+msgstr "Per questo evento non è possibile iscriversi tramite modulo."

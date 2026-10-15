@@ -154,7 +154,7 @@ $uid = 'ebs_' . uniqid();
             </div>
 
             <?php if ( $guide_id && get_post_status( (int) $guide_id ) === 'publish' ) :
-                // ── Guide box: photo, name, short text + other posts by this guide ──
+                // ── Guide box (only with photo and/or short text): photo, name, short text + other posts by this guide ──
                 $gb_photo_id = (int) get_post_meta( (int) $guide_id, '_guide_photo_id', true );
                 $gb_photo    = $gb_photo_id ? ( wp_get_attachment_image_url( $gb_photo_id, 'enroute-guide-square' ) ?: wp_get_attachment_image_url( $gb_photo_id, 'medium' ) ) : '';
                 $gb_text     = get_post_meta( (int) $guide_id, '_guide_blog_text', true );
@@ -177,7 +177,9 @@ $uid = 'ebs_' . uniqid();
                     } ) );
                 }
             ?>
+            <?php if ( $gb_photo || trim( (string) $gb_text ) !== '' || $gb_posts ) : ?>
             <section class="enroute-blog-guide font-montserrat" style="margin-top:4.5rem; width:100%;">
+                <?php if ( $gb_photo || trim( (string) $gb_text ) !== '' ) : // only the name → no box ?>
                 <!-- Guide box: grey, full width; photo left, name + short text right -->
                 <div style="display:flex; gap:2rem; align-items:flex-start; width:100%; box-sizing:border-box; background:#efefef; padding:20px;">
                     <?php if ( $gb_photo ) : ?>
@@ -191,9 +193,10 @@ $uid = 'ebs_' . uniqid();
                         <?php endif; ?>
                     </div>
                 </div>
+                <?php endif; ?>
 
                 <?php if ( $gb_posts ) : ?>
-                <div style="margin-top:2rem;">
+                <div style="margin-top:<?php echo ( $gb_photo || trim( (string) $gb_text ) !== '' ) ? '2rem' : '0'; ?>;">
                     <h3 style="margin:0 0 0.75rem; font-size:1rem; font-weight:700; color:#111;">
                         <?php echo esc_html( sprintf( __( 'Weitere Beiträge von %s', 'enroute_offers' ), $guide_name ) ); ?>
                     </h3>
@@ -207,6 +210,7 @@ $uid = 'ebs_' . uniqid();
                 </div>
                 <?php endif; ?>
             </section>
+            <?php endif; ?>
             <?php endif; ?>
 
         </article>
