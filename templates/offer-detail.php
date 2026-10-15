@@ -484,16 +484,58 @@ $button_color_green = '#c9d56b'; // green button
     </div><!-- /layout -->
 
 
-   <div class="grid grid-cols-3 gap-8 font-[montserrat] bg-[#B5DFFC] pt-8 pb-8 border-t border-b border-black mt-6">
+   <?php
+   // ── User passes box (bottom) ──
+   // Middle: user passes of the current language ("title – description"), sorted by credit.
+   // Right: text block "userpass_info" (Settings → Text blocks).
+   $box_lang   = function_exists( 'pll_current_language' ) ? substr( (string) pll_current_language(), 0, 2 ) : substr( get_locale(), 0, 2 );
+   $box_passes = get_posts( [
+       'post_type'   => 'enroute_userpass',
+       'post_status' => 'publish',
+       'numberposts' => -1,
+       'meta_query'  => [ [ 'key' => '_userpass_language', 'value' => $box_lang, 'compare' => '=' ] ],
+   ] );
+   usort( $box_passes, function( $a, $b ) {
+       $ca = (float) get_post_meta( $a->ID, '_userpass_credit', true );
+       $cb = (float) get_post_meta( $b->ID, '_userpass_credit', true );
+       return $ca <=> $cb ?: strcasecmp( $a->post_title, $b->post_title );
+   } );
+   $box_url = get_option( 'enroute_userpass_page_url', '' );
+   if ( function_exists( 'enroute_translated_page_url' ) ) $box_url = enroute_translated_page_url( $box_url, 'enroute_userpass_booking' );
+   $box_info = function_exists( 'enroute_text' ) ? enroute_text( 'userpass_info' ) : ''; // Settings → Text blocks
+   if ( $box_passes ) : // no passes for this language → no box
+   ?>
+   <div class="enroute-userpass-box grid grid-cols-3 gap-8 font-[montserrat] bg-[#B5DFFC] pt-8 pb-8 border-t border-b border-black mt-6">
        <div class="font-semibold text-2xl pl-6 pr-6">
            <?php esc_html_e( 'Benutzerpässe für Lehrpersonen', 'enroute_offers' ); ?>
        </div>
        <div class="text-sm pl-6 pr-6">
-           <?php echo nl2br( esc_html__( "EduPass Mini: 250 CHF zahlen - für 350 CHF nutzen\nEduPass Midi: 500 CHF zahlen - für 750 CHF nutzen\nEduPass Maxi: 1000 CHF zahlen - für 1550 CHF nutzen\nDas Guthaben ist ein Jahr ab Bestelldatum gültig.", 'enroute_offers' ) ); ?>
+           <?php if ( $box_passes ) : ?>
+           <ul style="list-style:none; margin:0; padding:0;">
+               <?php foreach ( $box_passes as $bp ) :
+                   $bp_title = html_entity_decode( get_the_title( $bp->ID ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+                   $bp_desc  = trim( (string) get_post_meta( $bp->ID, '_userpass_description', true ) );
+               ?>
+               <li style="margin:0; padding:0;"><?php echo esc_html( $bp_title ); ?><?php if ( $bp_desc !== '' ) : ?> – <?php echo nl2br( esc_html( $bp_desc ) ); ?><?php endif; ?></li>
+               <?php endforeach; ?>
+           </ul>
+           <?php
+           // Credit passes: note on the validity of the credit
+           $box_has_credits = (bool) array_filter( $box_passes, fn( $p ) => get_post_meta( $p->ID, '_userpass_credit_type', true ) === 'credits' );
+           if ( $box_has_credits ) : ?>
+           <p style="margin:0;"><?php esc_html_e( 'Das Guthaben ist ein Jahr ab Bestelldatum gültig.', 'enroute_offers' ); ?></p>
+           <?php endif; ?>
+           <?php endif; ?>
+           <?php if ( $box_url ) : ?>
+           <p style="margin:0.75rem 0 0;">
+               <a href="<?php echo esc_url( $box_url ); ?>" style="font-weight:600; color:inherit; text-decoration:underline;"><?php esc_html_e( 'Benutzerpass buchen', 'enroute_offers' ); ?></a>
+           </p>
+           <?php endif; ?>
        </div>
        <div class="text-sm pl-6 pr-6">
-           <?php esc_html_e( 'Ein Upgrade auf einen höheren Pass ist jederzeit möglich, das Ablaufdatum bleibt dabei unverändert. Nicht genutztes Guthaben verfällt nach Ablauf und wird nicht rückerstattet. Bei Überschreitung wird der Differenzbetrag in Rechnung gestellt.', 'enroute_offers' ); ?>
+           <?php echo $box_info; // escaped by enroute_text() ?>
        </div>
    </div>
+   <?php endif; ?>
 
 </article>

@@ -241,7 +241,30 @@ add_shortcode( 'enroute_contact', function( $atts ): string {
 function enroute_text_blocks(): array {
     return [
         'footer_copyright' => __( 'Footer Copyright text', 'enroute_offers' ),
+        'userpass_info'    => __( 'Benutzerpässe – Text rechts (Angebotsseite unten)', 'enroute_offers' ),
     ];
+}
+
+/** Default texts per block and language (used until the field is saved in the settings). */
+function enroute_text_block_defaults(): array {
+    return [
+        'userpass_info' => [
+            'de' => 'Ein Upgrade auf einen höheren Pass ist jederzeit möglich, das Ablaufdatum bleibt dabei unverändert. Nicht genutztes Guthaben verfällt nach Ablauf und wird nicht rückerstattet. Bei Überschreitung wird der Differenzbetrag in Rechnung gestellt.',
+            'fr' => "Un passage à un pass supérieur est possible à tout moment ; la date d'échéance reste inchangée. Le crédit non utilisé expire à l'échéance et n'est pas remboursé. En cas de dépassement, la différence est facturée.",
+            'it' => 'Il passaggio a un pass superiore è possibile in qualsiasi momento; la data di scadenza rimane invariata. Il credito non utilizzato scade alla fine del periodo e non viene rimborsato. In caso di superamento, la differenza viene fatturata.',
+        ],
+    ];
+}
+
+/** Saved text of a block/language, else its default. */
+function enroute_text_block_value( string $block, string $lang ): string {
+    $default = enroute_text_block_defaults()[ $block ][ $lang ] ?? '';
+    return (string) get_option( "enroute_text_{$block}_{$lang}", $default );
+}
+
+/** Text blocks edited as multi-line text (line breaks are kept). */
+function enroute_text_blocks_multiline(): array {
+    return [ 'userpass_info' ];
 }
 
 /** Text block for the current language (German if empty); {jahr}/{year} → current year. */
@@ -251,10 +274,11 @@ function enroute_text( string $block, string $lang = '' ): string {
         $lang = function_exists( 'pll_current_language' ) ? (string) pll_current_language() : '';
         $lang = $lang ?: substr( get_locale(), 0, 2 );
     }
-    $text = (string) get_option( "enroute_text_{$block}_" . sanitize_key( $lang ), '' );
-    if ( $text === '' && $lang !== 'de' ) $text = (string) get_option( "enroute_text_{$block}_de", '' );
+    $text = enroute_text_block_value( $block, sanitize_key( $lang ) );
+    if ( $text === '' && $lang !== 'de' ) $text = enroute_text_block_value( $block, 'de' );
     if ( $text === '' ) return '';
     $text = str_replace( [ '{jahr}', '{year}' ], date_i18n( 'Y' ), $text );
+    if ( in_array( $block, enroute_text_blocks_multiline(), true ) ) $text = nl2br( trim( $text ) );
     return '<span class="enroute-text enroute-text-' . esc_attr( str_replace( '_', '-', $block ) ) . '">' . wp_kses_post( $text ) . '</span>';
 }
 

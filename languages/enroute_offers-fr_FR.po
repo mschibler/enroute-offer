@@ -1074,3 +1074,12 @@ msgstr "Autres articles de %s"
 
 msgid "Zu den Guides"
 msgstr "Vers les guides"
+
+msgid "Benutzerpass buchen"
+msgstr "Réserver un User Pass"
+
+msgid "Das Guthaben ist ein Jahr ab Bestelldatum gültig."
+msgstr "Le crédit est valable un an à partir de la date de commande."
+
+msgid "Benutzerpässe – Text rechts (Angebotsseite unten)"
+msgstr "User Pass – texte à droite (bas de la page offre)"

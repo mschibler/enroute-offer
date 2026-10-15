@@ -480,8 +480,12 @@ function enroute_offers_settings_page() {
                 <?php foreach ( enroute_settings_languages() as $lang => $lang_label ) : $key = "enroute_text_{$block}_{$lang}"; ?>
                 <tr>
                     <th><label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $lang_label ); ?></label></th>
-                    <td><input type="text" id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( get_option( $key, '' ) ); ?>" class="large-text"
-                               placeholder="<?php echo esc_attr( $block === 'footer_copyright' ? '© {jahr} Enroute' : '' ); ?>"></td>
+                    <td><?php if ( in_array( $block, enroute_text_blocks_multiline(), true ) ) : ?>
+                        <textarea id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $key ); ?>" rows="4" class="large-text"><?php echo esc_textarea( enroute_text_block_value( $block, $lang ) ); ?></textarea>
+                    <?php else : ?>
+                        <input type="text" id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( enroute_text_block_value( $block, $lang ) ); ?>" class="large-text"
+                               placeholder="<?php echo esc_attr( $block === 'footer_copyright' ? '© {jahr} Enroute' : '' ); ?>">
+                    <?php endif; ?></td>
                 </tr>
                 <?php endforeach; ?>
             </table>
