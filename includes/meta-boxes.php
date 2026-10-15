@@ -165,7 +165,7 @@ function enroute_offer_details_cb( WP_Post $post ): void {
                 <option value="1" <?php selected( $featured ); ?>><?php esc_html_e( 'Ja', 'enroute_offers' ); ?></option>
             </select>
             <p class="description">
-                <?php esc_html_e( 'Neu featured Angebote kommen auf Position 1. Reihenfolge:', 'enroute_offers' ); ?>
+                <?php esc_html_e( 'Neu featured Angebote kommen auf Position 1 der Liste ihrer Sprache. Reihenfolge:', 'enroute_offers' ); ?>
                 <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=offer&page=enroute-featured-offers' ) ); ?>"><?php esc_html_e( 'Featured Angebote', 'enroute_offers' ); ?></a>
             </p>
         </div>

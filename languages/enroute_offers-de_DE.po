@@ -377,3 +377,7 @@ msgstr ""
 "Kontaktangaben pro Sprache, z. B. für den Footer. Auf der Website wird "
 "automatisch die Angabe der aktuellen Sprache angezeigt; ein leeres Feld wird"
 " nicht angezeigt."
+
+msgctxt "Veranstaltung"
+msgid "Anmelden"
+msgstr "Anmelden"

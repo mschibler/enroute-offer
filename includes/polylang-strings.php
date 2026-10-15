@@ -77,7 +77,8 @@ function enroute_pll_collect_strings(): array {
     $cached    = get_transient( $cache_key );
     if ( is_array( $cached ) ) return $cached;
 
-    $funcs   = [ '__', '_e', 'esc_html__', 'esc_html_e', 'esc_attr__', 'esc_attr_e', '_x', '_ex' ];
+    $funcs   = [ '__', '_e', 'esc_html__', 'esc_html_e', 'esc_attr__', 'esc_attr_e', '_x', '_ex', 'esc_html_x', 'esc_attr_x' ];
+    $ctx_funcs = [ '_x', '_ex', 'esc_html_x', 'esc_attr_x' ];
     $strings = [];
 
     foreach ( $groups as $rel => $group ) {
@@ -110,6 +111,11 @@ function enroute_pll_collect_strings(): array {
             if ( $domain !== 'enroute_offers' ) continue;
 
             $text = enroute_pll_unquote( $arg[1] );
+            // With context (_x): own Polylang string "Text (Context)", so the same word
+            // can be translated differently, e.g. "Anmelden (Veranstaltung)"
+            if ( in_array( $t[1], $ctx_funcs, true ) && $tokens[ $i + 3 ] === ',' && is_array( $tokens[ $i + 4 ] ) && $tokens[ $i + 4 ][0] === T_CONSTANT_ENCAPSED_STRING ) {
+                $text = enroute_pll_context_key( $text, enroute_pll_unquote( $tokens[ $i + 4 ][1] ) );
+            }
             if ( $text !== '' && ! isset( $strings[ $text ] ) ) {
                 $strings[ $text ] = $group;
             }
@@ -143,8 +149,17 @@ add_action( 'init', function() {
 // ── Use the Polylang translation on the front end (and in front-end AJAX) ─────
 add_filter( 'gettext', 'enroute_pll_gettext', 20, 3 );
 add_filter( 'gettext_with_context', function( $translation, $text, $context, $domain ) {
-    return enroute_pll_gettext( $translation, $text, $domain );
+    // Looked up as "Text (Context)"; not saved → the .mo translation (never the
+    // translation of the plain text, which may mean something else)
+    $key = enroute_pll_context_key( $text, $context );
+    $out = enroute_pll_gettext( $translation, $key, $domain );
+    return $out === $key ? $translation : $out;
 }, 20, 4 );
+
+/** Polylang string for a text with context. */
+function enroute_pll_context_key( string $text, string $context ): string {
+    return $context !== '' ? $text . ' (' . $context . ')' : $text;
+}
 
 function enroute_pll_gettext( $translation, $text, $domain ) {
     static $busy = false;

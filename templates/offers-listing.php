@@ -16,6 +16,24 @@ $offers = get_posts([
     'meta_query'     => [ enroute_offer_active_meta_query() ], // hide inactive offers
 ]);
 
+// Order: 1. offers of the current language – first its featured offers in the
+// order of Offers → Featured Angebote, then the others randomly;
+// 2. offers of the other languages, randomly mixed.
+$list_lang = function_exists( 'pll_current_language' ) ? (string) pll_current_language() : substr( get_locale(), 0, 2 );
+$list_lang = substr( $list_lang, 0, 2 );
+$own = $rest = [];
+foreach ( $offers as $o ) {
+    if ( get_post_meta( $o->ID, '_offer_language', true ) === $list_lang ) $own[ $o->ID ] = $o; else $rest[] = $o;
+}
+$featured_own = [];
+foreach ( function_exists( 'enroute_featured_offer_ids_for' ) ? enroute_featured_offer_ids_for( $list_lang ) : [] as $fid ) {
+    if ( isset( $own[ $fid ] ) ) { $featured_own[] = $own[ $fid ]; unset( $own[ $fid ] ); }
+}
+$own = array_values( $own );
+shuffle( $own );
+shuffle( $rest );
+$offers = array_merge( $featured_own, $own, $rest );
+
 $offers_data = [];
 foreach ( $offers as $i => $offer ) {
     // Image priority: 1) offer photo, 2) station activities photo, 3) station main photo

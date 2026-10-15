@@ -5,8 +5,9 @@
  * - Offer form: "Featured" yes / no
  * - Offers → Featured Angebote: all featured offers, drag & drop order,
  *   add (goes to position 1, the others move back) and remove
- * - Position 1 of the list = "Featured #1" in the blocks / shortcode, etc.
- *   Blocks offer #1–12, the list shows all.
+ * - Per language (offer field "Language"): position 1 of that language =
+ *   "Featured #1" on the pages of that language, etc. Blocks offer #1–12,
+ *   the list shows all.
  *
  * Storage: option enroute_featured_offers = ordered offer IDs (the order),
  * post meta _offer_featured = '1' for featured offers (the yes/no field).
@@ -56,9 +57,29 @@ function enroute_featured_offer_ids(): array {
     } ) );
 }
 
-/** Offer at featured position $n (1-based), 0 if none. */
-function enroute_featured_offer_id( int $n ): int {
-    $ids = enroute_featured_offer_ids();
+/** Language of an offer (field "Language"), '' if none. */
+function enroute_featured_offer_lang( int $offer_id ): string {
+    return (string) get_post_meta( $offer_id, '_offer_language', true );
+}
+
+/** Featured offers of one language, in order. */
+function enroute_featured_offer_ids_for( string $lang ): array {
+    return array_values( array_filter( enroute_featured_offer_ids(), fn( $id ) => enroute_featured_offer_lang( $id ) === $lang ) );
+}
+
+/** Language whose featured list is used: given, else current page language, else default. */
+function enroute_featured_current_lang(): string {
+    $lang = '';
+    if ( function_exists( 'pll_current_language' ) ) $lang = (string) pll_current_language();
+    // Block preview in the editor (REST): language of the edited page
+    if ( ! $lang && ! empty( $_GET['post_id'] ) && function_exists( 'pll_get_post_language' ) ) $lang = (string) pll_get_post_language( absint( $_GET['post_id'] ) );
+    if ( ! $lang && function_exists( 'pll_default_language' ) ) $lang = (string) pll_default_language();
+    return $lang ?: substr( get_locale(), 0, 2 );
+}
+
+/** Offer at featured position $n (1-based) of a language (current if empty), 0 if none. */
+function enroute_featured_offer_id( int $n, string $lang = '' ): int {
+    $ids = enroute_featured_offer_ids_for( $lang ?: enroute_featured_current_lang() );
     return $n >= 1 ? (int) ( $ids[ $n - 1 ] ?? 0 ) : 0;
 }
 
@@ -100,33 +121,58 @@ add_action( 'admin_menu', function() {
 } );
 
 function enroute_featured_offers_page() {
-    $ids      = enroute_featured_offer_ids();
-    $others   = get_posts( [
+    // Tabs: languages of the website (Polylang), so no tab for unused languages (e.g. English)
+    $languages = enroute_get_languages();
+    $site      = function_exists( 'pll_languages_list' ) ? (array) pll_languages_list( [ 'fields' => 'slug' ] ) : [ 'de', 'fr', 'it' ];
+    $languages = array_intersect_key( $languages, array_flip( $site ) ) ?: $languages;
+    $all_ids   = enroute_featured_offer_ids();
+    $no_lang   = array_values( array_filter( $all_ids, fn( $id ) => ! array_key_exists( enroute_featured_offer_lang( $id ), $languages ) ) );
+    $tabs      = $languages + ( $no_lang ? [ 'none' => __( 'Ohne Sprache', 'enroute_offers' ) ] : [] );
+    $lang      = sanitize_key( $_GET['lang'] ?? '' );
+    if ( ! isset( $tabs[ $lang ] ) ) $lang = (string) array_key_first( $languages );
+    $ids       = $lang === 'none' ? $no_lang : enroute_featured_offer_ids_for( $lang );
+
+    $others = $lang === 'none' ? [] : get_posts( [
         'post_type'    => 'offer',
         'post_status'  => [ 'publish', 'draft', 'pending', 'private', 'future' ],
         'numberposts'  => -1,
         'orderby'      => 'title',
         'order'        => 'ASC',
-        'post__not_in' => $ids ?: [ 0 ],
-        'lang'         => '', // offers are language-independent
+        'post__not_in' => $all_ids ?: [ 0 ],
+        'meta_query'   => [ [ 'key' => '_offer_language', 'value' => $lang ] ],
+        'lang'         => '', // offers are language-independent in Polylang
     ] );
     $nonce    = wp_create_nonce( 'enroute_featured' );
+    $base_url = admin_url( 'edit.php?post_type=offer&page=enroute-featured-offers' );
     ?>
     <div class="wrap enroute-featured">
         <h1><?php esc_html_e( 'Featured Angebote', 'enroute_offers' ); ?></h1>
         <p class="description" style="max-width:760px;">
             <?php printf(
-                esc_html__( 'Reihenfolge per Drag & Drop ändern. Position 1 ist «Featured #1» in den Blöcken der Startseite usw. In den Blöcken wählbar sind die Positionen 1–%d; weiter unten stehende Angebote bleiben featured und können jederzeit nach oben gezogen werden. Neu hinzugefügte Angebote kommen auf Position 1.', 'enroute_offers' ),
+                esc_html__( 'Jede Sprache hat ihre eigene Liste (nach dem Feld «Sprache» des Angebots). Reihenfolge per Drag & Drop ändern. Position 1 ist «Featured #1» in den Blöcken der Seiten dieser Sprache usw. In den Blöcken wählbar sind die Positionen 1–%d; weiter unten stehende Angebote bleiben featured und können jederzeit nach oben gezogen werden. Neu hinzugefügte Angebote kommen auf Position 1.', 'enroute_offers' ),
                 ENROUTE_FEATURED_SLOTS
             ); ?>
         </p>
+
+        <nav class="nav-tab-wrapper" style="margin-top:1rem;">
+            <?php foreach ( $tabs as $code => $label ) :
+                $count = $code === 'none' ? count( $no_lang ) : count( enroute_featured_offer_ids_for( $code ) ); ?>
+            <a href="<?php echo esc_url( add_query_arg( 'lang', $code, $base_url ) ); ?>" class="nav-tab<?php echo $code === $lang ? ' nav-tab-active' : ''; ?>">
+                <?php echo esc_html( $label ); ?> <span style="opacity:.6;">(<?php echo (int) $count; ?>)</span>
+            </a>
+            <?php endforeach; ?>
+        </nav>
 
         <?php if ( isset( $_GET['updated'] ) ) : ?>
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Gespeichert.', 'enroute_offers' ); ?></p></div>
         <?php endif; ?>
 
+        <?php if ( $lang === 'none' ) : ?>
+        <p style="color:#b32d2e; margin:1rem 0;"><?php esc_html_e( 'Diese Angebote sind featured, haben aber keine Sprache und werden deshalb nirgends angezeigt. Bitte im Angebot eine Sprache wählen oder hier entfernen.', 'enroute_offers' ); ?></p>
+        <?php else : ?>
         <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin:1.25rem 0; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
             <input type="hidden" name="action" value="enroute_featured_add">
+            <input type="hidden" name="lang" value="<?php echo esc_attr( $lang ); ?>">
             <?php wp_nonce_field( 'enroute_featured' ); ?>
             <label for="enroute-featured-add"><strong><?php esc_html_e( 'Angebot hinzufügen:', 'enroute_offers' ); ?></strong></label>
             <select id="enroute-featured-add" name="offer_id" style="min-width:320px; max-width:100%;">
@@ -137,16 +183,16 @@ function enroute_featured_offers_page() {
             </select>
             <?php submit_button( __( 'Hinzufügen (auf Position 1)', 'enroute_offers' ), 'primary', 'submit', false ); ?>
         </form>
+        <?php endif; ?>
 
         <?php if ( ! $ids ) : ?>
-            <p><em><?php esc_html_e( 'Noch keine Featured Angebote.', 'enroute_offers' ); ?></em></p>
+            <p><em><?php esc_html_e( 'Noch keine Featured Angebote in dieser Sprache.', 'enroute_offers' ); ?></em></p>
         <?php else : ?>
         <table class="widefat striped enroute-featured-table" style="max-width:900px;">
             <thead>
                 <tr>
                     <th style="width:28px;"></th>
                     <th style="width:70px;"><?php esc_html_e( 'Position', 'enroute_offers' ); ?></th>
-                    <th style="width:90px;"><?php esc_html_e( 'Bild', 'enroute_offers' ); ?></th>
                     <th><?php esc_html_e( 'Angebot', 'enroute_offers' ); ?></th>
                     <th style="width:110px;"></th>
                 </tr>
@@ -157,12 +203,11 @@ function enroute_featured_offers_page() {
                 $warnings = [];
                 if ( $p->post_status !== 'publish' ) $warnings[] = get_post_status_object( $p->post_status )->label;
                 if ( function_exists( 'enroute_offer_is_active' ) && ! enroute_offer_is_active( $id ) ) $warnings[] = __( 'Inaktiv', 'enroute_offers' );
-                $remove_url = wp_nonce_url( admin_url( 'admin-post.php?action=enroute_featured_remove&offer_id=' . $id ), 'enroute_featured' );
+                $remove_url = wp_nonce_url( admin_url( 'admin-post.php?action=enroute_featured_remove&lang=' . $lang . '&offer_id=' . $id ), 'enroute_featured' );
             ?>
                 <tr data-id="<?php echo (int) $id; ?>">
                     <td class="enroute-featured-handle" style="cursor:move; color:#8c8f94;"><span class="dashicons dashicons-menu"></span></td>
                     <td><strong class="enroute-featured-pos"></strong></td>
-                    <td><?php echo get_the_post_thumbnail( $id, [ 80, 50 ], [ 'style' => 'width:80px; height:50px; object-fit:cover; display:block;' ] ); ?></td>
                     <td>
                         <a href="<?php echo esc_url( get_edit_post_link( $id ) ); ?>"><strong><?php echo esc_html( html_entity_decode( get_the_title( $id ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) ); ?></strong></a>
                         <?php if ( $warnings ) : ?>
@@ -216,11 +261,15 @@ add_action( 'admin_enqueue_scripts', function( $hook ) {
 add_action( 'wp_ajax_enroute_featured_sort', function() {
     check_ajax_referer( 'enroute_featured', 'nonce' );
     if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error( null, 403 );
-    $new     = array_map( 'absint', (array) ( $_POST['ids'] ?? [] ) );
     $current = enroute_featured_list_raw();
-    // keep only offers that are in the list; entries not sent (e.g. trashed) stay at the end
-    $new = array_values( array_intersect( $new, $current ) );
-    enroute_featured_list_save( array_merge( $new, array_diff( $current, $new ) ) );
+    // The sent IDs (one language) get the new order in the places they already
+    // take in the overall list; other languages stay where they are.
+    $new     = array_values( array_intersect( array_map( 'absint', (array) ( $_POST['ids'] ?? [] ) ), $current ) );
+    $queue   = $new;
+    foreach ( $current as $i => $id ) {
+        if ( in_array( $id, $new, true ) ) $current[ $i ] = array_shift( $queue );
+    }
+    enroute_featured_list_save( $current );
     wp_send_json_success();
 } );
 
@@ -229,7 +278,7 @@ add_action( 'admin_post_enroute_featured_add', function() {
     if ( ! current_user_can( 'edit_posts' ) ) wp_die( esc_html__( 'Keine Berechtigung.', 'enroute_offers' ) );
     $id = absint( $_POST['offer_id'] ?? 0 );
     if ( $id && get_post_type( $id ) === 'offer' ) enroute_featured_add( $id );
-    wp_safe_redirect( admin_url( 'edit.php?post_type=offer&page=enroute-featured-offers&updated=1' ) );
+    wp_safe_redirect( admin_url( 'edit.php?post_type=offer&page=enroute-featured-offers&updated=1&lang=' . sanitize_key( $_REQUEST['lang'] ?? '' ) ) );
     exit;
 } );
 
@@ -238,6 +287,6 @@ add_action( 'admin_post_enroute_featured_remove', function() {
     if ( ! current_user_can( 'edit_posts' ) ) wp_die( esc_html__( 'Keine Berechtigung.', 'enroute_offers' ) );
     $id = absint( $_GET['offer_id'] ?? 0 );
     if ( $id ) enroute_featured_remove( $id );
-    wp_safe_redirect( admin_url( 'edit.php?post_type=offer&page=enroute-featured-offers&updated=1' ) );
+    wp_safe_redirect( admin_url( 'edit.php?post_type=offer&page=enroute-featured-offers&updated=1&lang=' . sanitize_key( $_REQUEST['lang'] ?? '' ) ) );
     exit;
 } );

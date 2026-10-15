@@ -131,7 +131,7 @@ $button_color_green = '#c9d56b';
                 <?php elseif ( enroute_event_registration_enabled( $post_id ) ) : // checkbox "Anmeldung per Formular aktivieren" ?>
                 <button type="button" @click="registrationOpen = true"
                     style="width:100%; padding:0.5rem 1rem; background:<?php echo esc_attr( $button_color_green ); ?>; border:none; font-weight:600; font-size:1.25rem; cursor:pointer; text-align:center;">
-                    <?php esc_html_e( 'Anmelden', 'enroute_offers' ); ?>
+                    <?php echo esc_html_x( 'Anmelden', 'Veranstaltung', 'enroute_offers' ); ?>
                 </button>
 
                 <!-- Backdrop -->

@@ -1111,3 +1111,7 @@ msgid ""
 msgstr ""
 "Token pubblico (inizia con pk.). È visibile sul sito – meglio limitarlo al "
 "proprio dominio in Mapbox."
+
+msgctxt "Veranstaltung"
+msgid "Anmelden"
+msgstr "Iscriversi"

@@ -1116,3 +1116,7 @@ msgid ""
 msgstr ""
 "Jeton public (commence par pk.). Il est visible sur le site – idéalement le "
 "restreindre à votre domaine dans Mapbox."
+
+msgctxt "Veranstaltung"
+msgid "Anmelden"
+msgstr "S'inscrire"
