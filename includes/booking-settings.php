@@ -316,7 +316,7 @@ function enroute_offers_settings_page() {
 
             <h2><?php esc_html_e( 'Kontakt', 'enroute_offers' ); ?></h2>
             <p class="description">
-                <?php esc_html_e( 'Kontaktangaben pro Sprache, z. B. für den Footer. Auf der Website wird automatisch die Angabe der aktuellen Sprache angezeigt (ist ein Feld leer, die deutsche).', 'enroute_offers' ); ?><br>
+                <?php esc_html_e( 'Kontaktangaben pro Sprache, z. B. für den Footer. Auf der Website wird automatisch die Angabe der aktuellen Sprache angezeigt; ein leeres Feld wird nicht angezeigt.', 'enroute_offers' ); ?><br>
                 <?php esc_html_e( 'Shortcodes:', 'enroute_offers' ); ?>
                 <code>[enroute_contact]</code> <?php esc_html_e( '(E-Mail und Telefon)', 'enroute_offers' ); ?>,
                 <code>[enroute_contact field="email"]</code>,

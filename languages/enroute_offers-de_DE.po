@@ -368,3 +368,12 @@ msgstr "Buchbar"
 
 msgid "Check if this offer can be booked directly."
 msgstr "Aktivieren, wenn dieses Angebot direkt gebucht werden kann."
+
+msgid ""
+"Kontaktangaben pro Sprache, z. B. für den Footer. Auf der Website wird "
+"automatisch die Angabe der aktuellen Sprache angezeigt; ein leeres Feld wird"
+" nicht angezeigt."
+msgstr ""
+"Kontaktangaben pro Sprache, z. B. für den Footer. Auf der Website wird "
+"automatisch die Angabe der aktuellen Sprache angezeigt; ein leeres Feld wird"
+" nicht angezeigt."

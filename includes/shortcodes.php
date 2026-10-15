@@ -192,11 +192,8 @@ function enroute_get_contact( string $field, string $lang = '' ): string {
         $lang = function_exists( 'pll_current_language' ) ? (string) pll_current_language() : '';
         $lang = $lang ?: substr( get_locale(), 0, 2 );
     }
-    $value = (string) get_option( "enroute_contact_{$field}_" . sanitize_key( $lang ), '' );
-    if ( $value === '' && $lang !== 'de' ) {
-        $value = (string) get_option( "enroute_contact_{$field}_de", '' );
-    }
-    return $value;
+    // Only what is entered for this language (empty field = nothing shown, no fallback)
+    return trim( (string) get_option( "enroute_contact_{$field}_" . sanitize_key( $lang ), '' ) );
 }
 
 /** HTML for one or both contact fields. */
