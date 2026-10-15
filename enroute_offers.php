@@ -3,7 +3,7 @@
  * Plugin Name: Enroute Offers
  * Plugin URI:  https://example.com/enroute-offers
  * Description: Manages Offers, Events, Stations and Resources with multilingual support (DE, FR, IT).
- * Version:     1.1.7
+ * Version:     1.2.0
  * Author:      Enroute
  * Text Domain: enroute_offers
  * Domain Path: /languages
@@ -11,7 +11,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'ENROUTE_OFFERS_VERSION', '1.1.7' );
+define( 'ENROUTE_OFFERS_VERSION', '1.2.0' );
 define( 'ENROUTE_OFFERS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ENROUTE_OFFERS_URL',  plugin_dir_url( __FILE__ ) );
 

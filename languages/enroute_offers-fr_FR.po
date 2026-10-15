@@ -1096,3 +1096,23 @@ msgstr ""
 
 msgid "Für diese Veranstaltung ist keine Anmeldung per Formular möglich."
 msgstr "L'inscription par formulaire n'est pas possible pour cet événement."
+
+msgid "Karte: Mapbox-Stil (optional)"
+msgstr "Carte : style Mapbox (facultatif)"
+
+msgid ""
+"Für die Karte [enroute_poi_map]: Style-URL aus Mapbox Studio (Share → Style "
+"URL). Leer lassen für die Standard-OpenStreetMap-Karte."
+msgstr ""
+"Pour la carte [enroute_poi_map] : URL du style depuis Mapbox Studio (Share →"
+" Style URL). Laisser vide pour la carte OpenStreetMap standard."
+
+msgid "Karte: Mapbox Access Token"
+msgstr "Carte : jeton d'accès Mapbox"
+
+msgid ""
+"Öffentliches Token (beginnt mit pk.). Es ist auf der Website sichtbar – in "
+"Mapbox am besten auf die eigene Domain beschränken."
+msgstr ""
+"Jeton public (commence par pk.). Il est visible sur le site – idéalement le "
+"restreindre à votre domaine dans Mapbox."

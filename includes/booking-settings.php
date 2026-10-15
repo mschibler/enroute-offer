@@ -57,6 +57,13 @@ function enroute_offers_settings_page() {
         if ( isset( $_POST['enroute_events_page_url'] ) ) {
             update_option( 'enroute_events_page_url', enroute_normalize_url( wp_unslash( $_POST['enroute_events_page_url'] ) ) );
         }
+        // POI map: optional Mapbox style (empty = standard OpenStreetMap)
+        if ( isset( $_POST['enroute_mapbox_token'] ) ) {
+            update_option( 'enroute_mapbox_token', sanitize_text_field( wp_unslash( $_POST['enroute_mapbox_token'] ) ) );
+        }
+        if ( isset( $_POST['enroute_mapbox_style'] ) ) {
+            update_option( 'enroute_mapbox_style', sanitize_text_field( wp_unslash( $_POST['enroute_mapbox_style'] ) ) );
+        }
 
         // Text blocks (per language); simple HTML (links, bold) allowed
         foreach ( array_keys( enroute_text_blocks() ) as $block ) {
@@ -265,6 +272,24 @@ function enroute_offers_settings_page() {
                                value="<?php echo esc_attr( get_option( 'enroute_events_page_url', '' ) ); ?>"
                                class="regular-text" placeholder="https://...">
                         <p class="description"><?php esc_html_e( 'URL der Seite mit dem Shortcode [enroute_events_listing]. Wird für den Link «Weitere Veranstaltungen» im Block auf der Startseite verwendet. Auf Französisch und Italienisch wird automatisch die übersetzte Seite verlinkt.', 'enroute_offers' ); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="enroute_mapbox_style"><?php esc_html_e( 'Karte: Mapbox-Stil (optional)', 'enroute_offers' ); ?></label></th>
+                    <td>
+                        <input type="text" id="enroute_mapbox_style" name="enroute_mapbox_style"
+                               value="<?php echo esc_attr( get_option( 'enroute_mapbox_style', '' ) ); ?>"
+                               class="regular-text" placeholder="mapbox://styles/benutzername/stil-id">
+                        <p class="description"><?php esc_html_e( 'Für die Karte [enroute_poi_map]: Style-URL aus Mapbox Studio (Share → Style URL). Leer lassen für die Standard-OpenStreetMap-Karte.', 'enroute_offers' ); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="enroute_mapbox_token"><?php esc_html_e( 'Karte: Mapbox Access Token', 'enroute_offers' ); ?></label></th>
+                    <td>
+                        <input type="text" id="enroute_mapbox_token" name="enroute_mapbox_token"
+                               value="<?php echo esc_attr( get_option( 'enroute_mapbox_token', '' ) ); ?>"
+                               class="regular-text" placeholder="pk.…">
+                        <p class="description"><?php esc_html_e( 'Öffentliches Token (beginnt mit pk.). Es ist auf der Website sichtbar – in Mapbox am besten auf die eigene Domain beschränken.', 'enroute_offers' ); ?></p>
                     </td>
                 </tr>
             </table>

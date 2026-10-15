@@ -34,6 +34,30 @@ foreach ( $pois as $poi ) {
     ];
 }
 
+// Tiles: Mapbox style (Settings → General) if style + token are set, else standard OpenStreetMap
+$mapbox_token = trim( (string) get_option( 'enroute_mapbox_token', '' ) );
+$mapbox_style = trim( (string) get_option( 'enroute_mapbox_style', '' ) );
+$mapbox_path  = preg_match( '#^mapbox://styles/([^/\s]+/[^/\s?]+)#', $mapbox_style, $mm ) ? $mm[1]
+              : ( preg_match( '~styles/v1/([^/\s]+/[^/\s?.#]+)~', $mapbox_style, $mm ) ? $mm[1]
+              : ( preg_match( '#^[\w.-]+/[\w.-]+$#', $mapbox_style ) ? $mapbox_style : '' ) );
+if ( $mapbox_token && $mapbox_path ) {
+    $tiles = [
+        'url'         => 'https://api.mapbox.com/styles/v1/' . $mapbox_path . '/tiles/512/{z}/{x}/{y}@2x?access_token=' . rawurlencode( $mapbox_token ),
+        'tileSize'    => 512,
+        'zoomOffset'  => -1,
+        'maxZoom'     => 20,
+        'attribution' => '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> <a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a>',
+    ];
+} else {
+    $tiles = [
+        'url'         => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'tileSize'    => 256,
+        'zoomOffset'  => 0,
+        'maxZoom'     => 19,
+        'attribution' => '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    ];
+}
+
 $map_id       = 'epm_' . uniqid();
 $markers_json = wp_json_encode( enroute_js_data( $markers, [ 'desc' ] ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 ?>
@@ -51,11 +75,7 @@ $markers_json = wp_json_encode( enroute_js_data( $markers, [ 'desc' ] ), JSON_UN
     width: 100%;
     height: 100%;
     z-index: 0;
-    background: #f0e96a;
-}
-/* Yellow tint on clean flat map */
-#<?php echo esc_attr( $map_id ); ?> .leaflet-tile-pane {
-    filter: sepia(80%) saturate(350%) hue-rotate(10deg) brightness(1.1);
+    background: #f2efe9;
 }
 /* Popup overlaid centered on map */
 .epm-popup-<?php echo esc_attr( $map_id ); ?> {
@@ -149,10 +169,13 @@ $markers_json = wp_json_encode( enroute_js_data( $markers, [ 'desc' ] ), JSON_UN
         scrollWheelZoom: true,
     }).setView([46.8, 8.2], 8);
 
-    // Stadia Alidade Smooth — clean flat map, no topography, no API key
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-        attribution: '© <a href="https://stadiamaps.com/">Stadia Maps</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 20,
+    // Map tiles: standard OpenStreetMap, or the Mapbox style from the settings
+    var tiles = <?php echo wp_json_encode( $tiles, JSON_UNESCAPED_SLASHES ); ?>;
+    L.tileLayer(tiles.url, {
+        attribution: tiles.attribution,
+        tileSize:    tiles.tileSize,
+        zoomOffset:  tiles.zoomOffset,
+        maxZoom:     tiles.maxZoom,
     }).addTo(map);
 
     var icon = L.divIcon({
